@@ -1,0 +1,185 @@
+# Single source for every figure quoted in paper, brief, essay and data README.
+# Values are display strings (Unicode minus −). Keys marked PENDING block release.
+# Status: v1.1 findings + trajectory update of 25 Sep 2026 (step 2).
+
+# --- Units and coverage
+n_hromadas_total: "1,763"
+n_hromadas_nonoccupied: "1,290"
+n_mainland_codab: "1,471"
+n_crimea_units: "292"             # CHECK: 1,763 − 1,471
+n_capacity: "1,288"
+n_recovery: "1,021"
+n_engagement: "PENDING"           # request 1
+n_rescore_oblasts: "PENDING"      # request 9
+n_dtm_oblasts: "PENDING"
+n_model: "PENDING"                # hromadas with both recovery and capacity
+n_garrison: "36"
+carpathian_oblasts: "Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi"   # confirmed by Carpathian dispatch
+n_carp_hromadas: "251"
+
+# --- Indices
+cap_pc1_share: "49 %"
+cap_loo_rho_min: "0.93"
+rho_recovery_windows: "0.88"
+min_lit_pixels: "10"
+
+# --- Relationships (annual ratio, v1.1)
+rho_cap_exp_min: "0.07"
+rho_cap_exp_max: "0.18"
+rho_rec_strikes: "−0.29"
+rho_rec_alerts: "−0.59"
+int_baseline_coef: "0.15"
+int_baseline_t: "6.3"
+int_fe_range: "PENDING"            # request 4
+cap_main_fe_min: "0.16"
+cap_main_fe_max: "0.19"
+cap_main_fe_t: "≈ 6"
+cap_main_fe_2021: "0.08"
+cap_main_fe_no_pitgrowth: "PENDING" # request 6
+r2_no_fe: "0.11"
+r2_fe: "0.57"
+spatial_lag_rho: "0.85"
+resid_moran_fe: "0.14"
+# Table 5 (request 8)
+rho_cap_strikes_2025: "PENDING"
+ci_cap_strikes_2025: "PENDING"
+rho_cap_alerts_2025: "PENDING"
+ci_cap_alerts_2025: "PENDING"
+rho_cap_strikes_2021: "PENDING"
+ci_cap_strikes_2021: "PENDING"
+rho_cap_alerts_2021: "PENDING"
+ci_cap_alerts_2021: "PENDING"
+rho_cap_strikes_within: "PENDING"
+rho_cap_alerts_within: "PENDING"
+
+# --- Monthly night-light panel (trajectory update)
+nl_panel_end: "August 2026"
+nl_panel_end_year: "2026"
+nl_panel_months: "80"
+nl_two_year_baseline_share: "91 %"
+nl_noise_median: "28 %"
+nl_noise_small: "32 %"
+nl_noise_large: "14 %"
+nl_2021_vs_2020: "24 %"
+nl_baseline_shift: "10 %"
+nl_march2022: "0.05"
+nl_sep2022: "0.18"
+nl_octnov2022: "0.08–0.09"
+nl_h2_2023: "0.40"
+nl_trough_2024_median: "0.10–0.11"
+nl_plateau: "0.37"
+nl_worstq_2022_share: "75 %"
+nl_change_nat_decline: "37 %"
+nl_change_nat_stable: "51 %"
+nl_change_nat_improve: "12 %"
+nl_change_nat: "37 / 51 / 12 %"
+nl_change_carp: "25 / 67 / 8 %"
+
+# --- Carpathian vs rest (medians)
+carp_level_recent: "0.62"
+rest_level_recent: "0.30"
+carp_level_h2_2023: "0.69"
+rest_level_h2_2023: "0.33"
+carp_worstq: "0.21"
+rest_worstq: "0.04"
+carp_share_q_below_half: "0.39"
+rest_share_q_below_half: "0.94"
+carp_outage_retained: "0.38"
+rest_outage_retained: "0.26"
+
+# --- Trajectory models (oblast FE, standardised, HC1)
+outage_cap_fe: "0.20"
+outage_cap_fe_t: "6.3"
+outage_cap_w: "0.16"
+outage_cap_w_t: "4.1"
+outage_cap_prewar: "0.13"
+outage_cap_prewar_t: "3.6"
+outage_moran: "0.07"
+level_cap_fe: "0.19–0.22"
+level_cap_fe_t: "7–8"
+level_cap_prewar: "0.09"
+level_cap_prewar_t: "3.0"
+worstq_cap_fe: "0.09"
+worstq_cap_prewar: "+0.02"
+slope_int: "−0.06"
+slope_int_t: "−2.3 to −3.4"
+slope_r2: "0.11–0.17"
+level_trough_moran: "0.15–0.22"
+rho_level_alerts: "−0.65"
+rho_level_alerts_within: "−0.55"
+rho_level_alerts_within_t: "−8.6"
+
+# --- reSCORE 2024
+rescore_n: "7,758"
+trust_national: "4.5"
+trust_diff_if: "1.8"
+trust_diff_cv: "1.3"
+trust_diff_zk: "−2.2"
+trust_diff_te: "−1.1"
+trust_diff_lv: "PENDING"           # request 15
+trust_if_abs: "6.3"
+trust_zk_abs: "2.3"
+cohesion_if: "7.8"
+locality_sat_if: "7.5"
+locality_sat_ks: "3.2"
+belonging_ks: "9.7"
+
+# --- IOM DTM (oblast level)
+idp_reg_zk: "98"
+idp_present_zk: "56"
+idp_reg_west_range: "78–80"        # CHECK: Carpathian dispatch gives 77–98 for the four oblasts (request 36)
+idp_present_west_range: "57–60"
+idp_reg_carp_range: "77–98"
+idp_present_carp_range: "56–60"
+idp_west_gap: "roughly 30–75 %"    # CHECK: 77/60 = 1.28, 98/56 = 1.75
+idp_reg_dp: "135"
+idp_present_dp: "194"
+idp_carp_decline: "13–18 %"
+idp_rise_ks: "97 %"
+idp_rise_su: "40 %"
+idp_rise_kc: "38 %"               # CHECK: base month for all changes = Feb 2023 (request 29)
+
+# --- Budget panel
+budget_panel_end: "2026 Q2"
+budget_panel_quarters: "22"
+military_pit_share_range: "31–35 %"
+own_rev_2025_ratio: "1.62–1.81"
+pit_carp_peak: "1.11–1.21"
+pit_carp_recent: "1.04–1.12"
+pit_exp_recent: "−0.24"
+pit_exp_2022: "−0.18"
+carp_pit_q3_2022_range: "13–29 %"
+carp_pit_2025_lv_if: "20 %"
+carp_pit_2025_zk_cv: "6–14 %"
+
+# --- Carpathian profile (from Carpathian dispatch)
+carp_alert_hours_12m: "108"
+nat_alert_hours_12m: "690"
+lviv_struck_share: "15 %"
+own_rev_pc_if_zk: "5,800"
+own_rev_pc_nat: "9,300"
+own_rev_pc_cv: "5,000"
+carp_weak_hit: "33"
+carp_weak_hit_if_cv: "27"
+
+# --- Periods and versions (request 25)
+period_viina: "PENDING"
+period_alerts: "PENDING"
+period_dream: "PENDING"
+version_codab: "PENDING"
+version_osm: "PENDING"
+
+# --- Release (fill at release)
+release_version: "v1.2"            # CHECK
+release_date: "PENDING"
+release_year: "2026"
+commit_hash: "PENDING"
+zenodo_doi: "PENDING"
+socarxiv_doi: "PENDING"
+run_time: "PENDING"
+
+# --- Access dates (request 25)
+access_dtm: "PENDING"
+access_rescore: "PENDING"
+access_openbudget: "PENDING"
+access_dream: "PENDING"

@@ -1,0 +1,213 @@
+# Requests from the publication conversation (v0.2 draft)
+
+## Status after the trajectory update (25 Sep 2026)
+
+**Answered, now in the drafts:**
+- **12**, mostly: national trajectory, Carpathian vs rest, change classes, outage, level and worst-quarter models, slope interaction.
+- **27**: variables standardised, HC1 errors.
+
+**Partly answered:**
+| Request | Answered | Still open |
+|---|---|---|
+| 10 | Exposure, capacity and light for the Carpathian oblasts, via the Carpathian dispatch | Table 11 medians for capacity 2021, capacity 2025 and the annual recovery ratio |
+| 11 | Own revenue 2025 = 1.62–1.81 × 2021 | CPI series used; see also 34 |
+| 19 | Source author Klimenko | Repository URL and exact MIT notice |
+| 22 | Lit pixels = lit in 2021; minimum 10 pixels; monthly baseline = 2020–21 mean | Radiance threshold for "lit"; winter months and combination rule for the v1.1 annual ratio |
+| 29 | The three missing months | Base month for the % changes; per-1,000 denominator; Figure 3 |
+
+**Still open from request 12:**
+- Capacity (2025 and pre-war) coefficients and residual Moran's I for the 2024–26 slope model.
+- Exact interaction estimates for outage loss, level and worst quarter. The update says "≈ 0"; the paper needs the numbers.
+
+**Now more important:** 15 (Lviv trust). Lviv is the fiscally strongest Carpathian oblast, and section 10.3 has no trust value for it.
+
+## New requests (33–38)
+
+**33. Maps 19 and 20 (right panel) under rule R2.** Both show last-12-month light by hromada. Provide versions with the "recent" window ending at least 6 months before the planned release, or aggregated to raion. Apply rule R3 (30 km zone) as well.
+
+**34. Basis of "2026 H1 = 2.16 × 2021".** Is it H1 2026 annualised against full-year 2021, or H1 against H1? Also the CPI series used for "about cumulative inflation".
+
+**35. Robust inference for the trajectory models.** Because residual Moran's I is 0.15–0.22 for level and worst quarter, the HC1 t-values are optimistic. Add wild-cluster bootstrap p-values (oblast) and, if feasible, Conley or spatial-HAC errors for outage loss, level, worst quarter and slope. This extends requests 4 and 5.
+
+**36. Registered IDPs, Carpathian range.** The v1.1 figures give 78–80 per 1,000 for Ivano-Frankivsk, Lviv and Chernivtsi, while the Carpathian dispatch gives 77–98 for the four oblasts. Confirm the values and the date.
+
+**37. Class definitions.** Define "weak and hit" (33 Carpathian hromadas) and "strong and steady": the capacity and outage-loss cut points, and whether national or regional terciles are used. Also the national count of "weak and hit" hromadas.
+
+**38. Publication threshold for single-hromada light.** The Carpathian dispatch shows single-hromada values only where at least 30 pixels are lit, while the models use at least 10. Confirm 30 as the general publication rule, and the number of hromadas below it nationally and in the Carpathian oblasts.
+
+Also for request 14: a figure export of the national median monthly index (paper Figure 2, essay Chart 1) and `fig1_carpathian_light.svg` into `publication/figures/`.
+
+---
+
+
+These are the numbers, tables, figures and method details the publication drafts still need. The drafts are `publication/paper/paper.md`, `brief/brief.md`, `essay/essay.md` and `data_package/`.
+
+- Numbers go into `publication/numbers.yaml` under the key named. Tables and figures go into `publication/figures/` or a CSV, as noted.
+- Request numbers match the `[[PENDING: … request N]]` markers in the drafts.
+- **Priority:** A = blocks a core claim; B = needed for tables and methods; C = needed before release.
+
+---
+
+## A. Core claims (do first)
+
+**4. Recovery model table M1–M7**
+- For each model: the specification (oblast FE, capacity measure, exposure measure, sample), plus β₁ capacity, β₂ exposure and β₃ interaction, each with SE and t.
+- For each model: n, R², and within-R² for the FE models.
+- Wild-cluster bootstrap p-values at oblast level for β₁ and β₃.
+- The t-value for the 2021-capacity main effect (+0.08).
+- Which exposure measure the baseline interaction (+0.15, t 6.3) uses.
+- Figure 1: β₃ with 95 % intervals across M1–M7.
+- Keys: `int_fe_range`, `n_model`. Used in paper Table 7 and sections 0, 7.2–7.4; brief finding 4.
+
+**27. Variable scaling and SE type**
+Are variables standardised (z), percentile ranks or raw? Which standard errors are used? This determines how the coefficients are described in the paper and brief.
+
+**6. Capacity index without civilian income-tax growth**
+Rebuild the index from own revenue, transfer dependency and capex share only, re-run M2–M7, and report β₁ and β₃. Key: `cap_main_fe_no_pitgrowth`. Used in paper sections 0.5, 7.4 and 11.11.
+
+**5. Spatial models**
+- Which model the spatial lag ρ = 0.85 comes from.
+- Spatial lag and spatial error models with oblast FE: β₁ and β₃.
+- Residual Moran's I for each model.
+- Used in paper section 7.5.
+
+**7. Sensitivity table (paper Table 8)**
+β₁ and β₃ with oblast FE for each of these variants:
+- primary (2021 capacity);
+- excluding the 36 garrison hromadas;
+- excluding frontline and border oblasts;
+- winter ratio only as the outcome;
+- annual ratio only as the outcome;
+- capacity without income-tax growth.
+
+**8. Capacity × exposure correlations (paper Table 5)**
+Spearman ρ with 95 % CI for capacity 2025 and capacity 2021 against strikes and against alert hours. Also within-oblast partial ρ for 2025. Keys: `rho_cap_*`, `ci_cap_*`.
+
+**10. Carpathian vs national medians (paper Table 11)**
+Strike exposure, alert hours, capacity 2021, capacity 2025 and recovery ratio. This confirms or corrects three claims in section 10.1 and in the essay: lower exposure, lower capacity and better recovery in the Carpathian oblasts.
+
+**1. Coverage**
+- The reasons for each drop: 1,290 → 1,288 (capacity), 1,290 → 1,021 (recovery), and the engagement n.
+- A table of excluded hromadas by oblast and reason.
+- Keys: `n_engagement`, `n_model`. Used in paper Table 1 and section 11.5.
+
+---
+
+## B. Tables and method description
+
+**2. Exposure periods and descriptives (paper Table 3)**
+VIINA and alert date ranges. Median, IQR and maximum of strikes and alert hours, nationally and by oblast. Keys: `period_viina`, `period_alerts`.
+
+**3. Capacity index PCA (paper Table 4)**
+Loadings, eigenvalues and leave-one-out ρ for each component.
+
+**9. reSCORE 2024 by oblast (paper Table 10)**
+For all oblasts: the four indicators (trust in local administration, community cohesion, locality satisfaction, belonging), with n and 95 % CI. Also the number of oblasts covered. Key: `n_rescore_oblasts`.
+
+**15. Lviv trust difference** (reSCORE 2024). Key: `trust_diff_lv`.
+
+**28. reSCORE change 2021 → 2024** in trust and cohesion, by oblast.
+
+**29. IDP details**
+- Confirm the base month for the percentage changes. The drafts assume February 2023 for all of them.
+- The denominator for the per-1,000 figures.
+- Figure 3: registered vs present IDPs per 1,000, by oblast.
+- Key: `n_dtm_oblasts`.
+
+**26. Tercile cross-tab (paper Table 6)**
+Hromada counts in each capacity × exposure tercile cell, for alert hours and for strikes, nationally and for the Carpathian oblasts. The brief quotes the national high-exposure / low-capacity count.
+
+**16. Occupation classification.** Source and reference date.
+
+**17. UA_LAEA projection.** Full parameters (PROJ string or WKT).
+
+**18. VIINA processing.** Event categories included, deduplication rule, and normalisation (count, per km² or per 10,000 residents).
+
+**19. Air-raid alerts**
+- Source name and URL.
+- The exact copyright line and MIT notice from its LICENSE file.
+- The rule for assigning oblast- and raion-level alerts to hromadas.
+
+**20. Risk index (Map 01).** Formula and weights.
+
+**21. Capacity index aggregation.** PC1 score or mean of percentile ranks.
+
+**22. Night-light recovery ratio**
+- Lit-pixel radiance threshold.
+- Baseline months, and the months defining "winter".
+- How the annual and winter ratios are combined.
+- The minimum-lit-pixel exclusion rule.
+- The baseline months for the monthly index.
+
+**24. OSM and ЄДРПОУ.** Which layers and tables are actually used, and for what. If they're unused in the published results, they are dropped from the paper's Table 2 and from the attribution file.
+
+---
+
+## C. Trajectories, security, release
+
+**12. Trajectory results (paper section 8, Table 9)**
+- The last month of the monthly panel. Keys: `nl_panel_end`, `nl_panel_end_year`.
+- The threshold for "months below baseline".
+- The four metrics per hromada: trough depth, winter dips, months below baseline, 2024–26 slope.
+- Models for each metric: β for capacity (2021), exposure and interaction, and R² without and with FE.
+- Figure 2: national median monthly index with IQR band and major outage periods marked.
+- Trajectory maps, and the Carpathian vs national comparison.
+- Final values for `nl_trough_2024_median` and `nl_calm_range`.
+
+**11. Real own revenue.** CPI-deflated own revenue 2021–2025, national and Carpathian, with the CPI source. Also `budget_panel_end`.
+
+**31. Front-line zone for rule R3**
+- Source and date of the front-line geometry.
+- The list of hromadas within 30 km of the front line or the Russian/Belarusian border.
+- The raion aggregation for these hromadas.
+
+**13. Security audit (paper Table 12, Annex E)**
+List every map, table and GeoPackage with its finest spatial level and finest time step. Flag anything below hromada level, and any hromada-level monthly data for the last 12 months. Specifically check:
+- Map 03 (strike points) and the Carpathian zoom pages;
+- whether any interpolated surface is exported as data.
+
+**32. Data package export**
+Actual file names and layout for `data/tables/` and `data/geo/`, following the proposed tree in `data_package/README.md`. Apply these rules in the export:
+- **R2:** hromada monthly values end 6 months before release; the last 12 months are at oblast level only.
+- **R3:** raion aggregation in the front-line zone.
+- **R4:** no garrison flag and no military income-tax fields.
+- **R5:** no event points.
+- **R6:** no names or free text.
+
+Also a `missing_reason` column with its codes added to the data dictionary.
+
+**14. Figure exports**
+170 mm wide, 300 dpi, with the source attribution line and run commit hash on every map. Save into `publication/figures/`.
+
+| Output | Figures needed |
+|---|---|
+| Paper | Maps 01, 04, 07, 09, 14, 15, 16, 17, 18; Figures 1–3; trajectory maps |
+| Brief | Maps 14 and 18 at half-page size |
+| Essay | Maps 01, 14, 17, 18 and the Figure 2 chart |
+
+**23. Terms of use**
+- DREAM: terms, and the definition of a "valid" project.
+- reSCORE: terms.
+- IOM DTM: whether oblast aggregates may be redistributed, and the required wording.
+
+**25. Versions and access dates**
+- VIINA version or date, alerts, DREAM extract, COD-AB version, OSM extract, and DTM, reSCORE and openbudget access dates.
+- Operating system and QGIS plugin versions.
+- Full `run_all.sh` run time.
+- Keys: `version_*`, `access_*`, `run_time`.
+
+**30. (Optional) Mountain vs lowland hromadas** within the Carpathian oblasts: capacity, recovery and exposure compared.
+
+---
+
+## Checks on values already in `numbers.yaml`
+
+- `carpathian_oblasts`: confirm that Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi is the set used for Map 17.
+- `n_crimea_units` = 292: confirm against the tessellation (computed as 1,763 − 1,471).
+- `idp_west_gap`: the source figures give roughly 30–75 %, not the ~40–75 % in the original brief. Confirm.
+- `idp_rise_*` and `idp_carp_decline`: confirm that all use February 2023 as the base.
+
+## Outside the pipeline
+
+- Hromada-level IOM DTM file: requested from IOM, pending.
+- Contact address for the README, brief and essay: to be decided by Michel.

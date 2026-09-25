@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite both the dataset and the companion paper."
+type: dataset
+title: "Ukraine hromada strikes and resilience dataset"
+version: "{{release_version}}"
+date-released: "{{release_date}}"
+doi: "{{zenodo_doi}}"
+license: ODbL-1.0
+authors:
+  - family-names: Garand
+    given-names: Michel
+    affiliation: "UBEC Platform"
+abstract: >-
+  Hromada-level dataset for Ukraine joining strike and air-raid-alert
+  exposure, local budget indicators and night-light recovery measures,
+  with oblast-level survey and displacement context. Aggregated open data;
+  sensitive detail withheld under published security rules.
+keywords:
+  - Ukraine
+  - hromada
+  - war
+  - night lights
+  - local government finance
+  - spatial analysis
+  - recovery
+preferred-citation:
+  type: report
+  title: "Strikes, fiscal capacity and night-light recovery in Ukraine's hromadas, 2022–2026: A spatial analysis with open data"
+  authors:
+    - family-names: Garand
+      given-names: Michel
+      affiliation: "UBEC Platform"
+  year: {{release_year}}
+  publisher:
+    name: SocArXiv
+  doi: "{{socarxiv_doi}}"
