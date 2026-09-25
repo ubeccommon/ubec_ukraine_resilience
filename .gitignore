@@ -1,0 +1,129 @@
+# =====================================================================
+# Whitelist .gitignore: everything is ignored unless re-included below.
+# The working tree holds ~40 GB of raw data, caches and GeoPackages.
+# NEVER run `git clean -fdx` (or -x/-X) here: it deletes ignored data.
+# Rules are read top to bottom; later rules override earlier ones.
+# =====================================================================
+
+# ---- 1. deny everything at the top level ----------------------------
+/*
+
+# ---- 2. repository files at the root --------------------------------
+!/.gitignore
+!/.gitattributes
+!/.github/
+!/README.md
+!/LICENSE*
+!/CITATION.cff
+!/CONTRIBUTING.md
+!/DATA_SOURCES.md
+!/requirements.txt
+!/MANUAL_SOURCES.txt
+
+# ---- 3. viina/: strike + alert pipeline and QGIS builder ------------
+!/viina/
+/viina/*
+!/viina/*.py
+!/viina/run_all.sh
+!/viina/strikes_by_month_oblast.csv
+/viina/*_before_resilience.*
+!/viina/qgis/
+/viina/qgis/*
+!/viina/qgis/meta.json
+!/viina/qgis/maps/
+/viina/qgis/maps/*
+!/viina/qgis/maps/preview/
+# held back pending sensitivity review (decisions D/E)
+/viina/qgis/maps/preview/01_*
+/viina/qgis/maps/preview/02_*
+/viina/qgis/maps/preview/03_*
+/viina/qgis/maps/preview/19_*
+/viina/qgis/maps/preview/20_*
+
+# ---- 4. resilience/: scripts, styles, docs, small tidy tables -------
+!/resilience/
+/resilience/*
+!/resilience/*.py
+!/resilience/styles/
+!/resilience/docs/
+/resilience/docs/*conversation_prompt.md
+/resilience/docs/carpathian_profiles.xlsx
+!/resilience/tidy/
+/resilience/tidy/*
+!/resilience/tidy/*.csv
+!/resilience/tidy/*.md
+!/resilience/tidy/*.json
+# > 5 MB (decision C) -> Zenodo
+/resilience/tidy/nightlights_panel_k3.csv
+/resilience/tidy/budget_quarterly_k3.csv
+# hromada-level recent night lights (decision D) -> Zenodo after lag/aggregation rule
+/resilience/tidy/nightlights_monthly_k3.csv
+/resilience/tidy/ntl_quarterly_k3.csv
+/resilience/tidy/trajectories_k3.csv
+/resilience/tidy/carpathian_profiles_k3.csv
+# superseded
+/resilience/tidy/keys_hromada_before_katottg_names.csv
+
+# ---- 4a. rule R4 (military finance): internal tables stay local; ----
+# ----     public copies without R4 fields come from 25_public_tables.py
+/resilience/tidy/resilience_v1_k3.csv
+/resilience/tidy/resilience_index_v11_k3.csv
+/resilience/tidy/budget_indicators_k3.csv
+/resilience/tidy/budget_long_k3_year.csv
+!/resilience/public/
+
+# ---- 4b. upstream terms: no redistribution (IOM DTM) or unclear (reSCORE)
+# users regenerate these with 16_/17_ and their own access; re-include only with permission
+/resilience/tidy/dtm_*.csv
+/resilience/tidy/oblast_context_k1.csv
+/resilience/tidy/rescore_long.csv
+/viina/qgis/maps/preview/18_*
+
+# ---- 5. publication/: sources only ----------------------------------
+!/publication/
+/publication/build/out/
+
+# ---- 6. global denies (override all whitelists above) ---------------
+# credentials
+.earthdata_token
+.dtm_key
+*token*
+*secret*
+*.key
+*.pem
+.env
+.netrc
+# python / environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+# logs, backups, editor files
+*.log
+*.out
+*.bak*
+*~
+*.swp
+# QGIS project and lock / auxiliary files (project is rebuilt by the builder)
+*.qgz
+*.qgs
+*.qgd
+*.aux.xml
+# spatial data, rasters, caches, archives (rebuilt or downloaded)
+*.gpkg
+*.gpkg-wal
+*.gpkg-shm
+*.fgb
+*.geojson
+*.shp
+*.tif
+*.tiff
+*.nc
+*.h5
+*.hdf
+*.npy
+*.pkl
+*.zip
+*.gz
+*.xlsx
+*.pdf

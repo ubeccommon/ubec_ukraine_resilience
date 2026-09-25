@@ -1,0 +1,27 @@
+# Normalise line endings to LF in the repository
+* text=auto eol=lf
+
+*.py    text diff=python
+*.sh    text eol=lf
+*.md    text diff=markdown
+*.csv   text eol=lf
+*.json  text eol=lf
+*.qml   text eol=lf
+*.yaml  text eol=lf
+*.tex   text eol=lf
+*.lua   text eol=lf
+*.css   text eol=lf
+*.svg   text eol=lf
+*.cff   text eol=lf
+*.txt   text eol=lf
+
+*.png   binary
+*.jpg   binary
+*.webp  binary
+*.pdf   binary
+*.xlsx  binary
+
+# Pipeline outputs: collapse diffs on GitHub and exclude from language stats
+resilience/tidy/*.csv   linguist-generated=true
+resilience/tidy/*.json  linguist-generated=true
+viina/qgis/meta.json    linguist-generated=true

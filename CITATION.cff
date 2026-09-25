@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software or its derived tables, please cite it as below, together with the companion paper."
+type: software
+title: "Ukraine strikes × hromada resilience: analysis pipeline"
+version: "1.1-step2"
+license:
+  - MIT
+  - ODbL-1.0
+  - CC-BY-4.0
+repository-code: "https://github.com/ubeccommon/ubec_ukraine_resilience"
+authors:
+  - family-names: Garand
+    given-names: Michel
+    affiliation: "UBEC Platform"
+abstract: >-
+  Reproducible Python and QGIS pipeline linking Russian strikes and
+  air-raid alerts in Ukraine to hromada-level fiscal capacity, local
+  budgets, displacement context and monthly night-light trajectories,
+  2022–2026. Code is MIT; small derived tables are ODbL 1.0;
+  documentation and figures are CC BY 4.0. Raw data and data whose
+  terms forbid redistribution are not included.
+keywords:
+  - Ukraine
+  - hromada
+  - war
+  - air-raid alerts
+  - night lights
+  - local government finance
+  - resilience
+  - spatial analysis
+  - QGIS
+preferred-citation:
+  type: report
+  title: "Strikes, fiscal capacity and night-light recovery in Ukraine's hromadas, 2022–2026: A spatial analysis with open data"
+  authors:
+    - family-names: Garand
+      given-names: Michel
+      affiliation: "UBEC Platform"
+  year: 2026
+  publisher:
+    name: SocArXiv
+  notes: "Working paper in preparation; DOI to be added on release."

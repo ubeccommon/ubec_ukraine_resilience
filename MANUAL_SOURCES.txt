@@ -1,0 +1,26 @@
+Manual / interactive sources (open the page, use its export or request access):
+
+Bellingcat Civilian Harm in Ukraine TimeMap
+  https://ukraine.bellingcat.com/           (map; "Download data" link exports CSV)
+Eyes on Russia / Russia-Ukraine Monitor Map (Centre for Information Resilience)
+  https://eyesonrussia.org/                 (map + database; export via map, or request)
+GeoConfirmed
+  https://geoconfirmed.org/                 (geolocated footage; GeoJSON/KML export in app)
+Texty.org.ua attack map
+  https://texty.org.ua/                     (search "карта ракетних ударів")
+DiXi Group energy-infrastructure strike log (2022-09 to 2024-08, CSV)
+  https://map.ua-energy.org/en/resources/12f3148d-841a-478d-b9ed-72bf0764b286
+UCDP Georeferenced Event Dataset (annual, academic)
+  https://ucdp.uu.se/downloads/
+ISW / CTP daily frontline shapefiles (ArcGIS Hub)
+  https://www.understandingwar.org/backgrounder/interactive-map-russias-invasion-ukraine
+DeepStateMap (frontline, subscription for exports)
+  https://deepstatemap.live/
+UNOSAT damage assessments (city-level building damage layers)
+  https://unosat.org/products
+Copernicus Emergency Management Service activations for Ukraine
+  https://emergency.copernicus.eu/
+KSE Institute "Russia Will Pay" damage reports (aggregate, PDF/XLSX)
+  https://kse.ua/russia-will-pay/
+CSIS Russian Firepower Strike Tracker (dashboard built on the Kaggle missile data)
+  https://www.csis.org/programs/futures-lab/projects/russian-firepower-strike-tracker-analyzing-missile-attacks-ukraine
