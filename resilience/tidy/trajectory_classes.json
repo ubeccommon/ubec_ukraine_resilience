@@ -1,0 +1,30 @@
+{
+ "recent_window": "2025-09 – 2026-08",
+ "recent_terciles": [
+  0.25,
+  0.492
+ ],
+ "capacity_terciles": [
+  0.404,
+  0.589
+ ],
+ "s24_quintiles": [
+  0.073,
+  0.215,
+  0.35,
+  0.511
+ ],
+ "change_share": {
+  "national": {
+   "stable": 0.514,
+   "declined": 0.366,
+   "improved": 0.119
+  },
+  "carpathian": {
+   "stable": 0.665,
+   "declined": 0.254,
+   "improved": 0.081
+  }
+ },
+ "n_light": 1021
+}

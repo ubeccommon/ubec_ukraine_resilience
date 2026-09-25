@@ -1,0 +1,12 @@
+code,exposure,capacity,colour
+11,low exposure,low capacity,#e8e8e8
+12,low exposure,medium capacity,#ace4e4
+13,low exposure,high capacity,#5ac8c8
+21,medium exposure,low capacity,#dfb0d6
+22,medium exposure,medium capacity,#a5add3
+23,medium exposure,high capacity,#5698b9
+31,high exposure,low capacity,#be64ac
+32,high exposure,medium capacity,#8c62aa
+33,high exposure,high capacity,#3b4994
+occ,occupied,,#bdbdbd
+na,no data,,#ffffff

@@ -1,0 +1,9 @@
+{
+  "event_first": "24 Feb 2022",
+  "event_end": "19 Sep 2026",
+  "event_w12_start": "19 Sep 2025",
+  "alert_start": "15 Mar 2022",
+  "alert_end": "7 Sep 2026",
+  "alert_w12_start": "7 Sep 2025",
+  "control_date": "19 Sep 2026"
+}
