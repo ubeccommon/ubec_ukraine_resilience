@@ -61,7 +61,7 @@ Across Ukraine, and within the Carpathians, one pattern holds up. During the out
 
 The pattern is also partly regional. Ivano-Frankivsk and Chernivtsi together hold 27 of the 33 hromadas in the group I call "weak and hit": low capacity, large outage loss. Lviv holds most of the "strong and steady" ones. Much of what looks like a local story is the grid of the oblast.
 
-Verkhovyna is a small example of the difficulty. Its capacity is low: own revenue about half the national middle, two-thirds of its income from transfers, little investment. It has recorded no strikes. Its tax receipts have run 20–24 % above the national middle since 2022, a lasting relocation gain. Its night-light record rests on only a handful of lit pixels, so the apparent near-total blackout of summer 2024 cannot be read with confidence. [[CHECK: the methods note shows single-hromada values only where at least 30 pixels are lit; either drop this sentence or state the exception]]
+Verkhovyna is a small example of the difficulty. Its capacity is low: own revenue about half the national middle, two-thirds of its income from transfers, little investment. It has recorded no strikes. Its tax receipts have run 20–24 % above the national middle since 2022, a lasting relocation gain. Its night-light record rests on fewer lit pixels than the 30 needed to quote a single hromada, so no light value is given for it here.
 
 ## What this data cannot tell
 
@@ -78,7 +78,7 @@ What the numbers do suggest is modest and, I think, useful. The Carpathian rear 
 *Figures (to insert):*
 1. *Night-light index, monthly 2021–2026, median hromada per oblast vs national (`fig1_carpathian_light.svg`).*
 2. *Map 17 — alert exposure × institutional capacity, Carpathian region (regional terciles).*
-3. *Map 20, left panel only — summer-2024 outage loss (the right panel awaits an R2-compliant version; request 33).* [[CHECK: the right panel (change since 2023) uses the last 12 months; publish with a window ending ≥ 6 months before publication, or at raion level — rule R2, request 33]]
+3. *Map 20, left panel only — summer-2024 outage loss (the right panel awaits an R2-compliant version; request 33).*
 
 *Methods in brief:* 251 non-occupied hromadas in four oblasts.
 - **Night lights:** NASA Black Marble VNP46A3, monthly, pixels lit in 2021, compared with the same month in 2020–21. June 2025 excluded as an artefact. Single-hromada values are shown only where at least 30 pixels are lit.
