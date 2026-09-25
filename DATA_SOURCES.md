@@ -10,7 +10,7 @@ The scripts that retrieve each source are included.
 
 ## Short attribution line for maps and figures
 
-> Data: VIINA 2.0 (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE
+> Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE
 > Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM;
 > © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
 
@@ -37,17 +37,28 @@ credit *IOM DTM* and *SeeD–UNDP reSCORE Ukraine*.
 ## Sources in detail
 
 ### VIINA 2.0: strike events and control areas
-Contains data from VIINA 2.0 (Violent Incident Information from News Articles), Yuri M. Zhukov,
-made available under the Open Database License (ODbL) 1.0. Repository:
-https://github.com/zhukovyuri/VIINA. Data dates for each build are in `viina/qgis/meta.json`.
-Only hromada and oblast counts are republished; event points are not (security rule R5).
-*To confirm: the exact attribution wording VIINA requests.*
+VIINA data are made available under the Open Database License (ODbL) 1.0; rights in individual
+contents are licensed under the Database Contents License. Citation requested by the authors:
+
+> Zhukov, Yuri and Natalie Ayers (2023). "VIINA 2.0: Violent Incident Information from News
+> Articles on the 2022 Russian Invasion of Ukraine." Cambridge, MA: Harvard University.
+> (https://github.com/zhukovyuri/VIINA, accessed [DATE]).
+
+Any redistribution of the data or of works produced from it must include a copy of the ODbL
+(`LICENSE-ODbL-1.0.txt`) and keep these notices. Data dates for each build are in
+`viina/qgis/meta.json`. Only hromada and oblast counts are republished; event points are not
+(security rule R5).
 
 ### Air-raid alert records
-Ukrainian air-raid sirens dataset, Vadym Klymenko, MIT License
-(https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset). The MIT notice of the source
-repository must be kept with any redistribution of the raw files.
-*To confirm: repository URL and copyright line against the source `LICENSE`.*
+Air Raid Datasets, Vadym Klymenko, https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset
+(official and volunteer alert records by oblast and hromada). MIT License,
+"Copyright (c) 2022 Vadym Klymenko"; the copyright and permission notice must be kept with any
+redistribution of the raw files.
+
+*Data note:* the official records stop on 7 September 2026. The likely cause is the change of
+Ukraine's alert system on 6 September 2026, which introduced yellow and red alert levels; the
+volunteer records (oblast level only) continue. Alert windows ending after 7 September 2026 need
+a revised method before use.
 
 ### OCHA COD-AB: administrative boundaries
 Ukraine subnational administrative boundaries, UN OCHA via the Humanitarian Data Exchange
@@ -63,9 +74,12 @@ Attribution required.
 ### NASA Black Marble: night lights
 NASA Black Marble VNP46A3 monthly night-time lights, Collection 2, from LAADS DAAC
 (`allData/5200`). NASA data is not copyrighted; acknowledgement is requested.
+NASA VIIRS Land Science Investigator-led Processing System (2025). *VIIRS/NPP Lunar
+BRDF-Adjusted Nighttime Lights Monthly L3 Global 15 arc second Linear Lat Lon Grid* (VNP46A3,
+V2). LAADS DAAC. https://doi.org/10.5067/VIIRS/VNP46A3.002.
 Román, M. O., et al. (2018). NASA's Black Marble nighttime lights product suite.
 *Remote Sensing of Environment*, 210, 113–143. Download requires a NASA Earthdata token
-(`~/.earthdata_token`). *To confirm: Collection 2 product DOI.*
+(`~/.earthdata_token`).
 
 ### JRC GHS-POP: population
 GHS-POP R2023A, 100 m, European Commission, Joint Research Centre,
@@ -75,7 +89,8 @@ policy with acknowledgement. Epoch 2020 is the per-capita denominator; 2025 is u
 ### DREAM: reconstruction projects
 Digital Restoration Ecosystem for Accountable Management, `public-api.dream.gov.ua`. Only
 project counts per hromada are republished; no record-level fields.
-*To confirm: DREAM terms of use and required attribution.*
+*To confirm: DREAM terms of use and required attribution (open-data page
+https://dream.gov.ua/info/open-data and user agreement https://dream.gov.ua/info/user-agreement).*
 
 ### Regional statistics offices: ЄДРПОУ counts
 Enterprise-register tables published by regional offices of the State Statistics Service

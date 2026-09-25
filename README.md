@@ -114,7 +114,7 @@ hromada and oblast tables up to 5 MB; results notes; publication sources.
 | Item | Reason |
 |---|---|
 | Raw downloads (about 40 GB), caches, GeoPackages, rasters, map PDFs | size; rebuilt by the pipeline or published on Zenodo |
-| Monthly and quarterly hromada night-light tables, trajectory metrics | security rule R2 (time lag); released on Zenodo under that rule |
+| Monthly and quarterly hromada night-light tables, trajectory metrics | security rules R2 and R3; lagged versions are released with the data package on Zenodo |
 | Tables with military finance fields at hromada level | security rule R4 |
 | IOM DTM derived tables | DTM terms forbid redistribution and derivative works |
 | reSCORE derived tables | no licence found; pending permission from SeeD |
@@ -154,7 +154,7 @@ The repository follows the publication rules of the companion paper:
 | Rule | Effect |
 |---|---|
 | R1 Spatial floor | Nothing below hromada level: no night-light rasters, project points, infrastructure layers or interpolated surfaces. |
-| R2 Time lag | Hromada monthly night-light values are published only with a lag; the last 12 months at oblast level only. |
+| R2 Time lag | Hromada-level monthly night-light values end at least 6 months before a public release; the most recent 12 months are published at oblast level only. Single-hromada light values are quoted only where at least 30 pixels are lit. |
 | R3 Frontline and border zone | Monthly values and trajectory metrics near the front line or border are aggregated to raion level. |
 | R4 Military finance | No garrison flag and no military income-tax fields at hromada level. |
 | R5 Strike events | Hromada counts only; VIINA event points are not republished. |
