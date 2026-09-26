@@ -13,6 +13,14 @@ Pages held back pending review:
 - 18: IOM DTM and reSCORE context (upstream terms)
 - 19: recent light level, last 12 months (R2)
 - 20: change class to the most recent 12 months (R2)
+- 05: Carpathian zoom, not yet reviewed (R1)
+- 06: IDW strike surface, not yet reviewed (R1)
+- 07: IDW vs kriging surfaces, not yet reviewed (R1)
+- 08: weighted surfaces, not yet reviewed (R1)
+- 09: alert kriging surface, not yet reviewed (R1)
+- 10: KDE 25 km, not yet reviewed (R1)
+- 12: Carpathian surfaces, not yet reviewed (R1)
+- 13: Carpathian hotspots, not yet reviewed (R1)
 
 ## 04 · alert hours
 
