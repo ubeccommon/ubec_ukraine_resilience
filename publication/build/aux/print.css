@@ -134,6 +134,9 @@ tr { break-inside: avoid; }
 td p, th p { margin: 0; text-align: left; hyphens: none; }
 caption { caption-side: top; text-align: left; font-weight: 600; color: var(--accent); padding-bottom: 1.5mm; }
 
+/* keep a table's caption line (the paragraph just before it) on the same page */
+p:has(+ table) { break-after: avoid; }
+
 /* wide tables (9+ columns): smaller type so they fit the text width */
 table:has(tr > th:nth-child(9)) { font-size: 7.4pt; }
 

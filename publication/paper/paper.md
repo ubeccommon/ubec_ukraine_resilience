@@ -3,7 +3,7 @@ title: "Hromada resilience under strikes in Ukraine, 2022–2026"
 subtitle: "Part I: local capacity, recovery and exposure · Part II: trust, cohesion and reception — an associational analysis with open data"
 short-title: "Hromada resilience under strikes, 2022–2026"
 author: "Michel Garand, Ubuntu Bioregional Economic Commons"
-version: "v0.3 — internal draft (two-part structure: resilience and its relationships)"
+version: "v0.4 — internal draft (two parts, read through social threefolding)"
 date: "September 2026"
 licence: "Text and figures CC BY 4.0. Data package ODbL 1.0. Code MIT."
 ---
@@ -22,7 +22,7 @@ This working paper is about the resilience of Ukraine's hromadas (municipal comm
 - **Part I — local capacity, recovery and exposure** works at hromada level. It relates fiscal capacity (the institutional side of resilience) and night-time light (a proxy for continued activity and services, the functional side) to strike and air-raid-alert exposure.
 - **Part II — trust, cohesion and reception** turns to the relational side: trust in local administration, community cohesion, belonging, and the movement and reception of displaced people and taxpayers. These data exist only by oblast, so Part II describes and compares, with a regional reading of the Carpathian oblasts.
 
-All results are associations. The paper estimates no causal effects, and it does not measure resilience directly: it measures proxies and names them as such.
+All results are associations. The paper estimates no causal effects, and it does not measure resilience directly: it measures proxies and names them as such. The measures are ordered by the three spheres of social threefolding — rights, cultural and economic life (section 1.4).
 
 ### Part I — local capacity, recovery and exposure
 
@@ -116,9 +116,41 @@ The contribution is threefold:
 - A transparent test of the "local capacity buffers exposure" hypothesis, including a clear negative result once oblast-level differences are controlled.
 - A relational reading, by oblast, of trust, cohesion and displacement, with the Carpathian oblasts as a regional case, keeping survey, displacement and fiscal evidence at the levels where they are actually measured.
 
-**Terms.** We use "resilience" for the ability of hromadas to keep functioning and to hold together under attack, and distinguish three sides: *institutional* (fiscal capacity), *functional* (night-time light, a proxy for activity and services) and *relational* (trust, cohesion, belonging and the reception of displaced people). None is measured directly; the text names the proxy each time. "Relationship" and "association" mean statistical association, not cause.
+**Terms.** We use "resilience" for the ability of hromadas to keep functioning and to hold together under attack, and distinguish three sides: *institutional* (fiscal capacity), *functional* (night-time light, a proxy for activity and services) and *relational* (trust, cohesion, belonging and the reception of displaced people). None is measured directly; the text names the proxy each time. Section 1.4 places these sides within the three spheres of social threefolding. "Relationship" and "association" mean statistical association, not cause.
 
-### 1.4 Structure
+### 1.4 Frame: social threefolding
+
+We read resilience through social threefolding (Steiner 1919), which distinguishes three spheres of social life, each with its own principle.
+
+**The three spheres**
+
+| Sphere | Principle | Domain |
+|---|---|---|
+| Rights (political) life | Equality and democracy | Law, public administration, representation, the allocation of public funds |
+| Cultural life | Freedom | Art, science, religion, education, the media |
+| Economic life | Uncoerced cooperation in freely contractual relations | Production, trade, work, the tax base |
+
+Read this way, a hromada is resilient when each sphere keeps its own principle working under attack — equal access and democratic self-government, free cultural and educational life, cooperative economic life — and when no sphere takes over the tasks of another. The theory is normative. Here it orders the measures and the reading of the results; it is not tested.
+
+The measures used in this paper fall into the spheres as follows.
+
+**Measures by sphere**
+
+| Measure | Level | Sphere |
+|---|---|---|
+| Own revenue per resident; civilian income-tax growth (capacity components) | Hromada | Economic: the tax base |
+| Transfer dependency; capital-spending share (capacity components) | Hromada | Rights: autonomy and spending choices of local self-government |
+| Night-time light | Hromada | Economic activity, and infrastructure shared across the grid |
+| Relative civilian income tax | Hromada | Economic |
+| DREAM reconstruction projects | Hromada | Rights: public investment planning |
+| Trust in local administration, civic engagement, locality satisfaction (reSCORE) | Oblast | Rights |
+| Belonging, mental wellbeing (reSCORE) | Oblast | Cultural |
+| Economic security (reSCORE) | Oblast | Economic |
+| Community cohesion (reSCORE); displacement (IOM DTM) | Oblast | Across spheres |
+
+Two consequences follow. First, the fiscal capacity index combines economic and rights components. Part I reports it as one index; separating the two is planned. Second, the cultural sphere has no hromada-level measure in this paper. It is the largest gap. The next version adds hromada-level measures for it, starting with education and culture spending from the same budget source (`resilience/docs/threefolding_framework.md`).
+
+### 1.5 Structure
 
 - Sections 2 and 3 define the spatial units, coverage and data sources shared by both parts.
 - **Part I** (sections 4–8): exposure (4), the capacity, recovery and engagement indices (5), how capacity and exposure relate (6), recovery models (7) and monthly trajectories (8).
@@ -126,7 +158,7 @@ The contribution is threefold:
 - **Synthesis:** how the two parts relate.
 - **Methods, limits and sources** (sections 11–13): limitations, the rules applied to protect sensitive information, and reproducibility, followed by references and annexes.
 
-### 1.5 Author's position
+### 1.6 Author's position
 
 The author lives in the Carpathian region of Ukraine and writes field dispatches from it (*Soil and Peace — Carpathian Dispatch 2026*). That proximity shaped the regional focus of section 10. All results are nevertheless computed nationally, with the same methods for every oblast.
 
@@ -770,6 +802,8 @@ Read together, the two parts suggest four points. Each is an association, not a 
 3. **Functional resilience is largely shared at oblast level.** Oblast fixed effects account for most of the variation in light recovery; grid conditions and oblast-wide decisions weigh more than any one hromada's budget (sections 7 and 8).
 4. **Relational resilience does not follow the fiscal map.** In the Carpathian oblasts, weak finances coexist with high trust in Ivano-Frankivsk and Chernivtsi, and the brightest oblast, Zakarpattia, reports among the lowest trust (sections 9 and 10). Displacement links the two sides: the west received people and taxpayers, and part of its measured fiscal capacity may reflect that (sections 8.6, 9.2, 9.3 and 10.4).
 
+**Through the threefold frame.** Part I rests on the economic and rights spheres. The capacity index, which combines the tax base with the autonomy of local self-government, goes with keeping light when the grid fails, but does not shield hromadas from heavier attack. Part II sees the rights sphere from the other side, as trust in local administration, and it does not follow the fiscal map. The cultural sphere — education, culture, religious and media life — is the one this paper cannot yet see at hromada level. Whether freedom in cultural life helps communities hold together under attack is the question the next version is built to ask.
+
 Whether relational resilience helps hromadas with weak budgets hold together under pressure is the question this paper cannot answer. It needs trust, cohesion and displacement data at hromada level, joined to the fiscal and light measures used here (section 10.5).
 
 # Methods, limits and sources
@@ -942,6 +976,7 @@ Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dat
 
 [[CHECK: verify every entry and add methods references used in the pipeline]]
 
+- Steiner, R. (1919). *Die Kernpunkte der sozialen Frage in den Lebensnotwendigkeiten der Gegenwart und Zukunft*. Stuttgart: Greifenverlag. English: *Towards Social Renewal*.
 - Getis, A., & Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. *Geographical Analysis*, 24(3), 189–206.
 - Román, M. O., et al. (2018). NASA's Black Marble nighttime lights product suite. *Remote Sensing of Environment*, 210, 113–143.
 - Schiavina, M., Freire, S., Carioli, A., & MacManus, K. (2023). *GHS-POP R2023A — GHS population grid multitemporal (1975–2030)*. European Commission, Joint Research Centre.
