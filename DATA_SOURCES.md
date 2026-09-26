@@ -28,7 +28,7 @@ credit *IOM DTM* and *SeeD–UNDP reSCORE Ukraine*.
 | openbudget.gov.ua | local budget indicators | hromada | CMU Res. 835 | yes (annual; quarterly via Zenodo) | `03_openbudget.py pull`, `20_budget_quarterly.py pull2026` |
 | NASA Black Marble VNP46A3 C2 | night-light indices | hromada | public domain | older windows only | `04_nightlights.py pull`, `19_nl_monthly.py pull` |
 | JRC GHS-POP R2023A | population denominators | hromada | EC reuse (CC BY 4.0) | yes | JRC download → `resilience/raw/ghs_pop/` |
-| DREAM | reconstruction project counts | hromada | public open data | yes (counts only) | `10_dream.py fetch` |
+| DREAM | reconstruction project counts | hromada | open data, no licence stated | yes (counts only) | `10_dream.py fetch` |
 | State statistics offices (ЄДРПОУ) | enterprise counts, 10 oblasts | hromada | official statistics | yes | `09_stat_edrpou.py --all` |
 | SeeD–UNDP SCORE / reSCORE | oblast survey context | oblast | no licence found | **no** (pending permission) | `16_oblast_context.py` |
 | IOM DTM API v3 | displacement context | oblast | no redistribution | **no** | `17_dtm_api.py pull` with own key |
@@ -87,10 +87,14 @@ doi:10.2905/2FF68A52-5B5B-4A22-8F40-C41DA8332CFE. Reuse authorised under the Com
 policy with acknowledgement. Epoch 2020 is the per-capita denominator; 2025 is used for change.
 
 ### DREAM: reconstruction projects
-Digital Restoration Ecosystem for Accountable Management, `public-api.dream.gov.ua`. Only
-project counts per hromada are republished; no record-level fields.
-*To confirm: DREAM terms of use and required attribution (open-data page
-https://dream.gov.ua/info/open-data and user agreement https://dream.gov.ua/info/user-agreement).*
+Digital Restoration Ecosystem for Accountable Management (DREAM), State Agency for Restoration
+and Development of Infrastructure of Ukraine; public API `public-api.dream.gov.ua`
+(documentation: https://open-contracting.github.io/dream-api-docs/). DREAM data are announced
+as open data published to the Open Contracting Data Standard, but no licence is stated on the
+readable portal pages or in the API responses (checked September 2026). Only project counts per
+hromada are republished here, with attribution: "Source: DREAM, dream.gov.ua, accessed <date>".
+No record-level fields are included.
+*Pending: confirmation of reuse terms from the DREAM project office.*
 
 ### Regional statistics offices: ЄДРПОУ counts
 Enterprise-register tables published by regional offices of the State Statistics Service
