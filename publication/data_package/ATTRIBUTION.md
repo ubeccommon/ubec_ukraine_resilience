@@ -14,7 +14,7 @@ Only the sources actually used in a given map need to be named.
 
 ### VIINA — strike events
 Contains data from VIINA 2.0 (Violent Incident Information from News Articles), Yuri M. Zhukov, made available under the Open Database License (ODbL) 1.0.
-Repository: https://github.com/zhukovyuri/VIINA, · Version / access date: {{period_viina}}
+Repository: https://github.com/zhukovyuri/VIINA · Version / access date: {{period_viina}}
 [[CHECK: exact attribution wording requested by VIINA]]
 
 ### Air-raid alert records
