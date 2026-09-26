@@ -367,13 +367,21 @@ where $R_i$ is recovery, $C_i$ fiscal capacity, $E_i$ exposure and $\alpha_{o(i)
 - $\beta_1$ is the **main effect of capacity**: the difference in recovery between hromadas of different capacity at average exposure.
 - The oblast fixed effects absorb everything shared by all hromadas in an oblast: grid conditions and outage schedules, distance to the front, regional economy and oblast-level administration.
 
-**Table 7. Model specifications** [[PENDING: exact specifications M1–M7 — request 4]]
+<!-- begin table: figures/table07_models.md (resilience/27_sensitivity.py) -->
+**Table 7. Recovery models M1–M7**
 
-| Model | Oblast FE | Capacity measure | Exposure measure | Sample / other |
-|---|---|---|---|---|
-| M1 | No | 2025 | | All |
-| M2 | Yes | 2025 | | All |
-| M3–M7 | Yes | | | |
+| Model | Oblast FE | Controls | Capacity | Exposure | Sample / method | n | R² | Within-R² | β₁ capacity (t) | p β₁ | β₃ interaction (t) | p β₃ | β₃ 95 % interval |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| M1 | No | No | 2025 | Strikes | All | 1,020 | 0.11 | — | +0.08 (2.5) | 0.271 | +0.15 (6.3) | < 0.001 | +0.09 to +0.22 |
+| M2 | Yes | No | 2025 | Strikes | All | 1,020 | 0.57 | 0.05 | +0.16 (6.5) | < 0.001 | −0.01 (−0.5) | 0.639 | −0.04 to +0.03 |
+| M3 | Yes | Yes | 2025 | Strikes | All | 1,020 | 0.57 | 0.05 | +0.18 (6.1) | < 0.001 | −0.01 (−0.7) | 0.529 | −0.05 to +0.03 |
+| M4 | Yes | Yes | 2025 | Alert hours | All | 1,020 | 0.58 | 0.09 | +0.16 (5.4) | < 0.001 | −0.03 (−1.6) | 0.294 | −0.09 to +0.02 |
+| M5 | Yes | Yes | 2021 (pre-war) | Strikes | All | 1,020 | 0.55 | 0.02 | +0.08 (2.3) | 0.058 | −0.01 (−0.2) | 0.824 | −0.06 to +0.04 |
+| M6 | Yes | Yes | 2025 | Strikes | Without Donetsk, Zaporizhzhia, Kherson | 980 | 0.53 | 0.05 | +0.19 (6.1) | < 0.001 | 0.00 (−0.2) | 0.890 | −0.05 to +0.06 |
+| M7 | Yes | Yes | 2025 | Strikes | All; spatial lag (S2SLS, KNN 6) | 1,020 | — | — | +0.14 (5.3) | — | −0.02 (−1.2) | — | −0.06 to +0.01 |
+
+Outcome: night-light recovery index; all variables standardised. Controls: log population 2020, log lit pixels, log 2021 radiance. t-values with HC1 standard errors; p-values from a restricted wild-cluster bootstrap by oblast (24 clusters, Webb weights, 9,999 draws). β₃ intervals invert that test (M1–M6); for M7 (spatial lag, ρ = 0.845) they use the S2SLS standard error. R² is not defined for M7. Within-R²: share of the variation around oblast means explained.
+<!-- end table: figures/table07_models.md -->
 
 ### 7.2 Pooled model: apparent buffering
 
@@ -383,7 +391,7 @@ Without fixed effects (M1), the interaction is positive and precisely estimated:
 
 Adding oblast fixed effects changes the picture in two ways.
 
-- **The model fit changes sharply.** R² rises from {{r2_no_fe}} to {{r2_fe}}. Most of the variation in night-light recovery is between oblasts, not within them. [[PENDING: within-R² for each fixed-effects model — request 4]]
+- **The model fit changes sharply.** R² rises from {{r2_no_fe}} to {{r2_fe}}. Most of the variation in night-light recovery is between oblasts, not within them. Within oblasts, capacity, exposure and the controls explain little: the within-R² is {{r2_within_range}} (Table 7).
 - **The interaction disappears.** In every fixed-effects specification (M2–M7), β₃ is approximately zero ({{int_fe_range}}). A wild-cluster bootstrap by oblast gives p = {{int_fe_p_range}} (M2–M6). The pooled M1 interaction stays significant under the same method (p < 0.001), so the contrast does not come from the standard errors.
 
 The buffering found in M1 is therefore a between-oblast pattern. Oblasts where hromadas have higher capacity on average also happen to recover better at a given exposure, most plausibly because of differences in grid conditions and distance from the front. Among hromadas within the same oblast, higher capacity does not go with a smaller loss at higher exposure.
@@ -436,7 +444,7 @@ The models support three statements:
 
 They do not support the claim that strengthening local finances would, by itself, speed recovery from attacks. Section 8 tests whether monthly trajectories reveal local differences that the annual ratio hides.
 
-**Figures and tables:** Table 7 — specifications. Table 8 — sensitivity. Figure 1 — β₃ with 95 % intervals across M1–M7 [[PENDING: request 4]]. Map 16 — recovery quintiles.
+**Figures and tables:** Table 7 — specifications. Table 8 — sensitivity. Figure 1 — β₃ with 95 % intervals across M1–M7 (figures/fig01_interaction.svg). Map 16 — recovery quintiles.
 
 ## 8. Trajectories, 2021–2026
 

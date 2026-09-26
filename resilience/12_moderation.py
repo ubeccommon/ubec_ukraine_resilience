@@ -24,7 +24,9 @@ Models (all standardised, HC1 robust SE):
   M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification
 Robust inference for capacity and interaction in M1-M6 (robust_inference.py): restricted wild-cluster
   bootstrap p-values by oblast (Webb weights, B = 9,999; t with CR1 SE) and Conley spatial-HAC t-values
-  (Bartlett kernel, 50 and 100 km, representative points in UA_LAEA metres).
+  (Bartlett kernel, 50 and 100 km, representative points in UA_LAEA metres). Main run only: 95 % interval
+  for the interaction by inverting the wild-cluster test (ci_lo/ci_hi_interaction).
+Within-R2 for fixed-effects models: 1 - SSR / sum of squares of y around its oblast mean.
 Spatial weights: KNN k=6 on polygon centroids, row-standardised; Moran's I of residuals
   (999 permutations) for M1-M6.
 Output: tidy/moderation_results[_TAG].csv (incl. se/t of the capacity main effect and the robust inference),
@@ -38,7 +40,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from robust_inference import conley_t, wild_cluster_p
+from robust_inference import conley_t, wild_cluster_ci, wild_cluster_p
 
 BASE = Path(__file__).resolve().parent
 TIDY, LOGS = BASE / "tidy", BASE / "logs"
@@ -226,22 +228,30 @@ def main():
         wi = knn_w(data[ok]) if ok.sum() < len(data) or data is not s else w
         I, p = moran(e, wi)
         focus = [c for c in cols if c in ("exp", "cap", "int", "exp_alert", "cap_pre", "int_alert", "int_pre")]
-        log(f"\n{name}  n={ok.sum()}  R2={r2:.3f}  Moran's I(resid)={I:.3f} (p={p:.3f})  {note}")
+        yo = data.loc[ok, "y"].astype(float).values
+        grp = data.loc[ok, "k1"].astype(str).values
+        r2w = np.nan
+        if any(c.startswith("ob_") for c in cols):
+            yd = yo - pd.Series(yo).groupby(grp).transform("mean").values
+            r2w = 1 - (e @ e) / (yd @ yd)
+        log(f"\n{name}  n={ok.sum()}  R2={r2:.3f}  within-R2={r2w:.3f}  Moran's I(resid)={I:.3f} (p={p:.3f})  {note}")
         for c in focus:
             log(f"    {c:10s} b={b[c]:+.3f}  se={se[c]:.3f}  t={b[c] / se[c]:+.2f}")
         ic = [c for c in focus if c.startswith("int")][0]
         cc = focus[1]
         # robust inference for capacity and interaction
         Xo = X[ok].astype(float)
-        yo = data.loc[ok, "y"].astype(float).values
         jc, ji = Xo.columns.get_loc(cc), Xo.columns.get_loc(ic)
-        wb = wild_cluster_p(yo, Xo.values, [jc, ji], data.loc[ok, "k1"].astype(str).values, B=B_BOOT)
+        wb = wild_cluster_p(yo, Xo.values, [jc, ji], grp, B=B_BOOT)
         pts = data.loc[ok].geometry.representative_point()
         ct = conley_t(yo, Xo.values, [jc, ji], np.column_stack([pts.x.values, pts.y.values]), CUTOFFS)
         c50, c100 = ct[CUTOFFS[0]], ct[CUTOFFS[1]]
+        lo = hi = np.nan
+        if not a.tag:
+            lo, hi = wild_cluster_ci(yo, Xo.values, ji, grp, B=B_BOOT)
         log(f"    robust     {cc}: CR1 t={wb[jc][0]:+.2f}  WCB p={wb[jc][1]:.3f}  Conley t50={c50[jc]:+.2f} "
             f"t100={c100[jc]:+.2f} | {ic}: CR1 t={wb[ji][0]:+.2f}  WCB p={wb[ji][1]:.3f}  "
-            f"Conley t50={c50[ji]:+.2f} t100={c100[ji]:+.2f}")
+            f"Conley t50={c50[ji]:+.2f} t100={c100[ji]:+.2f}  WCB 95% [{lo:+.3f}, {hi:+.3f}]")
         results.append({"model": name, "n": int(ok.sum()), "r2": r2, "moran_I": I, "moran_p": p,
                         "b_exposure": b[focus[0]], "b_capacity": b[cc], "b_interaction": b[ic],
                         "se_interaction": se[ic], "t_interaction": b[ic] / se[ic], "note": note,
@@ -249,7 +259,8 @@ def main():
                         "t_cr1_capacity": wb[jc][0], "p_wcb_capacity": wb[jc][1],
                         "t_conley50_capacity": c50[jc], "t_conley100_capacity": c100[jc],
                         "t_cr1_interaction": wb[ji][0], "p_wcb_interaction": wb[ji][1],
-                        "t_conley50_interaction": c50[ji], "t_conley100_interaction": c100[ji]})
+                        "t_conley50_interaction": c50[ji], "t_conley100_interaction": c100[ji],
+                        "r2_within": r2w, "ci_lo_interaction": lo, "ci_hi_interaction": hi})
 
     run("M1 baseline", s, ["exp", "cap", "int"])
     run("M2 + oblast FE", s, ["exp", "cap", "int"] + fe_cols)

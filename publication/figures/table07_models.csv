@@ -1,0 +1,8 @@
+model,n,r2,r2_within,b_capacity,t_capacity,p_wcb_capacity,b_interaction,t_interaction,p_wcb_interaction,ci_lo,ci_hi,ci_method,note
+M1 baseline,1020,0.1145,,0.078,2.5386,0.2713,0.1489,6.2821,0.0,0.0915,0.2154,wild-cluster bootstrap by oblast,
+M2 + oblast FE,1020,0.567,0.0487,0.1592,6.5323,0.0,-0.0078,-0.4869,0.6388,-0.0392,0.0276,wild-cluster bootstrap by oblast,
+M3 + FE + controls,1020,0.5686,0.0522,0.1821,6.1011,0.0,-0.0116,-0.6953,0.5289,-0.0469,0.0289,wild-cluster bootstrap by oblast,"controls: c_logpop, c_loglit, c_rad21"
+M4 alert hours,1020,0.5845,0.0873,0.1592,5.417,0.0001,-0.0299,-1.5866,0.2943,-0.0917,0.022,wild-cluster bootstrap by oblast,exposure = alert hours 12 m
+M5 pre-war capacity,1020,0.5521,0.016,0.0763,2.2643,0.0584,-0.0056,-0.2465,0.8236,-0.0562,0.0422,wild-cluster bootstrap by oblast,capacity from 2021 budgets
+M6 without frontline oblasts,980,0.5268,0.0534,0.189,6.1435,0.0,-0.0036,-0.154,0.8901,-0.0539,0.0618,wild-cluster bootstrap by oblast,"dropped k1 ['14', '23', '65']"
+M7 spatial lag,1020,,,0.1422,5.3435,,-0.0244,-1.242,,-0.0629,0.0141,normal (S2SLS SE),rho=0.845
