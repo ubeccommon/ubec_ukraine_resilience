@@ -201,7 +201,7 @@ n_light_reliable_carp: "134"
 # --- Periods and versions (request 25)
 period_viina: "24 Feb 2022 – 19 Sep 2026"
 period_alerts: "15 Mar 2022 – 31 Aug 2026"
-period_dream: "PENDING"
+period_dream: "5 Sep 2023 – 30 Jul 2026"   # project record dates (OCDS release date), 16,172 projects
 version_codab: "v05, valid from 1 Sep 2025 (HDX release 26 Jan 2026, accessed 22 Sep 2026)"
 version_osm: "tiles retrieved 26 Sep 2026"
 
