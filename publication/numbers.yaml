@@ -36,7 +36,7 @@ cap_main_fe_min: "0.16"
 cap_main_fe_max: "0.19"
 cap_main_fe_t: "≈ 6"
 cap_main_fe_2021: "0.08"
-cap_main_fe_no_pitgrowth: "PENDING" # request 6
+cap_main_fe_no_pitgrowth: "0.13–0.16" # request 6
 r2_no_fe: "0.11"
 r2_fe: "0.57"
 spatial_lag_rho: "0.85"

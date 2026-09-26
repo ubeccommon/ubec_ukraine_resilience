@@ -2,7 +2,14 @@
 """
 12_moderation.py — robustness of "capacity buffers the effect of exposure on recovery"
 
-  python 12_moderation.py
+  python 12_moderation.py                         main run -> tidy/moderation_results.csv
+  python 12_moderation.py --cap COL --tag NAME    variant  -> tidy/moderation_results_NAME.csv
+  options: --cap COL            capacity column from resilience_index_v11_k3.csv (default capacity_index)
+           --outcome annual|winter  outcome from one light ratio only (log, p2/p98 winsorised,
+                                percentile rank among non-occupied, as in 11); default index
+           --drop-garrison      exclude hromadas with garrison_flag == 1
+           --drop-k1 14,23,...  exclude oblasts (k1 codes)
+           --tag NAME           required with any option; names the output and log files
 
 Outcome  z(recovery_index)                      (lit-pixel night-light recovery, 04 v1.1)
 Exposure z(log1p strikes since 2022)  |  alt: z(alert hours, 12 m)
@@ -12,14 +19,15 @@ Models (all standardised, HC1 robust SE):
   M1 baseline                      M2 + oblast fixed effects
   M3 M2 + controls (log pop 2020, log lit pixels, log 2021 lit radiance)
   M4 M3 with alert hours as exposure
-  M5 M3 with pre-war (2021) capacity
+  M5 M3 with pre-war (2021) capacity (unchanged by --cap)
   M6 M3 without frontline oblasts (Donetsk 14, Zaporizhzhia 23, Kherson 65)
   M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification
 Spatial weights: KNN k=6 on polygon centroids, row-standardised; Moran's I of residuals
   (999 permutations) for M1-M6.
-Output: tidy/moderation_results.csv, logs/12_moderation.log
+Output: tidy/moderation_results[_TAG].csv, logs/12_moderation[_TAG].log
 Caveat: cross-sectional and descriptive; the interaction is an association, not a causal effect.
 """
+import argparse
 from pathlib import Path
 
 import geopandas as gpd
@@ -31,7 +39,8 @@ TIDY, LOGS = BASE / "tidy", BASE / "logs"
 UNITS = BASE / "units_hromada.gpkg"
 FRONTLINE = {"14", "23", "65"}
 K = 6
-_logf = open(LOGS / "12_moderation.log", "w", encoding="utf-8")
+OUTCOME_SRC = {"annual": "ntl_recovery_2124", "winter": "ntl_winter_ratio_2125"}
+_logf = None
 pd.set_option("display.width", 200)
 
 
@@ -100,13 +109,49 @@ def s2sls_lag(y, X, lag_cols, w):
     return pd.Series(b, names), pd.Series(se, names)
 
 
+def parse():
+    ap = argparse.ArgumentParser(description="capacity x exposure moderation models")
+    ap.add_argument("--cap", default="capacity_index")
+    ap.add_argument("--outcome", choices=["index", "annual", "winter"], default="index")
+    ap.add_argument("--drop-garrison", action="store_true")
+    ap.add_argument("--drop-k1", default="")
+    ap.add_argument("--tag", default="")
+    a = ap.parse_args()
+    a.drop_k1 = {k.strip().zfill(2) for k in a.drop_k1.split(",") if k.strip()}
+    variant = a.cap != "capacity_index" or a.outcome != "index" or a.drop_garrison or a.drop_k1
+    if variant and not a.tag:
+        ap.error("--tag is required with --cap, --outcome, --drop-garrison or --drop-k1")
+    return a
+
+
 def main():
+    global _logf
+    a = parse()
+    sfx = f"_{a.tag}" if a.tag else ""
+    _logf = open(LOGS / f"12_moderation{sfx}.log", "w", encoding="utf-8")
+    if a.tag:
+        log(f"variant '{a.tag}': cap={a.cap}  outcome={a.outcome}  drop_garrison={a.drop_garrison}  "
+            f"drop_k1={sorted(a.drop_k1)}")
+
     idx = pd.read_csv(TIDY / "resilience_index_v11_k3.csv", dtype={"k1": str, "k2": str, "k3": str})
     base = pd.read_csv(TIDY / "resilience_v1_k3.csv", dtype={"k1": str, "k2": str, "k3": str})
     for t in (idx, base):
         t["k3"] = t["k3"].str.zfill(7)
-    extra = [c for c in ("pop_ghs_2020", "ntl_n_lit_px", "ntl_2021") if c in base]
+    assert a.cap in idx, f"capacity column {a.cap} not in resilience_index_v11_k3.csv"
+    extra = [c for c in ("pop_ghs_2020", "ntl_n_lit_px", "ntl_2021") + tuple(OUTCOME_SRC.values()) if c in base]
     d = idx.merge(base[["k3"] + extra], on="k3", how="left")
+
+    # outcome
+    if a.outcome == "index":
+        ycol = "recovery_index"
+    else:
+        v = pd.to_numeric(d[OUTCOME_SRC[a.outcome]], errors="coerce")
+        v = np.log(v.where(v > 0))
+        v = v.clip(v.quantile(0.02), v.quantile(0.98))
+        d["y_single"] = v.rank(pct=True)
+        ycol = "y_single"
+        log(f"outcome from {OUTCOME_SRC[a.outcome]} only: n={d[ycol].notna().sum()}  "
+            f"Spearman with recovery_index = {d[ycol].corr(d['recovery_index'], method='spearman'):.2f}")
 
     # pre-war capacity from 2021 budgets
     lp = TIDY / "budget_long_k3_year.csv"
@@ -122,18 +167,30 @@ def main():
         log(f"pre-war capacity (2021 own revenue pc, transfer dependency): n={d['capacity_prewar'].notna().sum()}  "
             f"Spearman with capacity_index 2025 = "
             f"{d['capacity_prewar'].corr(d['capacity_index'], method='spearman'):.2f}")
+    if a.cap != "capacity_index":
+        log(f"capacity column {a.cap}: n={d[a.cap].notna().sum()}  Spearman with capacity_index = "
+            f"{d[a.cap].corr(d['capacity_index'], method='spearman'):.2f}")
 
     g = gpd.read_file(UNITS, layer="hromada")[["k3", "geometry"]]
     g["k3"] = g["k3"].astype(str).str.zfill(7)
     d = g.merge(d, on="k3", how="inner")
 
-    need = ["recovery_index", "capacity_index", "exp_strikes_log"]
+    if a.drop_garrison:
+        gf = pd.to_numeric(d["garrison_flag"], errors="coerce") == 1
+        log(f"dropping {int(gf.sum())} garrison hromadas")
+        d = d[~gf]
+    if a.drop_k1:
+        dk = d["k1"].str.zfill(2).isin(a.drop_k1)
+        log(f"dropping {int(dk.sum())} hromadas in oblasts {sorted(a.drop_k1)}")
+        d = d[~dk]
+
+    need = [ycol, a.cap, "exp_strikes_log"]
     s = d.dropna(subset=need).copy().reset_index(drop=True)
     log(f"analysis sample: {len(s)} non-occupied hromadas with recovery, capacity and exposure")
 
-    s["y"] = z(s["recovery_index"])
+    s["y"] = z(s[ycol])
     s["exp"] = z(s["exp_strikes_log"])
-    s["cap"] = z(s["capacity_index"])
+    s["cap"] = z(s[a.cap])
     s["int"] = s["exp"] * s["cap"]
     ctrl = []
     if "pop_ghs_2020" in s:
@@ -206,21 +263,28 @@ def main():
         t = pd.qcut(s["exp_strikes_log"].rank(method="first"), 3, labels=["low", "mid", "high"])
         c = pd.qcut(s[col].rank(method="first"), 3, labels=["low", "mid", "high"])
         tab = s.assign(exposure=t, capacity=c).pivot_table(index="exposure", columns="capacity",
-                                                           values="recovery_index", aggfunc="median", observed=False)
+                                                           values=ycol, aggfunc="median", observed=False)
         cnt = s.assign(exposure=t, capacity=c).pivot_table(index="exposure", columns="capacity",
-                                                           values="recovery_index", aggfunc="count", observed=False)
+                                                           values=ycol, aggfunc="count", observed=False)
         log(f"\nmedian recovery by exposure (rows) x {label} (cols)  [n per cell]\n"
             + tab.round(3).astype(str).add(" [").add(cnt.astype(int).astype(str)).add("]").to_string())
 
-    terciles("capacity_index", "capacity 2025")
+    terciles(a.cap, "capacity 2025" if a.cap == "capacity_index" else a.cap)
     if "cap_pre" in s:
         terciles("capacity_prewar", "pre-war capacity 2021")
 
     r = pd.DataFrame(results)
-    r.to_csv(TIDY / "moderation_results.csv", index=False)
+    if a.tag:
+        r["variant"] = a.tag
+        r["cap_col"] = a.cap
+        r["outcome"] = a.outcome
+        r["dropped"] = ";".join(filter(None, ["garrison" if a.drop_garrison else "",
+                                              ",".join(sorted(a.drop_k1))]))
+    out = TIDY / f"moderation_results{sfx}.csv"
+    r.to_csv(out, index=False)
     log("\nsummary (interaction term):\n" + r[["model", "n", "b_exposure", "b_capacity", "b_interaction",
                                               "t_interaction", "moran_I", "note"]].round(3).to_string(index=False))
-    log("\nwrote tidy/moderation_results.csv")
+    log(f"\nwrote {out.relative_to(BASE)}")
 
 
 if __name__ == "__main__":
