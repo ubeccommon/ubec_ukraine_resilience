@@ -126,3 +126,6 @@ venv/
 *.gz
 *.xlsx
 *.pdf
+
+# data package export (Zenodo upload, never committed)
+/publication/data_package/out/
