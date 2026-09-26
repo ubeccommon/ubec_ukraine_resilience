@@ -160,8 +160,8 @@ The repository follows the publication rules of the companion paper:
 | Rule | Effect |
 |---|---|
 | R1 Spatial floor | Nothing below hromada level: no night-light rasters, project points, infrastructure layers or interpolated surfaces. |
-| R2 Time lag | Hromada-level monthly night-light values end at least 6 months before a public release; the most recent 12 months are published at oblast level only. Single-hromada light values are quoted only where at least 30 pixels are lit. |
-| R3 Frontline and border zone | Monthly values and trajectory metrics near the front line or border are aggregated to raion level. |
+| R2 Time lag | Hromada-level monthly night-light values end at least 6 months before a public release (currently March 2026: `PUB_END` in `resilience/22_trajectories.py`); the most recent 12 months are published at oblast level only. Single-hromada light values are shown only where at least 30 pixels are lit and the pre-war month-to-month noise is at most 0.35. |
+| R3 Frontline and border zone | Within 30 km of the front line or of the border with Russia or Belarus, hromada values on maps and in the data package are replaced by raion values. The front line is the boundary between occupied and non-occupied hromadas (VIINA territorial control); a hromada is in the zone if any part of it lies within 30 km (`resilience/28_frontline_zone.py`; raion values from `resilience/29_r3_aggregate.py`). |
 | R4 Military finance | No garrison flag and no military income-tax fields at hromada level. |
 | R5 Strike events | Hromada counts only; VIINA event points are not republished. |
 | R6 Personal data | No names, addresses or free-text fields from any source. |
