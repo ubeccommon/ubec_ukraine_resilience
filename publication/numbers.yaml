@@ -203,7 +203,7 @@ period_viina: "24 Feb 2022 – 19 Sep 2026"
 period_alerts: "15 Mar 2022 – 31 Aug 2026"
 period_dream: "PENDING"
 version_codab: "v05, valid from 1 Sep 2025 (HDX release 26 Jan 2026, accessed 22 Sep 2026)"
-version_osm: "PENDING"
+version_osm: "tiles retrieved 26 Sep 2026"
 
 # --- Release (fill at release)
 release_version: "v1.2"            # CHECK
@@ -215,7 +215,7 @@ socarxiv_doi: "PENDING"
 run_time: "PENDING"
 
 # --- Access dates (request 25)
-access_dtm: "PENDING"
-access_rescore: "PENDING"
-access_openbudget: "PENDING"
-access_dream: "PENDING"
+access_dtm: "24–25 Sep 2026"
+access_rescore: "24 Sep 2026"
+access_openbudget: "22–25 Sep 2026"
+access_dream: "24 Sep 2026"

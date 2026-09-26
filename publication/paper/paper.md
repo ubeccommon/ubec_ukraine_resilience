@@ -162,7 +162,7 @@ All inputs are open, aggregated data. None contains personal data. Table 2 lists
 | DREAM | Reconstruction projects | Project, geocoded to hromada | {{period_dream}} | [[PENDING: terms — request 23]] |
 | reSCORE Ukraine 2021, 2024 (SeeD–UNDP) | Trust, cohesion, locality satisfaction, belonging | Oblast | 2021, 2024 | [[PENDING: terms — request 23]] |
 | IOM DTM (API v3) | Registered IDPs by host and origin oblast; IDPs present (survey) | Oblast | Feb 2022 – Aug 2026; Aug 2024 – Mar 2026 | IOM terms of use |
-| OpenStreetMap | Basemap tiles only (maps) | Vector | {{version_osm}} | ODbL 1.0 |
+| OpenStreetMap | Basemap tiles only (maps) | Raster tiles | {{version_osm}} | ODbL 1.0 |
 | Regional statistics offices | ЄДРПОУ enterprise tables: legal entities and sole proprietors by hromada; regional supplement for the Carpathian profile only (partial coverage), not used in the indices or models | [[PENDING]] | [[PENDING]] | Open data |
 
 Three properties of the sources shape the analysis:

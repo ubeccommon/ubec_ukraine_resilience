@@ -1,17 +1,17 @@
-# Build report — 2026-09-26 20:04 (draft)
+# Build report — 2026-09-26 20:07 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 35 | 14 | 2 | 0 | 0 | 0 |
+| paper | 35 | 9 | 2 | 0 | 0 | 0 |
 | brief | 3 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
 | carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/README.md | 1 | 4 | 0 | 0 | 0 | 6 |
-| data_package/ATTRIBUTION.md | 1 | 3 | 0 | 0 | 0 | 0 |
+| data_package/ATTRIBUTION.md | 1 | 0 | 0 | 0 | 0 | 0 |
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 85**
+**Total blocking items: 77**
 
 ## paper
 
@@ -60,7 +60,7 @@
 
 **Keys still PENDING in numbers.yaml**
 
-access_dream, access_dtm, access_openbudget, access_rescore, commit_hash, n_dtm_oblasts, n_rescore_oblasts, period_dream, release_date, run_time, socarxiv_doi, trust_diff_lv, version_osm, zenodo_doi
+commit_hash, n_dtm_oblasts, n_rescore_oblasts, period_dream, release_date, run_time, socarxiv_doi, trust_diff_lv, zenodo_doi
 
 ## brief
 
@@ -114,10 +114,6 @@ control_date, n_light_reliable, n_package_units, n_r3_hromadas, n_r3_raions, pub
 **PENDING markers**
 
 - PENDING: DREAM reply
-
-**Keys still PENDING in numbers.yaml**
-
-access_dream, access_openbudget, version_osm
 
 ## data_package/CITATION.cff
 

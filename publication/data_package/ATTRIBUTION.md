@@ -68,7 +68,7 @@ Project data from DREAM (Digital Restoration Ecosystem for Accountable Managemen
 The companion paper also uses reSCORE Ukraine (SeeD–UNDP) survey indicators and IOM DTM displacement figures at oblast level. Their terms do not allow redistribution, so they are not part of this dataset; see the README for how to obtain them.
 
 ### OpenStreetMap (maps only)
-© OpenStreetMap contributors. Available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright. Extract date: {{version_osm}}.
+© OpenStreetMap contributors. Available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright. Basemap tiles from tile.openstreetmap.org (no data extract is used), {{version_osm}}.
 
 
 ## This dataset
