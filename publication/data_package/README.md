@@ -3,7 +3,7 @@
 **Version:** {{release_version}} ({{release_date}})
 **DOI:** {{zenodo_doi}}
 **Author:** Michel Garand, UBEC Platform
-**Companion paper:** *Strikes, fiscal capacity and night-light recovery in Ukraine's hromadas, 2022–2026*, {{socarxiv_doi}}
+**Companion paper:** *Hromada resilience under strikes in Ukraine, 2022–2026*, {{socarxiv_doi}}
 **Code:** https://github.com/ubeccommon/ubec_ukraine_resilience, release {{release_version}}
 **Licences:** data ODbL 1.0 · documentation CC BY 4.0 · code MIT (see `LICENSE.md`)
 

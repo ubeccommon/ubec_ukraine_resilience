@@ -92,7 +92,8 @@ nav.toc ul { list-style: none; margin: 0; padding: 0; }
 nav.toc li { margin: 0; }
 nav.toc > ul > li > a { display: block; font-size: 10.5pt; font-weight: 600; color: var(--ink);
                         padding: 1.9mm 0; border-bottom: 0.4pt solid var(--rule); }
-nav.toc ul ul a { display: block; font-size: 9pt; font-weight: 400; color: var(--muted); padding: 0.6mm 0 0.6mm 7mm; }
+nav.toc ul ul a { display: block; font-size: 9.5pt; font-weight: 400; color: var(--ink); padding: 0.9mm 0 0.9mm 7mm; }
+nav.toc ul ul { margin-bottom: 1.5mm; }
 nav.toc a::after { content: leader(" ") target-counter(attr(href), page); color: var(--muted); font-weight: 400; }
 
 /* ------------------------------------------------------------ headings */
@@ -100,6 +101,11 @@ h1, h2, h3, h4 { font-family: "Source Sans 3", "DejaVu Sans", sans-serif; color:
                  hyphens: none; break-after: avoid; line-height: 1.22; }
 main h2 { font-size: 17pt; font-weight: 700; margin: 0 0 5mm; padding-bottom: 2mm;
           border-bottom: 1.2pt solid var(--accent); break-before: page; string-set: section content(); }
+/* part headings (# in the Markdown): divider page with a short introduction */
+main h1 { font-size: 25pt; font-weight: 700; line-height: 1.15; margin: 38mm 0 7mm; padding-top: 5mm;
+          border-top: 3pt solid var(--accent); break-before: page; string-set: section content(); }
+main section.level1 > p { font-size: 11.5pt; line-height: 1.5; color: var(--ink); text-align: left; max-width: 150mm; }
+main section.level1 > ol { font-size: 10.5pt; }
 main h3 { font-size: 11.8pt; font-weight: 700; margin: 6mm 0 2mm; }
 main h4 { font-size: 10.5pt; font-weight: 600; margin: 4mm 0 1.5mm; color: var(--ink); }
 

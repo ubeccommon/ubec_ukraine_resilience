@@ -1,8 +1,8 @@
-# Build report — 2026-09-26 21:33 (draft)
+# Build report — 2026-09-26 21:50 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 35 | 5 | 2 | 0 | 0 | 0 |
+| paper | 33 | 5 | 2 | 0 | 0 | 0 |
 | brief | 3 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
 | carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -11,13 +11,12 @@
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 73**
+**Total blocking items: 71**
 
 ## paper
 
 **PENDING markers**
 
-- PENDING: Lviv trust difference — request 15
 - PENDING: request 1
 - PENDING: request 1
 - PENDING: request 1
@@ -40,7 +39,6 @@
 - PENDING: confirm that all changes use February 2023 as base — request 29
 - PENDING: denominator used for "per 1,000 residents" — request 29
 - PENDING: request 29
-- PENDING: Lviv trust — request 15
 - PENDING: optional — request 30
 - PENDING: breakdown of the 1,289 → 1,021 drop by reason and oblast — request 1
 - PENDING: oblast sample sizes and confidence intervals for the trust differences — request 9

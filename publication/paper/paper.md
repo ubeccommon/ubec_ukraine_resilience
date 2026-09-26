@@ -1,8 +1,9 @@
 ---
-title: "Strikes, fiscal capacity and night-light recovery in Ukraine's hromadas, 2022–2026"
-subtitle: "A spatial analysis with open data"
+title: "Hromada resilience under strikes in Ukraine, 2022–2026"
+subtitle: "Part I: local capacity, recovery and exposure · Part II: trust, cohesion and reception — an associational analysis with open data"
+short-title: "Hromada resilience under strikes, 2022–2026"
 author: "Michel Garand, UBEC Platform"
-version: "v0.2 — internal draft (trajectory results added)"
+version: "v0.3 — internal draft (two-part structure: resilience and its relationships)"
 date: "September 2026"
 licence: "Text and figures CC BY 4.0. Data package ODbL 1.0. Code MIT."
 ---
@@ -16,7 +17,14 @@ Conventions
 
 ## 0. Key findings
 
-This working paper links Russian strike exposure, local fiscal capacity and night-time light across Ukraine's hromadas (municipal communities), from 2021 to {{nl_panel_end}}. The analysis is descriptive and associational. It does not estimate causal effects.
+This working paper is about the resilience of Ukraine's hromadas (municipal communities) under Russian strikes, from 2021 to {{nl_panel_end}}, and about how its different sides relate to one another and to the pressure of attack. It has two parts.
+
+- **Part I — local capacity, recovery and exposure** works at hromada level. It relates fiscal capacity (the institutional side of resilience) and night-time light (a proxy for continued activity and services, the functional side) to strike and air-raid-alert exposure.
+- **Part II — trust, cohesion and reception** turns to the relational side: trust in local administration, community cohesion, belonging, and the movement and reception of displaced people and taxpayers. These data exist only by oblast, so Part II describes and compares, with a regional reading of the Carpathian oblasts.
+
+All results are associations. The paper estimates no causal effects, and it does not measure resilience directly: it measures proxies and names them as such.
+
+### Part I — local capacity, recovery and exposure
 
 1. **Fiscal capacity and exposure are nearly unrelated.** Across {{n_capacity}} non-occupied hromadas, the fiscal capacity index correlates with strike and air-raid-alert exposure at only ρ = {{rho_cap_exp_min}} to {{rho_cap_exp_max}}. Hromadas with stronger and weaker local finances are exposed at broadly similar levels.
 
@@ -39,17 +47,27 @@ This working paper links Russian strike exposure, local fiscal capacity and nigh
    - For the 2024–26 trend it is slightly negative ({{slope_int}}, t {{slope_int_t}}): capacity helps the trend less where exposure is high.
    - The apparent buffering in the pooled model reflects differences between oblasts.
 
-7. **The Carpathian region is quieter and brighter, but not uniformly poorer or more trusting.**
-   - A typical Carpathian hromada spent about {{carp_alert_hours_12m}} hours under alert in the last 12 months, against about {{nat_alert_hours_12m}} nationally.
-   - Its recent light level is {{carp_level_recent}} of pre-war, against {{rest_level_recent}} elsewhere.
-   - Fiscal capacity is below the national median in three of the four oblasts; Lviv is above it.
-   - In the reSCORE 2024 survey (n = {{rescore_n}}), trust in local administration is far above the national average ({{trust_national}}) in Ivano-Frankivsk (+{{trust_diff_if}}) and Chernivtsi (+{{trust_diff_cv}}), but far below it in Zakarpattia ({{trust_diff_zk}}). Zakarpattia is the brightest of the four. [[PENDING: Lviv trust difference — request 15]]
+### Part II — trust, cohesion and reception
 
-8. **Money and people moved west, and are partly moving on.**
+7. **Relational resilience varies as much within the west as between west and east.** In the reSCORE 2024 survey (n = {{rescore_n}}), trust in local administration is far above the national average ({{trust_national}}) in Ivano-Frankivsk (+{{trust_diff_if}}) and Chernivtsi (+{{trust_diff_cv}}), close to it in Lviv (+{{trust_diff_lv}}), and far below it in Zakarpattia ({{trust_diff_zk}}) and neighbouring Ternopil ({{trust_diff_te}}).
+   - Attachment is not satisfaction: Kherson records the lowest satisfaction with the locality ({{locality_sat_ks}}) but the strongest sense of belonging ({{belonging_ks}}).
+
+8. **Relational and fiscal resilience do not line up.** Ivano-Frankivsk and Chernivtsi combine below-median fiscal capacity with trust well above the national average. Zakarpattia, the brightest of the four Carpathian oblasts, reports one of the lowest levels of trust. This sets hromada finances beside oblast survey means; it is a juxtaposition of two levels of measurement, not a measured relationship between them.
+
+9. **Money and people moved west, and are partly moving on.**
    - Civilian income tax in Carpathian hromadas, relative to 2021 and to the national median, peaked at {{pit_carp_peak}} in 2022 Q2–Q3 and has settled at {{pit_carp_recent}}.
    - Within oblasts, higher exposure goes with lower relative income tax ({{pit_exp_recent}}), consistent with taxpayers relocating away from exposed areas.
    - Registered IDPs in the Carpathian oblasts exceed those present by {{idp_west_gap}} (Zakarpattia: {{idp_reg_zk}} registered vs {{idp_present_zk}} present per 1,000 residents). Registrations there have fallen by {{idp_carp_decline}} since February 2023, while rising in Kherson (+{{idp_rise_ks}}), Sumy (+{{idp_rise_su}}) and Kyiv city (+{{idp_rise_kc}}).
    - Real own revenue of hromadas has been roughly flat since 2021.
+
+10. **The Carpathian region is quieter and brighter, but its four oblasts differ.**
+    - A typical Carpathian hromada spent about {{carp_alert_hours_12m}} hours under alert in the last 12 months, against about {{nat_alert_hours_12m}} nationally.
+    - Its recent light level is {{carp_level_recent}} of pre-war, against {{rest_level_recent}} elsewhere.
+    - Fiscal capacity is below the national median in three of the four oblasts; Lviv is above it.
+
+### How the two parts relate
+
+Part I finds that fiscal capacity goes with keeping light when the grid fails, but does not buffer exposure. Part II finds that relational indicators do not follow the fiscal ones. Because the relational data exist only by oblast, they cannot enter the hromada models: oblast fixed effects absorb them. The paper therefore cannot test whether trust or cohesion helps hromadas with weak budgets hold together under pressure. That test needs hromada-level survey and displacement data (section 10.5).
 
 **What this paper does not show.** It does not show that local fiscal capacity causes recovery. It says nothing about individuals, only about hromadas and oblasts. It does not describe conditions in occupied territory. It does not describe anything below the hromada level, or current power conditions in any hromada.
 
@@ -61,14 +79,21 @@ Since February 2022, Russian strikes have reached nearly every region of Ukraine
 
 That combination raises an obvious question for recovery planning. Do hromadas with stronger local finances cope better with the same level of attack? If they do, strengthening local fiscal capacity would be a recovery priority in its own right. If they do not, the reasons matter: perhaps recovery is governed by systems larger than any hromada, such as the national grid.
 
+Resilience also has more than one side. Budgets and infrastructure describe what a hromada can pay for and keep running. Trust, cohesion and the reception of displaced people describe the relationships through which communities hold together. This paper looks at both, and at how each relates to exposure and to the other.
+
 ### 1.2 Questions
 
-The paper asks four questions:
+The paper asks five questions, in two parts.
+
+**Part I — local capacity, recovery and exposure (hromada level)**
 
 1. Is local fiscal capacity related to how exposed a hromada has been to strikes and air-raid alerts?
 2. Does recovery, measured with night-time lights, vary with exposure and with capacity?
 3. Does capacity moderate the association between exposure and recovery, so that stronger hromadas lose less for the same exposure?
-4. How do oblast-level differences in trust, cohesion and displacement frame these results, particularly in the Carpathian region (Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi oblasts)?
+**Part II — trust, cohesion and reception (oblast level)**
+
+4. How do oblasts differ in trust in local administration, community cohesion and belonging, and do these relational indicators follow the fiscal ones?
+5. Where have displaced people and taxpayers moved, and what does that mean for the Carpathian region (Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi oblasts) as a region of reception?
 
 ### 1.3 Approach and contribution
 
@@ -89,23 +114,17 @@ We relate these indices using pooled models, oblast fixed-effects models and spa
 The contribution is threefold:
 - An open, reproducible hromada-level dataset joining exposure, local finance and night-light data, released with its code, data dictionary and source catalogue.
 - A transparent test of the "local capacity buffers exposure" hypothesis, including a clear negative result once oblast-level differences are controlled.
-- A regional reading of the Carpathian oblasts that keeps survey, displacement and fiscal evidence at the levels where they are actually measured.
+- A relational reading, by oblast, of trust, cohesion and displacement, with the Carpathian oblasts as a regional case, keeping survey, displacement and fiscal evidence at the levels where they are actually measured.
 
-A note on terms: we use "resilience" only as a label for the research area. What we actually measure are proxies (fiscal indicators and night-time lights), and the text names them as such throughout.
+**Terms.** We use "resilience" for the ability of hromadas to keep functioning and to hold together under attack, and distinguish three sides: *institutional* (fiscal capacity), *functional* (night-time light, a proxy for activity and services) and *relational* (trust, cohesion, belonging and the reception of displaced people). None is measured directly; the text names the proxy each time. "Relationship" and "association" mean statistical association, not cause.
 
 ### 1.4 Structure
 
-- Section 2 defines the spatial units and coverage.
-- Section 3 describes the data sources.
-- Section 4 describes exposure.
-- Section 5 constructs the indices.
-- Sections 6 and 7 present the relationships and models.
-- Section 8 covers monthly trajectories.
-- Section 9 covers oblast social and displacement context.
-- Section 10 focuses on the Carpathian region.
-- Section 11 sets out limitations.
-- Section 12 describes the rules applied to protect sensitive information.
-- Section 13 documents reproducibility.
+- Sections 2 and 3 define the spatial units, coverage and data sources shared by both parts.
+- **Part I** (sections 4–8): exposure (4), the capacity, recovery and engagement indices (5), how capacity and exposure relate (6), recovery models (7) and monthly trajectories (8).
+- **Part II** (sections 9–10): trust, cohesion and displacement by oblast (9), and the Carpathian region, where both parts are read together (10).
+- **Synthesis:** how the two parts relate.
+- **Methods, limits and sources** (sections 11–13): limitations, the rules applied to protect sensitive information, and reproducibility, followed by references and annexes.
 
 ### 1.5 Author's position
 
@@ -172,6 +191,10 @@ Three properties of the sources shape the analysis:
 - **Reporting.** Strike events come from open-source reporting and are affected by reporting density (section 11.4). Alerts, budgets and night lights are recorded administratively or by instrument.
 
 Attribution for every source is given in `ATTRIBUTION.md` of the data package and in the caption of every map.
+
+# Part I — Local capacity, recovery and exposure
+
+Part I works at the level of the hromada. It asks whether local fiscal capacity, the institutional side of resilience, is related to exposure, and whether it goes with keeping or recovering night-time light, the functional side. All models are associational.
 
 ## 4. Exposure
 
@@ -593,7 +616,11 @@ Light levels in the last 12 months describe current power conditions. Under the 
 
 Map 19 and the right panel of Map 20 use "recent" windows. For publication, their windows end at least 6 months before release, or they are shown at raion level. [[PENDING: re-windowed or aggregated versions — request 33]] Historical windows (2022–2024), including the outage-loss panel of Map 20, carry lower risk and are published at hromada level.
 
-## 9. Oblast context: trust, cohesion and displacement
+# Part II — Trust, cohesion and reception
+
+Part II turns to the relational side of resilience: trust in local administration, community cohesion, belonging, and the movement of displaced people and taxpayers. These data are published only by oblast, so this part describes and compares; it does not model. Section 10 reads both parts together for the Carpathian oblasts.
+
+## 9. Relational resilience by oblast: trust, cohesion and displacement
 
 Survey and displacement data are available only by oblast. They cannot enter the hromada models: any oblast-level variable is absorbed completely by the oblast fixed effects. This section is therefore descriptive. It asks how oblasts differ in social conditions and displacement, not whether these conditions explain hromada recovery.
 
@@ -708,7 +735,7 @@ The oblast pattern:
 - **Ivano-Frankivsk** combines below-median fiscal capacity with trust in local administration of {{trust_if_abs}} on a 0–10 scale, the highest of the four oblasts. It also records the highest community cohesion and locality satisfaction in the country, and above-average economic security.
 - **Chernivtsi** also combines weak finances with trust above the national average (+{{trust_diff_cv}}).
 - **Zakarpattia**, the brightest of the four, reports one of the lowest levels of trust in local administration in the country: {{trust_zk_abs}}.
-- **Lviv**, the fiscally strongest: [[PENDING: Lviv trust — request 15]]
+- **Lviv**, the fiscally strongest, is close to the national average (+{{trust_diff_lv}}).
 
 This is a juxtaposition of two levels of measurement: hromada fiscal data and oblast survey means. It is not a relationship. We cannot say whether the hromadas with low capacity are the ones whose residents report high trust. The observation matters because fiscal indicators alone would rank much of the region as weak. Survey evidence suggests that, in at least two of its oblasts, local government holds a resource the budget data does not measure. Light, budgets and trust point in different directions here: a place can keep its lights on and distrust those who run it, or go dark and hold together.
 
@@ -733,6 +760,21 @@ Three questions follow, and none can be answered with current open data:
 3. What explains the four different light curves: grid topology, supply priorities or lighting policy? This needs grid and policy data by area, released with a security delay.
 
 A fourth can be tested with the existing data: whether mountain and lowland hromadas differ within the region. [[PENDING: optional — request 30]]
+
+# Synthesis: resilience and its relationships
+
+Read together, the two parts suggest four points. Each is an association, not a cause.
+
+1. **Exposure and institutional resilience are largely separate.** Fiscal capacity is nearly unrelated to how exposed a hromada has been (section 6). Hromadas with strong and weak finances face similar pressure.
+2. **Institutional resilience shows when shared systems fail, not against heavier attack.** Within oblasts, hromadas with higher pre-war capacity kept more of their light in the summer-2024 outages (section 8.5), but capacity does not buffer exposure once differences between oblasts are accounted for (section 7).
+3. **Functional resilience is largely shared at oblast level.** Oblast fixed effects account for most of the variation in light recovery; grid conditions and oblast-wide decisions weigh more than any one hromada's budget (sections 7 and 8).
+4. **Relational resilience does not follow the fiscal map.** In the Carpathian oblasts, weak finances coexist with high trust in Ivano-Frankivsk and Chernivtsi, and the brightest oblast, Zakarpattia, reports among the lowest trust (sections 9 and 10). Displacement links the two sides: the west received people and taxpayers, and part of its measured fiscal capacity may reflect that (sections 8.6, 9.2, 9.3 and 10.4).
+
+Whether relational resilience helps hromadas with weak budgets hold together under pressure is the question this paper cannot answer. It needs trust, cohesion and displacement data at hromada level, joined to the fiscal and light measures used here (section 10.5).
+
+# Methods, limits and sources
+
+The remaining sections set out the limitations of both parts, the rules applied to protect sensitive information and how to reproduce the results, followed by references and annexes.
 
 ## 11. Limitations
 
@@ -892,7 +934,7 @@ Every map and table credits its sources. Full attribution statements are in Anne
 
 ### 13.6 Suggested citation
 
-Garand, M. ({{release_year}}). *Strikes, fiscal capacity and night-light recovery in Ukraine's hromadas, 2022–2026: A spatial analysis with open data* (Working paper {{release_version}}). SocArXiv. {{socarxiv_doi}}
+Garand, M. ({{release_year}}). *Hromada resilience under strikes in Ukraine, 2022–2026: An associational analysis with open data* (Working paper {{release_version}}). SocArXiv. {{socarxiv_doi}}
 
 Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dataset* ({{release_version}}) [Data set]. Zenodo. {{zenodo_doi}}
 
