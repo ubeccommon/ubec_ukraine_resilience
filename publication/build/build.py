@@ -6,7 +6,7 @@ Build the publication outputs from Markdown sources and numbers.yaml.
   dispatch/four_carpathians.md                    -> build/out/<name>.pdf, .html, .md
   data_package/ (README, ATTRIBUTION, LICENSE, CITATION.cff, licenses/)
                                                   -> build/out/data_package/
-  report                                          -> build/report.md
+  report                                          -> build/out/report.md (not tracked)
 
 Steps
   1. Read numbers.yaml (flat `key: "value"  # comment` lines; no PyYAML needed).
@@ -14,7 +14,7 @@ Steps
   3. Replace {{key}} with its value. Keys whose value is PENDING, and unknown
      keys, are marked visibly.
   4. Count [[PENDING …]], [[CHECK …]], [[FIELD NOTE …]] markers per file and
-     write build/report.md.
+     write build/out/report.md.
   5. Draft mode (default): markers are highlighted in red in PDF and HTML.
      Release mode (--release): stops if any marker, PENDING value or unknown
      key remains.
@@ -390,7 +390,7 @@ def write_report(reports: list[FileReport], numbers: dict[str, Number], stamp: s
     if unused:
         lines += ["## Keys defined but not used in any output", "", ", ".join(unused), ""]
 
-    path = BUILD / "report.md"
+    path = OUT / "report.md"      # untracked: local builds never dirty the working tree
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
