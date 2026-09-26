@@ -11,8 +11,8 @@ n_crimea_units: "292"             # CHECK: 1,763 − 1,471
 n_capacity: "1,288"
 n_recovery: "1,021"
 n_engagement: "1,289"           # request 1
-n_rescore_oblasts: "PENDING"      # request 9
-n_dtm_oblasts: "PENDING"
+n_rescore_oblasts: "23"           # request 9: 22 oblasts + Kyiv city with 2024 values (not Crimea, Sevastopol, Donetsk, Luhansk)
+n_dtm_oblasts: "24 (registered IDPs, Jul 2026) and 21 (IDPs present, Mar 2026)"   # 16_oblast_context.py log
 n_model: "1,020"                # hromadas with both recovery and capacity
 n_garrison: "36"
 carpathian_oblasts: "Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi"   # confirmed by Carpathian dispatch
@@ -144,7 +144,7 @@ trust_diff_if: "1.8"
 trust_diff_cv: "1.3"
 trust_diff_zk: "−2.2"
 trust_diff_te: "−1.1"
-trust_diff_lv: "PENDING"           # request 15
+trust_diff_lv: "0.4"               # request 15: Lviv 4.9 − national 4.5
 trust_if_abs: "6.3"
 trust_zk_abs: "2.3"
 cohesion_if: "7.8"

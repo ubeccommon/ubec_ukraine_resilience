@@ -1,8 +1,8 @@
-# Build report — 2026-09-26 20:42 (draft)
+# Build report — 2026-09-26 20:46 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 35 | 8 | 2 | 0 | 0 | 0 |
+| paper | 35 | 5 | 2 | 0 | 0 | 0 |
 | brief | 3 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
 | carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -11,7 +11,7 @@
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 76**
+**Total blocking items: 73**
 
 ## paper
 
@@ -60,7 +60,7 @@
 
 **Keys still PENDING in numbers.yaml**
 
-commit_hash, n_dtm_oblasts, n_rescore_oblasts, release_date, run_time, socarxiv_doi, trust_diff_lv, zenodo_doi
+commit_hash, release_date, run_time, socarxiv_doi, zenodo_doi
 
 ## brief
 

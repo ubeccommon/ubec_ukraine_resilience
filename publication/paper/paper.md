@@ -140,8 +140,8 @@ Coverage falls from the full frame to each index, for different reasons (Table 1
 | Fiscal capacity index | Hromada | {{n_capacity}} | [[PENDING: request 1]] |
 | Night-light recovery ratio | Hromada | {{n_recovery}} | [[PENDING: request 1]] |
 | Engagement (DREAM projects) | Hromada | {{n_engagement}} | [[PENDING: request 1]] |
-| reSCORE 2024 indicators | Oblast | {{n_rescore_oblasts}} oblasts | Donetsk, Luhansk and Crimea not surveyed |
-| IOM DTM displacement | Oblast | {{n_dtm_oblasts}} oblasts | Only oblast level served for Ukraine |
+| reSCORE 2024 indicators | Oblast | {{n_rescore_oblasts}} (22 oblasts and Kyiv city) | Donetsk, Luhansk and Crimea not surveyed |
+| IOM DTM displacement | Oblast | {{n_dtm_oblasts}} | Only oblast level served for Ukraine |
 
 The largest drop, from {{n_hromadas_nonoccupied}} to {{n_recovery}} hromadas for the recovery ratio, matters for interpretation: the excluded hromadas are not a random subset (section 11.5).
 
