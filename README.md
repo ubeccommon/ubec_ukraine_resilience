@@ -41,6 +41,7 @@ QGIS project + 20 map pages                       viina/build_qgis_project.py
 | `viina/` | strike and alert pipeline, exposure surfaces and hot spots, QGIS builder, `run_all.sh` |
 | `resilience/` | scripts `00_…` to `24_…`, `styles/` (QGIS styles), `docs/` (results notes, Carpathian brief), `tidy/` (derived tables, data dictionary, source catalogue) |
 | `publication/` | sources of the working paper, essay, brief, dispatch and data package |
+| `tools/` | `publish_outputs.sh`: commits regenerated pipeline outputs from the data machine |
 
 Main scripts in `resilience/`:
 
@@ -197,5 +198,5 @@ repository". A Zenodo DOI will be added with the first release.
 > Garand, M. (2026). *Ukraine strikes × hromada resilience: analysis pipeline* (v1.1-step2)
 > [Software]. https://github.com/ubeccommon/ubec_ukraine_resilience
 
-Working conventions, the monthly refresh routine and the branch convention are in
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
+Working conventions, the maintenance workflow (who commits what, how outputs are published),
+the monthly refresh routine and the branch policy are in [`CONTRIBUTING.md`](CONTRIBUTING.md).

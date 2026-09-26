@@ -82,6 +82,11 @@
 !/publication/
 /publication/build/out/
 
+# ---- 5a. tools/: maintenance scripts (publish_outputs.sh) -----------
+!/tools/
+/tools/*
+!/tools/*.sh
+
 # ---- 6. global denies (override all whitelists above) ---------------
 # credentials
 .earthdata_token
