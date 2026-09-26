@@ -394,7 +394,7 @@ We report this as the central result of the paper: **within oblasts, we find no 
 
 Within oblasts, capacity is positively associated with recovery at average exposure. The coefficient is +{{cap_main_fe_min}} to +{{cap_main_fe_max}} (t {{cap_main_fe_t}}) across models using the 2025 index.
 
-This estimate is inflated by construction. The 2025 index includes civilian income-tax growth from 2021 to 2025, which partly reflects the same recovery the outcome measures (section 11.11). Using pre-war (2021) capacity instead, the coefficient falls to +{{cap_main_fe_2021}}. [[PENDING: t-value for the 2021 estimate; estimate with income-tax growth removed from the 2025 index — requests 4 and 6]]
+This estimate is inflated by construction. The 2025 index includes civilian income-tax growth from 2021 to 2025, which partly reflects the same recovery the outcome measures (section 11.11). Using pre-war (2021) capacity instead, the coefficient falls to +{{cap_main_fe_2021}} (t {{cap_main_fe_2021_t}}, HC1). Removing income-tax growth from the 2025 index, and keeping its other three components, gives +{{cap_main_fe_no_pitgrowth}} (t {{cap_main_fe_no_pitgrowth_t}}). The income-tax component thus accounts for about a sixth of the 2025 estimate. Most of the gap to the pre-war estimate lies elsewhere: own revenue, transfers and capital spending in 2025 also move with the wartime economy.
 
 We treat the pre-war estimate as the primary result. It says that hromadas with stronger finances before the invasion show modestly better night-light recovery than others in the same oblast. It does not say why. Pre-war capacity is correlated with size, urbanisation and economic structure, any of which could drive the association. A clearer version of this association appears in the summer-2024 outage loss (section 8.5).
 
@@ -589,7 +589,7 @@ A plausible reading is that many people registered in the west early in the war,
 
 ### 9.3 Why these data stay at oblast level
 
-Displacement is the most obvious candidate explanation for the within-oblast capacity association in section 7.4. Hromadas that received many IDPs may have both higher income-tax growth and brighter nights. Testing this requires hromada-level displacement data, which has been requested from IOM. Until it is available, the capacity association remains open to this interpretation.
+Displacement is the most obvious candidate explanation for the within-oblast capacity association in section 7.4. Hromadas that received many IDPs may have both higher income-tax growth and brighter nights. Testing this requires hromada-level displacement data, which has been requested from IOM. Removing income-tax growth from the capacity index lowers the within-oblast association only modestly (section 7.4), so displacement acting through income tax alone does not explain it. It could still act through other channels, such as own revenue or the demand for lighting. Until hromada-level data are available, the capacity association remains open to this interpretation.
 
 ## 10. The Carpathian region
 
@@ -726,7 +726,7 @@ The t-values for these outcomes are therefore optimistic. The outage-loss result
 
 ### 11.11 Composition of the capacity index
 
-The 2025 capacity index includes civilian income-tax growth from 2021 to 2025, which is partly a consequence of the wartime economy and of recovery itself. This builds a degree of circularity into any model predicting recovery from 2025 capacity. We therefore report pre-war (2021) capacity as the primary specification, and the 2025 index as descriptive.
+The 2025 capacity index includes civilian income-tax growth from 2021 to 2025, which is partly a consequence of the wartime economy and of recovery itself. This builds a degree of circularity into any model predicting recovery from 2025 capacity. We therefore report pre-war (2021) capacity as the primary specification, and the 2025 index as descriptive. Removing the income-tax component from the 2025 index lowers the within-oblast capacity coefficient to +{{cap_main_fe_no_pitgrowth}} and leaves the interaction at zero, so that component is not what drives the 2025 results.
 
 ### What would change the conclusions
 
