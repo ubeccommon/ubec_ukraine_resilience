@@ -4,7 +4,9 @@ Inputs : qgis/admin_units.gpkg, qgis/admin_centres.gpkg (<level>_centre), qgis/s
 Outputs: qgis/unit_stats.gpkg  layers <level>_poly (polygons) and <level>_pt (centre points), same columns;
          qgis/unit_stats_<level>.csv
 Windows: strikes  = 365 days ending on the last strike event (END);
-         alerts   = 365 days ending on the last alert record, capped at END (the alert CSV usually lags the events).
+         alerts   = 365 days ending at the earliest of: the last alert record, END + 1 day, ALERT_CUTOFF
+                    (alert_window.py: 1 Sep 2026, when the single alert was replaced by yellow/red levels;
+                    the old series is not continued past it and nothing after it is spliced in).
 Columns: n_all, n_12m (strike events), rep_all, rep_12m (sum of n_reports), score (recency-weighted, 6-month half-life),
          civcas_all, civcas_12m, last_strike, pop_gn, area_km2, dens_12m (per 1,000 km2), rate_12m (per 100k pop),
          alert_h_12m / alert_h_all   = hours any part of the unit was under alert (union of all alert rows of the unit,
@@ -17,6 +19,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from alert_window import ALERT_CUTOFF
 
 pd.set_option("display.width", 230); pd.set_option("display.max_columns", 40)
 OUT = Path("qgis")
@@ -100,14 +103,20 @@ a["s"] = to_sec(a["started_at"])
 a["e"] = to_sec(a["finished_at"])
 a = a[a["e"] > a["s"]]
 ALERT_START = a["s"].min()
-A_END = min(a["e"].max(), to_sec(pd.Series([END + pd.Timedelta(days=1)])).iloc[0])
+REC_END = a["e"].max()
+EV_END = to_sec(pd.Series([END + pd.Timedelta(days=1)])).iloc[0]
+CUT = to_sec(pd.Series([ALERT_CUTOFF])).iloc[0]
+A_END = min(REC_END, EV_END, CUT)
 W12 = (A_END - 365 * 86400, A_END)
 WALL = (ALERT_START, A_END)
 HOURS12 = (W12[1] - W12[0]) / 3600
-print(f"alerts: {len(a):,} rows, {sec_to_date(ALERT_START)} .. {sec_to_date(a['e'].max())}; "
+print(f"alerts: {len(a):,} rows, {sec_to_date(ALERT_START)} .. {sec_to_date(REC_END)}; "
       f"unmapped raion/hromada rows: {((a['level'] == 'raion') & a['k2'].isna()).sum() + ((a['level'] == 'hromada') & a['k3'].isna()).sum()}")
-print(f"alert window 12m = {sec_to_date(W12[0])} .. {sec_to_date(W12[1])} "
-      f"({(to_sec(pd.Series([END + pd.Timedelta(days=1)])).iloc[0] - A_END) / 86400:.0f} days before the strike window end)")
+if A_END == CUT:
+    print(f"alert series capped at ALERT_CUTOFF {ALERT_CUTOFF.date()} (yellow/red levels from Sep 2026); "
+          f"{(REC_END - CUT) / 86400:.1f} days of later records ignored")
+print(f"alert window 12m = {sec_to_date(W12[0])} .. {sec_to_date(W12[1] - 1)} "
+      f"({(EV_END - A_END) / 86400:.0f} days before the strike window end)")
 
 def arrays(df, key):
     return {k: (g["s"].to_numpy(), g["e"].to_numpy()) for k, g in df.groupby(key)}

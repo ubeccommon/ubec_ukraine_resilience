@@ -1,6 +1,7 @@
 # Single source for every figure quoted in paper, brief, essay and data README.
 # Values are display strings (Unicode minus −). Keys marked PENDING block release.
-# Status: v1.1 findings + trajectory update of 25 Sep 2026 (step 2).
+# Status: v1.1 findings + trajectory update of 25 Sep 2026 (step 2);
+# alert window fixed at 1 Sep 2025 – 31 Aug 2026 (yellow/red levels from Sep 2026), 26 Sep 2026.
 
 # --- Units and coverage
 n_hromadas_total: "1,763"
@@ -27,7 +28,7 @@ min_lit_pixels: "10"
 rho_cap_exp_min: "0.07"
 rho_cap_exp_max: "0.18"
 rho_rec_strikes: "−0.29"
-rho_rec_alerts: "−0.59"
+rho_rec_alerts: "−0.60"
 int_baseline_coef: "0.15"
 int_baseline_t: "6.3"
 int_fe_range: "PENDING"            # request 4
@@ -106,8 +107,8 @@ slope_int_t: "−2.3 to −3.4"
 slope_r2: "0.11–0.17"
 level_trough_moran: "0.15–0.22"
 rho_level_alerts: "−0.65"
-rho_level_alerts_within: "−0.55"
-rho_level_alerts_within_t: "−8.6"
+rho_level_alerts_within: "−0.54"
+rho_level_alerts_within_t: "−8.5"
 
 # --- reSCORE 2024
 rescore_n: "7,758"
@@ -153,8 +154,8 @@ carp_pit_2025_lv_if: "20 %"
 carp_pit_2025_zk_cv: "6–14 %"
 
 # --- Carpathian profile (from Carpathian dispatch)
-carp_alert_hours_12m: "108"
-nat_alert_hours_12m: "690"
+carp_alert_hours_12m: "114"
+nat_alert_hours_12m: "670"
 lviv_struck_share: "15 %"
 own_rev_pc_if_zk: "5,800"
 own_rev_pc_nat: "9,300"
@@ -164,7 +165,7 @@ carp_weak_hit_if_cv: "27"
 
 # --- Periods and versions (request 25)
 period_viina: "PENDING"
-period_alerts: "PENDING"
+period_alerts: "15 Mar 2022 – 31 Aug 2026"
 period_dream: "PENDING"
 version_codab: "PENDING"
 version_osm: "PENDING"

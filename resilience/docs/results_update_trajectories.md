@@ -62,7 +62,7 @@ Relative civilian PIT in the Carpathian oblasts peaked in 2022 Q2–Q3 (1.11–1
 **Recent light level.**
 - Capacity +0.19 to +0.22 (t 7–8), robust to weighting and to alert hours as the exposure.
 - Pre-war capacity only +0.09 (t 3.0). Part of the 2025 association runs from local economic activity to both lights and revenue.
-- Alert hours are the dominant exposure: Spearman −0.65; within oblasts −0.55 (t −8.6).
+- Alert hours are the dominant exposure: Spearman −0.65; within oblasts −0.54 (t −8.5). Updated 26 Sep 2026: alert window fixed at 1 Sep 2025 – 31 Aug 2026 (yellow/red alert levels from Sep 2026).
 
 **Worst quarter.** Oblast-wide. Within oblasts capacity is weak (+0.09), and pre-war capacity is about 0 (+0.02). In the acute phase local capacity did not protect.
 

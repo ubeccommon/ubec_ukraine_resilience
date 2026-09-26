@@ -8,7 +8,7 @@ data_as_of: "night lights to Aug 2026; local budgets to Q2 2026; IDPs to Jul 202
 ---
 
 
-Seen from Kyiv, Kharkiv or Odesa, the four Carpathian oblasts — Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi — are often called "the rear": fewer strikes, fewer alarms, a place where people and businesses go. The data bear this out in part. Over the last 12 months a typical hromada here spent about 108 hours under air-raid alert, against about 690 nationally. Fewer than one in ten of the region's 251 hromadas has recorded even one strike since 2022; nationally it is more than one in five.
+Seen from Kyiv, Kharkiv or Odesa, the four Carpathian oblasts — Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi — are often called "the rear": fewer strikes, fewer alarms, a place where people and businesses go. The data bear this out in part. In the 12 months to 31 August 2026 a typical hromada here spent about 114 hours under air-raid alert, against about 670 nationally. Fewer than one in ten of the region's 251 hromadas has recorded even one strike since 2022; nationally it is more than one in five.
 
 Look closer, and "the rear" breaks apart into four quite different places. Night-time light, local budgets and a national survey each tell a different part of the story, and the parts do not always agree.
 
