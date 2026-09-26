@@ -45,6 +45,7 @@ OUTPUTS=(
 # Claude adds a path here when a new script starts producing a tracked
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
+  "viina/qgis/maps/preview/18_oblast_context.png"   # page 18, reSCORE panels only (26 Sep 2026)
 )
 
 DRY=0; YES=0; SUBJECT=""

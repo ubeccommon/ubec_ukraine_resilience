@@ -113,5 +113,5 @@ if nm3:
         log("name differences (first 15):\n" + mm[~mm["same"]][["k3", "name", nm3]].head(15).to_string(index=False))
 m["in_cod"] = m[pc3].notna()
 m[["k3", pc3, "in_cod"]].rename(columns={pc3: "adm3_pcode"}).to_csv(TIDY / "crosswalk_k3_codpcode.csv", index=False)
-log("wrote tidy/crosswalk_k3_codpcode.csv   licence: CC BY-IGO (OCHA COD-AB, SSPE Kartographia)")
+log("wrote tidy/crosswalk_k3_codpcode.csv   licence: CC BY 3.0 IGO (OCHA COD-AB, SSPE Kartographia)")
 _logf.close()

@@ -65,7 +65,7 @@ fig.text(0.01, 0.01,
          "in 2020–21. 2021 lies above 1 because it was\nbrighter than 2020. Single months vary with snow, cloud and "
          "moonlight — read the trend. June 2025 omitted (retrieval artefact). Light also reflects\ncurfews, "
          "street-lighting policy and grid schedules, not only damage. Data: NASA Black Marble VNP46A3 (public domain); "
-         "boundaries OCHA COD-AB (CC BY-IGO).",
+         "boundaries OCHA COD-AB (CC BY 3.0 IGO).",
          fontsize=7, color="#555555", va="bottom")
 fig.subplots_adjust(left=0.08, right=0.87, top=0.9, bottom=0.17)
 for ext, kw in (("png", {"dpi": 200}), ("svg", {})):

@@ -49,6 +49,7 @@ from qgis.core import (
     QgsReferencedRectangle, QgsColorRampShader, QgsRasterShader, QgsSingleBandPseudoColorRenderer,
     QgsBilinearRasterResampler, QgsLegendStyle, QgsMapLayerLegendUtils, QgsLayoutItemShape,
 )
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QColor, QFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -629,7 +630,8 @@ def make_layout_multi(name, title, panels, subtitle="", extent=None, scale_km=20
     return layout
 
 def make_layout_grid(name, title, panels, cols=4, subtitle="", extent=None, legend=None, legend_cols=2):
-    """panels: list of (layers bottom->top, caption); maps in a cols x rows grid, shared legend below."""
+    """panels: list of (layers bottom->top, caption); maps in a cols x rows grid, shared legend below.
+    If layers is a string, the panel is an empty framed placeholder showing that text (e.g. data withheld)."""
     layout = new_layout(name)
     ext = extent or UA_RECT
     n = len(panels)
@@ -642,6 +644,9 @@ def make_layout_grid(name, title, panels, cols=4, subtitle="", extent=None, lege
         r, c = divmod(i, cols)
         x, y = 8 + c * (w + gap), 21 + r * (h + 8)
         add_text(layout, cap, x, y, w, 5, 7.5, bold=True)
+        if isinstance(layers, str):
+            add_placeholder(layout, layers, x, y + 5, w, h)
+            continue
         maps.append(add_map(layout, layers, x, y + 5, w, h, ext))
     add_text(layout, title, 8, 6, 280, 10, 15, bold=True)
     y0 = 21 + rows * (h + 8) + 1
@@ -655,6 +660,16 @@ def make_layout_grid(name, title, panels, cols=4, subtitle="", extent=None, lege
 RECT_SHAPE = getattr(QgsLayoutItemShape, "Rectangle", None)
 if RECT_SHAPE is None:
     RECT_SHAPE = QgsLayoutItemShape.Shape.Rectangle
+
+def add_placeholder(layout, text, x, y, w, h):
+    """empty panel with the map-frame outline and a centred explanation"""
+    shp = QgsLayoutItemShape(layout)
+    shp.setShapeType(RECT_SHAPE)
+    shp.setSymbol(QgsFillSymbol.createSimple({"color": "#f7f7f7", "outline_color": "#000000", "outline_width": "0.3"}))
+    layout.addLayoutItem(shp)
+    shp.attemptMove(QgsLayoutPoint(x, y, MM)); shp.attemptResize(QgsLayoutSize(w, h, MM))
+    t = add_text(layout, text, x + 4, y + 4, w - 8, h - 8, 7)
+    t.setHAlign(Qt.AlignmentFlag.AlignHCenter); t.setVAlign(Qt.AlignmentFlag.AlignVCenter)
 
 def add_bv_legend(layout, x, y, exp_label, cap_label, cell=10.0, notes=None):
     """3x3 grid: exposure increases upwards, capacity to the right."""
@@ -694,8 +709,8 @@ def make_bv_layout(name, title, bv_layer, context, subtitle, exp_label, cap_labe
 
 W_STRIKE = f"{md('event_w12_start')} – {md('event_end')}"
 W_ALERT = f"{md('alert_w12_start')} – {md('alert_end')}"
-credit = ("Sources: VIINA 2.0 (Zhukov, ODbL); Ukrainian air-raid alerts (Klimenko, MIT); KATOTTG codifier "
-          "(mykhailoklimnyk/ua-administrative-codes, CC BY 4.0); boundaries OCHA COD-AB / SSPE Kartographia (CC BY-IGO); "
+credit = ("Sources: VIINA 2.0 (Zhukov & Ayers, ODbL); Ukrainian air-raid alerts (V. Klymenko, MIT); KATOTTG codifier "
+          "(mykhailoklimnyk/ua-administrative-codes, CC BY 4.0); boundaries OCHA COD-AB / SSPE Kartographia (CC BY 3.0 IGO); "
           "GeoNames (CC BY 4.0); © OpenStreetMap contributors (ODbL). "
           "Events are news-coded and geocoded to settlements: counts reflect reporting density and geocoding precision. "
           f"Crimea and places not under Ukrainian control on {md('control_date')} excluded (hatched). "
@@ -723,8 +738,8 @@ N13 = ("Gi* and LISA as in map 11. Cold spots here are nominal: none survives FD
        "'no detectable clustering', not 'safe'. ")
 
 credit_res = ("Sources: budgets openbudget.gov.ua (MinFin/Treasury, open data CMU 835); population JRC GHS-POP R2023A "
-              "(EC reuse); night lights NASA Black Marble VNP46A3 C2 (public domain); alerts Klimenko (MIT); strikes VIINA 2.0 "
-              "(Zhukov, ODbL); boundaries OCHA COD-AB / SSPE Kartographia (CC BY-IGO); © OpenStreetMap contributors (ODbL). "
+              "(EC reuse); night lights NASA Black Marble VNP46A3 C2 (public domain); alerts V. Klymenko (MIT); strikes VIINA 2.0 "
+              "(Zhukov & Ayers, ODbL); boundaries OCHA COD-AB / SSPE Kartographia (CC BY 3.0 IGO); © OpenStreetMap contributors (ODbL). "
               f"Places not under Ukrainian control on {md('control_date')} excluded.")
 R3_TXT = (f"Within 30 km of the front line (VIINA control, {md('control_date')}) or of the border with Russia or Belarus, "
           "hromadas are shown as raion values (dashed outline; population-weighted, national class limits). ")
@@ -748,11 +763,12 @@ N17 = ("Terciles computed within Ivano-Frankivsk, Zakarpattia, Lviv and Chernivt
 N18 = ("reSCORE 2024 (SeeD / UNDP, General Population; n = 7,758, face-to-face, Jun–Sep 2024; government-controlled "
        "areas excluding Donetsk, Luhansk and Crimea): oblast score minus national score on the 0–10 scale; SeeD treats "
        "differences within ±0.5 as not significant. Blank oblasts: not surveyed. City booster samples (Kharkiv, Odesa, "
-       "Zaporizhzhia, Dnipro, Kryvyi Rih) not included. IDPs present = IOM DTM estimate of IDPs living in the oblast, "
-       "31 Mar 2026, per 1,000 pre-war residents (GHS-POP 2020); registered IDPs differ (e.g. Dnipropetrovsk 194 present "
-       "vs 134 registered per 1,000); no estimate for Zaporizhzhia, Kherson, Donetsk. Sources: SCORE Ukraine "
-       "(scoreforpeace.org); IOM DTM via HDX; JRC GHS-POP; boundaries OCHA COD-AB / SSPE Kartographia (CC BY-IGO); "
-       "© OpenStreetMap contributors (ODbL).")
+       "Zaporizhzhia, Dnipro, Kryvyi Rih) not included. The IDP panel is left empty: IOM DTM terms of use do not allow "
+       "redistribution. Sources: SCORE Ukraine 2024, SeeD and UNDP (scoreforpeace.org); boundaries OCHA COD-AB v05 / "
+       "SSPE Kartographia (CC BY 3.0 IGO); © OpenStreetMap contributors (ODbL).")
+IDP_NOTE = ("Not shown\n\nIDPs present per 1,000 pre-war residents (IOM DTM) are omitted: IOM DTM terms of use do not "
+            "allow redistribution of the data.\n\nWith your own IOM DTM access: resilience/16_oblast_context.py "
+            "and 17_dtm_api.py rebuild this panel.")
 
 _cs = TC.get("change_share_pub", {})
 def _sh(grp):
@@ -835,11 +851,10 @@ layouts = [
                    "exposure: alert hours (regional)", cap_label="capacity (regional)",
                    extent=CARP_RECT, scale_km=50),
     make_layout_grid("18_oblast_context",
-                     "Citizen resilience by oblast — reSCORE 2024 (difference from national) and IDPs present",
-                     [([osm, l, outline], lab) for l, lab in ctx_layers] + [([osm, idp_ctx, outline], "IDPs present per 1,000")],
+                     "Citizen resilience by oblast — reSCORE 2024 (difference from national)",
+                     [([osm, l, outline], lab) for l, lab in ctx_layers] + [(IDP_NOTE, "IDPs present per 1,000")],
                      cols=4, subtitle=N18,
-                     legend=[(ctx_leg, "reSCORE indicator vs national (0–10 scale)"),
-                             (idp_ctx, "IDPs present per 1,000 pre-war residents")]),
+                     legend=[(ctx_leg, "reSCORE indicator vs national (0–10 scale)")]),
     make_bv_layout("19_trajectory_level_capacity",
                    f"Night lights {PUB_WIN} vs pre-war — light deficit × institutional capacity, hromadas",
                    traj_bv, [occ, zone_r3, obl_b, outline, cities], N19 + credit_res,

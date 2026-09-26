@@ -24,8 +24,9 @@ OUT = MAPS / "preview"
 WIDTH = 1600
 
 # hromada- or oblast-level choropleths, cleared for publication (14–16, 19–20: rule R3 raion values in the
-# front-line and border zone; 19–20: rule R2 publication window and reliable light data)
-DEFAULT = ["04", "13", "14", "15", "16", "17", "19", "20"]
+# front-line and border zone; 19–20: rule R2 publication window and reliable light data; 18: reSCORE panels only,
+# the IOM DTM panel is an empty placeholder because DTM terms forbid redistribution)
+DEFAULT = ["04", "13", "14", "15", "16", "17", "18", "19", "20"]
 
 # never previewed until the reason is resolved (mirrors .gitignore section 3 / 4b)
 HELD = {
@@ -40,11 +41,10 @@ HELD = {
     "10": "kernel density from event locations (R1/R5)",
     "11": "Gi* hot spots at hromada level, incl. the front-line and border zone (R3)",
     "12": "kernel density on 1 km grid with strike points (R1/R5)",
-    "18": "IOM DTM and reSCORE context (upstream terms)",
 }
 
-ATTRIBUTION = ("Data: VIINA 2.0 (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
-               "SSPE Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; "
+ATTRIBUTION = ("Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
+               "SSPE Kartographia (CC BY 3.0 IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; "
                "DREAM. Analysis and maps: M. Garand, UBEC Platform, CC BY 4.0.")
 
 

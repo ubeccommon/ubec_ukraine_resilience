@@ -14,8 +14,8 @@ The scripts that retrieve each source are included.
 > Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM;
 > © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
 
-Name only the sources actually used in a given map. Maps that show oblast context (page 18) also
-credit *IOM DTM* and *SeeD–UNDP reSCORE Ukraine*.
+Name only the sources actually used in a given map. Page 18 (oblast context) also credits
+*SCORE Ukraine 2024, SeeD and UNDP*; its IOM DTM panel is left empty (DTM terms forbid redistribution).
 
 ## Overview
 
@@ -30,7 +30,7 @@ credit *IOM DTM* and *SeeD–UNDP reSCORE Ukraine*.
 | JRC GHS-POP R2023A | population denominators | hromada | EC reuse (CC BY 4.0) | yes | JRC download → `resilience/raw/ghs_pop/` |
 | DREAM | reconstruction project counts | hromada | open data, no licence stated | yes (counts only) | `10_dream.py fetch` |
 | State statistics offices (ЄДРПОУ) | enterprise counts, 10 oblasts | hromada | official statistics | yes | `09_stat_edrpou.py --all` |
-| SeeD–UNDP SCORE / reSCORE | oblast survey context | oblast | no licence found | **no** (pending permission) | `16_oblast_context.py` |
+| SeeD–UNDP SCORE / reSCORE | oblast survey context | oblast | no licence found | **no** tables (pending permission); map page 18 with attribution | `16_oblast_context.py` |
 | IOM DTM API v3 | displacement context | oblast | no redistribution | **no** | `17_dtm_api.py pull` with own key |
 | OpenStreetMap | reference layers | — | ODbL 1.0 | no | Geofabrik / OSM |
 

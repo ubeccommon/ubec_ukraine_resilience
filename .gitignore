@@ -76,7 +76,6 @@
 /resilience/tidy/dtm_*.csv
 /resilience/tidy/oblast_context_k1.csv
 /resilience/tidy/rescore_long.csv
-/viina/qgis/maps/preview/18_*
 
 # ---- 5. publication/: sources only ----------------------------------
 !/publication/
