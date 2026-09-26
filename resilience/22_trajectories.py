@@ -15,6 +15,9 @@ Budgets: _rel = ratio to same quarter 2021 / national median (inflation-neutral)
 Models as 12: z(y) ~ exposure + capacity + interaction [+ oblast FE] [+ controls, NaN -> 0];
   HC1 SEs; M3w weights 1/noise_sd^2; budget outcomes use pre-war (2021) capacity only
   (2025 capacity contains 2025 own revenue and PIT growth — circular).
+  Robust inference (robust_inference.py) for exposure, capacity and interaction in every model:
+  restricted wild-cluster bootstrap p-values by oblast (p_wcb_*, Webb weights, B = 9,999) and Conley
+  spatial-HAC t-values (t_c50_*, t_c100_*: Bartlett kernel, 50 / 100 km, centroids in UA_LAEA).
 Map classes (maps 19–20, build_qgis_project.py):
   bv_rec_cap  light-deficit tercile (1 = brightest third, 3 = darkest third of tr_recent, sample)
               x capacity tercile (non-occupied, as 13_bivariate); "na" no light metric, "occ" occupied
@@ -29,6 +32,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from robust_inference import conley_t, wild_cluster_p
+
 BASE = Path(__file__).resolve().parent
 TIDY = BASE / "tidy"
 UNITS = BASE / "units_hromada.gpkg"
@@ -37,6 +42,8 @@ LAEA = "+proj=laea +lat_0=48.5 +lon_0=31 +ellps=GRS80 +units=m"
 CARP = {"21", "26", "46", "73"}
 EXCL = {"2025-06"}
 MIN_LIT = 10
+B_BOOT = 9999
+CUTOFFS = (50_000, 100_000)
 
 
 def log(*a):
@@ -256,7 +263,8 @@ def main():
             X = pd.concat([X, s[extra].reset_index(drop=True)], axis=1)
             X = X.loc[:, X.std() > 0]
             w = (1 / s["tr_noise_sd"].clip(lower=0.05) ** 2).values if wt else None
-            b, se, r2, n, e = ols(z(yv[ok]).values, X.values, w)
+            yz = z(yv[ok]).values
+            b, se, r2, n, e = ols(yz, X.values, w)
             r = {"outcome": oname, "spec": sname, "capacity": cv, "exposure": ev, "n": n, "r2": r2}
             for j, c in enumerate(["exp", "cap", "int"]):
                 r[f"b_{c}"], r[f"t_{c}"] = b[j], b[j] / se[j]
@@ -266,16 +274,28 @@ def main():
                 wk = libpysal.weights.KNN.from_array(pts[good], k=8)
                 wk.transform = "r"
                 r["moran_resid"] = esda.Moran(e[good], wk, permutations=0).I
+            # robust inference: columns 1-3 of Xc are exp, cap, int
+            Xc = np.column_stack([np.ones(len(X)), X.values.astype(float)])
+            wb = wild_cluster_p(yz, Xc, [1, 2, 3], s["k1"].astype(str).values, w=w, B=B_BOOT)
+            for j, c in zip([1, 2, 3], ["exp", "cap", "int"]):
+                r[f"p_wcb_{c}"] = wb[j][1]
+            if xy is not None:
+                pts = xy[ok.values]
+                if np.isfinite(pts).all():
+                    ct = conley_t(yz, Xc, [1, 2, 3], pts, CUTOFFS, w=w)
+                    for j, c in zip([1, 2, 3], ["exp", "cap", "int"]):
+                        r[f"t_c50_{c}"], r[f"t_c100_{c}"] = ct[CUTOFFS[0]][j], ct[CUTOFFS[1]][j]
             rows.append(r)
     R = pd.DataFrame(rows)
     R.to_csv(TIDY / "trajectory_models.csv", index=False)
-    print("\nmodels: z(outcome) ~ exposure + capacity + interaction (HC1 t in brackets)")
+    print("\nmodels: z(outcome) ~ exposure + capacity + interaction (HC1 t in brackets; WCB p by oblast)")
     for oname, g2 in R.groupby("outcome", sort=False):
         print(f"\n{oname}  (capacity = {g2['capacity'].iloc[0]})")
         for _, r in g2.iterrows():
             mi = f"  I={r['moran_resid']:.2f}" if pd.notna(r.get("moran_resid")) else ""
             print(f"  {r['spec']:<15} n={r['n']:4d} R2={r['r2']:.2f}  exp {r['b_exp']:+.2f} [{r['t_exp']:+.1f}]"
-                  f"  cap {r['b_cap']:+.2f} [{r['t_cap']:+.1f}]  int {r['b_int']:+.2f} [{r['t_int']:+.1f}]{mi}")
+                  f"  cap {r['b_cap']:+.2f} [{r['t_cap']:+.1f}] p={r['p_wcb_cap']:.3f}"
+                  f"  int {r['b_int']:+.2f} [{r['t_int']:+.1f}] p={r['p_wcb_int']:.3f}{mi}")
 
     # ---------------- map layer + dictionary
     try:

@@ -22,9 +22,13 @@ Models (all standardised, HC1 robust SE):
   M5 M3 with pre-war (2021) capacity (unchanged by --cap)
   M6 M3 without frontline oblasts (Donetsk 14, Zaporizhzhia 23, Kherson 65)
   M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification
+Robust inference for capacity and interaction in M1-M6 (robust_inference.py): restricted wild-cluster
+  bootstrap p-values by oblast (Webb weights, B = 9,999; t with CR1 SE) and Conley spatial-HAC t-values
+  (Bartlett kernel, 50 and 100 km, representative points in UA_LAEA metres).
 Spatial weights: KNN k=6 on polygon centroids, row-standardised; Moran's I of residuals
   (999 permutations) for M1-M6.
-Output: tidy/moderation_results[_TAG].csv (incl. se/t of the capacity main effect), logs/12_moderation[_TAG].log
+Output: tidy/moderation_results[_TAG].csv (incl. se/t of the capacity main effect and the robust inference),
+  logs/12_moderation[_TAG].log
 Caveat: cross-sectional and descriptive; the interaction is an association, not a causal effect.
 """
 import argparse
@@ -34,11 +38,15 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
+from robust_inference import conley_t, wild_cluster_p
+
 BASE = Path(__file__).resolve().parent
 TIDY, LOGS = BASE / "tidy", BASE / "logs"
 UNITS = BASE / "units_hromada.gpkg"
 FRONTLINE = {"14", "23", "65"}
 K = 6
+B_BOOT = 9999
+CUTOFFS = (50_000, 100_000)
 OUTCOME_SRC = {"annual": "ntl_recovery_2124", "winter": "ntl_winter_ratio_2125"}
 _logf = None
 pd.set_option("display.width", 200)
@@ -223,10 +231,25 @@ def main():
             log(f"    {c:10s} b={b[c]:+.3f}  se={se[c]:.3f}  t={b[c] / se[c]:+.2f}")
         ic = [c for c in focus if c.startswith("int")][0]
         cc = focus[1]
+        # robust inference for capacity and interaction
+        Xo = X[ok].astype(float)
+        yo = data.loc[ok, "y"].astype(float).values
+        jc, ji = Xo.columns.get_loc(cc), Xo.columns.get_loc(ic)
+        wb = wild_cluster_p(yo, Xo.values, [jc, ji], data.loc[ok, "k1"].astype(str).values, B=B_BOOT)
+        pts = data.loc[ok].geometry.representative_point()
+        ct = conley_t(yo, Xo.values, [jc, ji], np.column_stack([pts.x.values, pts.y.values]), CUTOFFS)
+        c50, c100 = ct[CUTOFFS[0]], ct[CUTOFFS[1]]
+        log(f"    robust     {cc}: CR1 t={wb[jc][0]:+.2f}  WCB p={wb[jc][1]:.3f}  Conley t50={c50[jc]:+.2f} "
+            f"t100={c100[jc]:+.2f} | {ic}: CR1 t={wb[ji][0]:+.2f}  WCB p={wb[ji][1]:.3f}  "
+            f"Conley t50={c50[ji]:+.2f} t100={c100[ji]:+.2f}")
         results.append({"model": name, "n": int(ok.sum()), "r2": r2, "moran_I": I, "moran_p": p,
                         "b_exposure": b[focus[0]], "b_capacity": b[cc], "b_interaction": b[ic],
                         "se_interaction": se[ic], "t_interaction": b[ic] / se[ic], "note": note,
-                        "se_capacity": se[cc], "t_capacity": b[cc] / se[cc]})
+                        "se_capacity": se[cc], "t_capacity": b[cc] / se[cc],
+                        "t_cr1_capacity": wb[jc][0], "p_wcb_capacity": wb[jc][1],
+                        "t_conley50_capacity": c50[jc], "t_conley100_capacity": c100[jc],
+                        "t_cr1_interaction": wb[ji][0], "p_wcb_interaction": wb[ji][1],
+                        "t_conley50_interaction": c50[ji], "t_conley100_interaction": c100[ji]})
 
     run("M1 baseline", s, ["exp", "cap", "int"])
     run("M2 + oblast FE", s, ["exp", "cap", "int"] + fe_cols)
