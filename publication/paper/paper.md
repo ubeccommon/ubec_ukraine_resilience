@@ -281,10 +281,11 @@ Fiscal capacity and exposure are nearly independent. Across the {{n_capacity}} h
 | Capacity 2025 | {{rho_cap_strikes_2025}} [{{ci_cap_strikes_2025}}] | {{rho_cap_alerts_2025}} [{{ci_cap_alerts_2025}}] |
 | Capacity 2021 (pre-war) | {{rho_cap_strikes_2021}} [{{ci_cap_strikes_2021}}] | {{rho_cap_alerts_2021}} [{{ci_cap_alerts_2021}}] |
 | Capacity 2025, within oblasts | {{rho_cap_strikes_within}} | {{rho_cap_alerts_within}} |
+| Capacity 2021 (pre-war), within oblasts | {{rho_cap_strikes_2021_within}} | {{rho_cap_alerts_2021_within}} |
 
-*Spearman ρ with 95 % confidence intervals. Within-oblast values are partial correlations after removing oblast means.* [[PENDING: all cells — request 8]]
+*Spearman ρ with 95 % confidence intervals (Fisher z, Bonett–Wright standard error); n = 1,288. Within-oblast values are partial correlations after removing oblast means of the ranks.*
 
-The small positive correlation is consistent with larger urban hromadas being both better resourced and more often targeted and reported (section 11.4). It is too weak to matter for the models that follow: capacity is not a stand-in for exposure, and both can enter the same model without collinearity problems.
+The small positive correlation is consistent with larger urban hromadas being both better resourced and more often targeted and reported (section 11.4). It is too weak to matter for the models that follow: capacity is not a stand-in for exposure, and both can enter the same model without collinearity problems. Pre-war capacity is different. It correlates with alert hours at ρ = {{rho_cap_alerts_2021}} and with strikes at ρ = {{rho_cap_strikes_2021}}. The alert association is regional: within oblasts it falls to ρ = {{rho_cap_alerts_2021_within}}. Hromadas in the east and centre had stronger own finances before 2022 and now spend the most hours under alert; the gap to the west has narrowed since (section 10.1). Within oblasts, pre-war capacity and strikes keep a small positive association (ρ = {{rho_cap_strikes_2021_within}}), the same urban pattern as above. Models with pre-war capacity therefore rely on oblast fixed effects to separate capacity from regional exposure.
 
 ### 6.2 Where low capacity meets high exposure
 

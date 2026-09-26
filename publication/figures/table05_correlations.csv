@@ -1,0 +1,9 @@
+capacity,exposure,scope,rho,ci_lo,ci_hi,n,oblasts,boot_lo,boot_hi
+capacity_index,exp_strikes_log,national,0.088,0.0334,0.142,1288,24,0.0315,0.1446
+capacity_index,alert_h_12m,national,0.1869,0.1332,0.2395,1288,24,0.1314,0.2418
+capacity_prewar,exp_strikes_log,national,0.261,0.2085,0.312,1288,24,0.2148,0.3062
+capacity_prewar,alert_h_12m,national,0.5036,0.459,0.5457,1288,24,0.4603,0.5457
+capacity_index,exp_strikes_log,within oblasts,0.0636,0.0084,0.1183,1288,24,,
+capacity_index,alert_h_12m,within oblasts,-0.0304,-0.0854,0.0248,1288,24,,
+capacity_prewar,exp_strikes_log,within oblasts,0.1423,0.0876,0.1962,1288,24,,
+capacity_prewar,alert_h_12m,within oblasts,0.0299,-0.0252,0.0849,1288,24,,

@@ -1,12 +1,13 @@
-"""26_publication_tables.py — paper Table 1 (coverage and exclusions), Table 3 (exposure descriptives) and
-Table 11 (Carpathian vs national).
+"""26_publication_tables.py — paper Table 1 (coverage and exclusions), Table 3 (exposure descriptives),
+Table 5 (capacity × exposure rank correlations) and Table 11 (Carpathian vs national).
 
 Run from anywhere with the venv Python.
 Inputs : viina/qgis/unit_stats_hromada.csv, viina/qgis/hromada_control.gpkg,
          resilience/tidy/trajectories_k3.csv, resilience/tidy/resilience_v1_k3.csv,
          resilience/tidy/resilience_index_v11_k3.csv, resilience/**/units_hromada.gpkg
 Outputs: publication/figures/table03_exposure.{csv,md}, publication/figures/table11_carpathian.{csv,md},
-         publication/figures/table01_coverage.{csv,md}, publication/figures/table01_exclusions.{csv,md}
+         publication/figures/table01_coverage.{csv,md}, publication/figures/table01_exclusions.{csv,md},
+         publication/figures/table05_correlations.{csv,md}
 
 Non-occupied hromadas only. Strikes = settlement-precision events since 24 Feb 2022 (n_all, as used in the
 models via exp_strikes_log); because most hromadas have none, the share with at least one event is reported
@@ -17,10 +18,17 @@ aggregates (rules R1–R6).
 Table 1 reproduces the sample rules of 11_composite.py (capacity >= 3 of 4 indicators, recovery >= 1 of 2
 light ratios, engagement = DREAM projects per 10k with population >= 100) and 12_moderation.py (model sample =
 recovery, capacity and strike exposure present, unit geometry present). Each excluded hromada gets one reason
-code per stage; the model stage records the first failing condition."""
+code per stage; the model stage records the first failing condition.
+
+Table 5: Spearman rho on average ranks; 95 % CI by Fisher z with the Bonett–Wright standard error
+sqrt((1 + rho²/2) / (n − 3)), checked against a percentile bootstrap (2,000 draws, seed 26). Within-oblast
+values (2025 and 2021 capacity): ranks demeaned within oblast, Pearson correlation of the residuals, degrees
+of freedom reduced by the number of oblasts − 1. rho_cap_exp_min/max refer to the 2025 capacity score."""
 from pathlib import Path
+import numpy as np
 import pandas as pd
 import pyogrio
+from scipy.stats import rankdata
 
 ROOT = Path(__file__).resolve().parent.parent
 FIG = ROOT / "publication" / "figures"
@@ -163,7 +171,8 @@ for t in (rv1, ix):
 occ = rv1["occupied"].astype(str).str.lower().isin(["true", "1"])
 keep = ["k1", "k3", "ntl_n_lit_px", "pop_ghs_2020", "dream_n", "dream_per10k"] + list(CAPC) + RECC
 u = rv1.loc[~occ, keep].merge(
-    ix[["k3", "capacity_index", "n_cap", "recovery_index", "n_rec", "engagement_index", "exp_strikes_log"]],
+    ix[["k3", "capacity_index", "n_cap", "recovery_index", "n_rec", "engagement_index", "exp_strikes_log",
+        "alert_h_12m"]],
     on="k3", how="left", validate="1:1")
 print(f"non-occupied (resilience_v1, as 11): {len(u):,}   rows in index file: {len(ix):,}   "
       f"non-occupied (hromada_control.gpkg, Tables 3/11): {len(d):,}")
@@ -283,3 +292,85 @@ print(f'  n_capacity: "{u["capacity_index"].notna().sum():,}"')
 print(f'  n_recovery: "{u["recovery_index"].notna().sum():,}"')
 print(f'  n_engagement: "{u["engagement_index"].notna().sum():,}"')
 print(f'  n_model: "{int(u["in_model"].sum()):,}"')
+
+# --- Table 5: capacity x exposure rank correlations (request 8) --------------------------------------
+print("\n=== Table 5: capacity x exposure ===")
+B, SEED = 2000, 26
+pre = pd.read_csv(TIDY / "trajectories_k3.csv", dtype=KEYS)[["k3", "capacity_prewar"]]
+pre["k3"] = pre["k3"].str.zfill(7)
+c5 = u[["k1", "k3", "capacity_index", "exp_strikes_log", "alert_h_12m"]].merge(
+    pre, on="k3", how="left", validate="1:1")
+
+
+def fisher_ci(r, n, k=0):
+    se = np.sqrt((1 + r ** 2 / 2) / (n - 3 - k))
+    lo, hi = np.tanh(np.arctanh(r) + np.array([-1.96, 1.96]) * se)
+    return lo, hi
+
+
+def rho_row(cap, exp, within=False):
+    s = c5[["k1", cap, exp]].dropna()
+    rx, ry = rankdata(s[cap]), rankdata(s[exp])
+    n, k = len(s), 0
+    if within:
+        g = s["k1"].to_numpy()
+        rx = rx - pd.Series(rx).groupby(g).transform("mean").to_numpy()
+        ry = ry - pd.Series(ry).groupby(g).transform("mean").to_numpy()
+        k = s["k1"].nunique() - 1
+    r = float(np.corrcoef(rx, ry)[0, 1])
+    lo, hi = fisher_ci(r, n, k)
+    bl = bh = np.nan
+    if not within:
+        rng = np.random.default_rng(SEED)
+        xv, yv = s[cap].to_numpy(), s[exp].to_numpy()
+        bs = np.empty(B)
+        for b in range(B):
+            j = rng.integers(0, n, n)
+            bs[b] = np.corrcoef(rankdata(xv[j]), rankdata(yv[j]))[0, 1]
+        bl, bh = np.quantile(bs, [0.025, 0.975])
+    return {"capacity": cap, "exposure": exp, "scope": "within oblasts" if within else "national",
+            "rho": r, "ci_lo": lo, "ci_hi": hi, "n": n, "oblasts": s["k1"].nunique(), "boot_lo": bl, "boot_hi": bh}
+
+
+EXPS = {"exp_strikes_log": "strikes", "alert_h_12m": "alerts"}
+CAPS = {"capacity_index": "2025", "capacity_prewar": "2021"}
+res = [rho_row(cap, e) for cap in CAPS for e in EXPS]
+res += [rho_row(cap, e, within=True) for cap in CAPS for e in EXPS]
+t5 = pd.DataFrame(res)
+t5.round(4).to_csv(FIG / "table05_correlations.csv", index=False)
+print(t5.round(3).to_string(index=False))
+
+mn = lambda x: f"{x:.2f}".replace("-", "−")
+ci = lambda r: f"{mn(r['ci_lo'])}, {mn(r['ci_hi'])}"
+get = lambda cap, e, sc="national": t5[(t5.capacity == cap) & (t5.exposure == e) & (t5.scope == sc)].iloc[0]
+cell = lambda cap, e, sc="national": f"{mn(get(cap, e, sc)['rho'])} [{ci(get(cap, e, sc))}]"
+W = "within oblasts"
+md_table(pd.DataFrame({
+    "": ["Capacity 2025", "Capacity 2021 (pre-war)", "Capacity 2025, within oblasts",
+         "Capacity 2021 (pre-war), within oblasts"],
+    "Strike exposure": [cell("capacity_index", "exp_strikes_log"), cell("capacity_prewar", "exp_strikes_log"),
+                        cell("capacity_index", "exp_strikes_log", W), cell("capacity_prewar", "exp_strikes_log", W)],
+    "Alert hours": [cell("capacity_index", "alert_h_12m"), cell("capacity_prewar", "alert_h_12m"),
+                    cell("capacity_index", "alert_h_12m", W), cell("capacity_prewar", "alert_h_12m", W)]}),
+    FIG / "table05_correlations.md",
+    "Table 5. Rank correlations between fiscal capacity and exposure",
+    f"Spearman ρ with 95 % confidence intervals (Fisher z, Bonett–Wright standard error). n = "
+    f"{get('capacity_index', 'alert_h_12m')['n']:,} for capacity 2025 and "
+    f"{get('capacity_prewar', 'alert_h_12m')['n']:,} for capacity 2021. Within-oblast values are partial "
+    "correlations after removing oblast means of the ranks. Strike exposure: all events since 24 Feb 2022; "
+    "alert hours: 1 Sep 2025 – 31 Aug 2026.")
+
+print("\nnumbers.yaml:")
+for cap, yr in CAPS.items():
+    for e, lab in EXPS.items():
+        r = get(cap, e)
+        print(f'  rho_cap_{lab}_{yr}: "{mn(r["rho"])}"')
+        print(f'  ci_cap_{lab}_{yr}: "{ci(r)}"')
+for cap, yr in CAPS.items():
+    for e, lab in EXPS.items():
+        r = get(cap, e, W)
+        key = f"rho_cap_{lab}_within" if yr == "2025" else f"rho_cap_{lab}_2021_within"
+        print(f'  {key}: "{mn(r["rho"])}"   # CI {ci(r)}')
+nat25 = t5[(t5.scope == "national") & (t5.capacity == "capacity_index")]["rho"]
+print(f'  rho_cap_exp_min: "{mn(nat25.min())}"')
+print(f'  rho_cap_exp_max: "{mn(nat25.max())}"')
