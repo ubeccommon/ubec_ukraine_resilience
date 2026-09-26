@@ -18,12 +18,18 @@ Models as 12: z(y) ~ exposure + capacity + interaction [+ oblast FE] [+ controls
   Robust inference (robust_inference.py) for exposure, capacity and interaction in every model:
   restricted wild-cluster bootstrap p-values by oblast (p_wcb_*, Webb weights, B = 9,999) and Conley
   spatial-HAC t-values (t_c50_*, t_c100_*: Bartlett kernel, 50 / 100 km, centroids in UA_LAEA).
+Publication rule R2 (maps 19–20): hromada light values shown only for a window ending at PUB_END (at least six
+  months before release) and only where the light data are reliable: >= 30 lit pixels and pre-war noise_sd
+  <= 0.35 (tr_light_reliable, as 23_carpathian.py). Fields *_pub hold the publication classes; the models and
+  the current-window classes are unchanged.
 Map classes (maps 19–20, build_qgis_project.py):
   bv_rec_cap  light-deficit tercile (1 = brightest third, 3 = darkest third of tr_recent, sample)
               x capacity tercile (non-occupied, as 13_bivariate); "na" no light metric, "occ" occupied
   s24_q       quintiles of tr_s24_rel (1 = largest loss); chg_cls improved/stable/declined/na/occ
+  *_pub       the same on the publication window and the reliable hromadas only (terciles / quintiles among
+              those); used by the map pages
 Outputs: tidy/trajectories_k3.csv, tidy/ntl_quarterly_k3.csv, tidy/trajectory_models.csv,
-  tidy/trajectory_classes.json (cut points, change shares for captions),
+  tidy/trajectory_classes.json (cut points, change shares, publication window for captions),
   resilience_maps.gpkg layer hromada_trajectories.
 """
 import json
@@ -44,6 +50,8 @@ EXCL = {"2025-06"}
 MIN_LIT = 10
 B_BOOT = 9999
 CUTOFFS = (50_000, 100_000)
+PUB_END = "2026-03"            # last month shown on published hromada light maps (R2: >= 6 months before release)
+REL_NLIT, REL_NOISE = 30, 0.35  # reliability rule for single-hromada light values (R2, as 23_carpathian.py)
 
 
 def log(*a):
@@ -117,9 +125,12 @@ def main():
                       usecols=["k3", "year", "month", "date", "ntl_idx"]))
     p = p[~p["date"].isin(EXCL) & p["ntl_idx"].notna()]
     last = pd.Period(p["date"].max(), freq="M")
+    pub = pd.Period(PUB_END, freq="M")
+    assert pub <= last, f"PUB_END {PUB_END} lies after the last panel month {last}"
     W = {"w2223": ("2022-11", "2023-02"), "h2_23": ("2023-07", "2023-12"),
          "s24": ("2024-06", "2024-07"), "w2425": ("2024-12", "2025-02"),
-         "recent": (str(last - 11), str(last))}
+         "recent": (str(last - 11), str(last)),
+         "recent_pub": (str(pub - 11), str(pub))}
     T = u.copy()
     nwin = {}
     for name, (a, b) in W.items():
@@ -145,14 +156,16 @@ def main():
 
     nz = k(pd.read_csv(TIDY / "nightlights_noise_k3.csv", dtype={"k3": str})).set_index("k3")
     T["tr_noise_sd"] = T["k3"].map(nz["noise_sd"])
-    dl = np.log(T["tr_recent"].clip(lower=0.01)) - np.log(T["tr_h2_23"].clip(lower=0.01))
-    T["tr_change_z"] = dl / (T["tr_noise_sd"] * np.sqrt(1 / nwin["recent"] + 1 / nwin["h2_23"]))
-    T["tr_change_class"] = np.select([T["tr_change_z"] > 2, T["tr_change_z"] < -2],
-                                     ["improved", "declined"], "stable")
-    T.loc[T["tr_change_z"].isna(), "tr_change_class"] = ""
+    for sfx, win in (("", "recent"), ("_pub", "recent_pub")):
+        dl = np.log(T[f"tr_{win}"].clip(lower=0.01)) - np.log(T["tr_h2_23"].clip(lower=0.01))
+        T[f"tr_change_z{sfx}"] = dl / (T["tr_noise_sd"] * np.sqrt(1 / nwin[win] + 1 / nwin["h2_23"]))
+        T[f"tr_change_class{sfx}"] = np.select([T[f"tr_change_z{sfx}"] > 2, T[f"tr_change_z{sfx}"] < -2],
+                                               ["improved", "declined"], "stable")
+        T.loc[T[f"tr_change_z{sfx}"].isna(), f"tr_change_class{sfx}"] = ""
     ntl_ok = (T["occupied"] == 0) & (T["ntl_n_lit_px"] >= MIN_LIT) & T["tr_noise_sd"].notna()
     for c in [c for c in T if c.startswith("tr_")]:
         T.loc[~ntl_ok, c] = np.nan if T[c].dtype.kind == "f" else ""
+    T["tr_light_reliable"] = (ntl_ok & (T["ntl_n_lit_px"] >= REL_NLIT) & (T["tr_noise_sd"] <= REL_NOISE)).astype(int)
 
     # ---------------- budgets
     bq = k(pd.read_csv(TIDY / "budget_quarterly_k3.csv", dtype={"k3": str}))
@@ -183,7 +196,20 @@ def main():
     chg = T["tr_change_class"].replace("", np.nan).fillna("na").astype(str)
     chg[occ] = "occ"
     T["chg_cls"] = chg
+    # publication classes (R2): publication window, reliable hromadas only
+    rel = T["tr_light_reliable"] == 1
+    dark_tp = nq(-T["tr_recent_pub"].where(rel), 3)
+    bvp = (dark_tp.astype("string") + cap_t.astype("string")).where(dark_tp.notna() & cap_t.notna(), "na")
+    bvp[occ] = "occ"
+    T["bv_rec_cap_pub"] = bvp.astype(str)
+    s24qp = nq(T["tr_s24_rel"].where(rel), 5).fillna("na")
+    s24qp[occ] = "occ"
+    T["s24_q_pub"] = s24qp.astype(str)
+    chgp = T["tr_change_class_pub"].where(rel).replace("", np.nan).fillna("na").astype(str)
+    chgp[occ] = "occ"
+    T["chg_cls_pub"] = chgp
     carp = T["k1"].isin(CARP)
+    allu = pd.Series(True, index=T.index)
     classes = {
         "recent_window": f"{W['recent'][0]} – {W['recent'][1]}",
         "recent_terciles": T["tr_recent"].dropna().quantile([1 / 3, 2 / 3]).round(3).tolist(),
@@ -191,11 +217,23 @@ def main():
         "s24_quintiles": T["tr_s24_rel"].dropna().quantile([.2, .4, .6, .8]).round(3).tolist(),
         "change_share": {grp: T.loc[m & ~occ, "tr_change_class"].replace("", np.nan).dropna()
                          .value_counts(normalize=True).round(3).to_dict()
-                         for grp, m in (("national", pd.Series(True, index=T.index)), ("carpathian", carp))},
+                         for grp, m in (("national", allu), ("carpathian", carp))},
         "n_light": int(ntl_ok.sum()),
+        "pub_end": PUB_END,
+        "pub_window": f"{W['recent_pub'][0]} – {W['recent_pub'][1]}",
+        "pub_rule": f">= {REL_NLIT} lit pixels and pre-war noise_sd <= {REL_NOISE}",
+        "n_light_reliable": int(rel.sum()),
+        "recent_terciles_pub": T.loc[rel, "tr_recent_pub"].dropna().quantile([1 / 3, 2 / 3]).round(3).tolist(),
+        "s24_quintiles_pub": T.loc[rel, "tr_s24_rel"].dropna().quantile([.2, .4, .6, .8]).round(3).tolist(),
+        "change_share_pub": {grp: T.loc[m & ~occ & rel, "tr_change_class_pub"].replace("", np.nan).dropna()
+                             .value_counts(normalize=True).round(3).to_dict()
+                             for grp, m in (("national", allu), ("carpathian", carp))},
     }
     (TIDY / "trajectory_classes.json").write_text(json.dumps(classes, ensure_ascii=False, indent=1))
     log(f"map classes: bv_rec_cap {T.loc[~occ, 'bv_rec_cap'].value_counts().sort_index().to_dict()}")
+    log(f"publication classes ({classes['pub_window']}, reliable n={classes['n_light_reliable']}): "
+        f"bv_rec_cap_pub {T.loc[~occ, 'bv_rec_cap_pub'].value_counts().sort_index().to_dict()}  "
+        f"chg_cls_pub {T.loc[~occ, 'chg_cls_pub'].value_counts().sort_index().to_dict()}")
     log(f"trajectory_classes.json: {classes}")
 
     qn.merge(bq[["k3", "year", "q", "own_gf_rel", "pdfo_civ_rel"]], on=["k3", "year", "q"],
@@ -301,7 +339,8 @@ def main():
     try:
         import geopandas as gpd
         g = k(gpd.read_file(UNITS, layer="hromada")[["k3", "geometry"]])
-        keep = (["k1", "k3", "name", "occupied", "bv_rec_cap", "s24_q", "chg_cls"]
+        keep = (["k1", "k3", "name", "occupied", "bv_rec_cap", "s24_q", "chg_cls",
+                 "bv_rec_cap_pub", "s24_q_pub", "chg_cls_pub"]
                 + [c for c in T if c.startswith(("tr_", "bt_"))])
         g.merge(T[keep], on="k3", how="left").to_file(MAPS, layer="hromada_trajectories",
                                                      driver="GPKG", engine="pyogrio")
@@ -319,6 +358,10 @@ def main():
          ("tr_below50_share", src, lic, "share", "2022Q2-", "hromada", "share of quarters with ntl_idx < 0.5"),
          ("tr_change_class", src, lic, "class", "", "hromada",
           "recent vs H2 2023, |dlog| > 2 x own pre-war noise (noise_sd 2021/2020)"),
+         ("tr_change_class_pub", src, lic, "class", W["recent_pub"][0] + ".." + W["recent_pub"][1], "hromada",
+          "publication window (ends PUB_END, rule R2) vs H2 2023, |dlog| > 2 x own pre-war noise"),
+         ("tr_light_reliable", src, lic, "flag", "", "hromada",
+          f"1 if >= {REL_NLIT} lit pixels and pre-war noise_sd <= {REL_NOISE} (single-hromada light values publishable, R2)"),
          ("bt_pit_recent", src, lic, "ratio", "last 4 q", "hromada", "mean pdfo_civ_rel, last 4 complete quarters"),
          ("bt_own_recent", src, lic, "ratio", "last 4 q", "hromada", "mean own_gf_rel, last 4 complete quarters"),
          ("bt_pit_2022", src, lic, "ratio", "2022Q2-Q4", "hromada", "mean pdfo_civ_rel 2022Q2-Q4 (relocation effect)"),

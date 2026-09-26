@@ -20,16 +20,17 @@ Creates qgis/ukraine_strikes.qgz with styled layers and A4 landscape layouts, ex
  16     resilience: night-light recovery quintiles (lit pixels)
  17     Carpathian zoom — alert exposure x capacity, regional terciles
  18     oblast context — reSCORE 2024 citizen resilience (difference from national) + IDPs present
- 19     trajectories: recent night-light deficit x capacity (bivariate 3x3, national terciles)
- 20     trajectories: summer-2024 outage loss (quintiles) | change since H2 2023 vs own noise
+ 19     trajectories: night-light deficit x capacity (bivariate 3x3), publication window and reliable hromadas (R2)
+ 20     trajectories: summer-2024 outage loss (quintiles) | change since H2 2023 vs own noise, publication window (R2)
 Inputs from the venv steps: qgis/*.gpkg, qgis/surfaces/*.tif, qgis/hotspots/*, qgis/fgb/*.fgb (export_fgb.py),
 qgis/meta.json (write_meta.py: data dates for the captions),
 ../resilience/resilience_maps.gpkg (resilience/13_bivariate.py) for maps 14–17,
 layer hromada_trajectories + tidy/trajectory_classes.json + tidy/trajectory_models.csv
-(resilience/22_trajectories.py) for maps 19–20 (captions read the current model results).
+(resilience/22_trajectories.py) for maps 19–20 (captions read the current model results; the map fields *_pub
+end at PUB_END and show only hromadas with reliable light data, rule R2).
 Requires: sudo apt install qgis python3-qgis
 """
-import os, json, csv, resource
+import os, json, csv, resource, datetime
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 # many layers share files; parallel export opens one connection per layer and thread
 _soft, _hard = resource.getrlimit(resource.RLIMIT_NOFILE)
@@ -371,9 +372,9 @@ def cat_style(lyr, field, spec, outline="#ffffff", outline_w=0.05):
                 for v, c, lab in spec]
         lyr.setRenderer(QgsCategorizedSymbolRenderer(field, cats))
 
-def bv_style(lyr, field, a="exposure", b="capacity"):
+def bv_style(lyr, field, a="exposure", b="capacity", na_label="No data"):
     spec = [(k, c, f"{a} {E_LBL[k[0]]} · {b} {E_LBL[k[1]]}") for k, c in BV_PAL.items()]
-    spec.append(("na", "#ffffff", "No data"))
+    spec.append(("na", "#ffffff", na_label))
     cat_style(lyr, field, spec)
 
 bv_alt = add_vector(RES, "Exposure (alert hours) × capacity — national terciles", layer="hromada_bivariate",
@@ -447,28 +448,48 @@ def tb(outcome, spec, coef="cap"):
 def pct(v):
     return f"{100 * v:.0f} %"
 
-_q = TC.get("s24_quintiles", [])
+def mon(ym):
+    """'2026-03' -> 'Mar 2026'."""
+    try:
+        y, m = ym.strip().split("-")
+        return datetime.date(int(y), int(m), 1).strftime("%b %Y")
+    except Exception:
+        return ym
+
+def win(key):
+    w = TC.get(key)
+    if not w:
+        return "?"
+    a, b = [s.strip() for s in w.split("–")]
+    return f"{mon(a)} – {mon(b)}"
+
+PUB_WIN, REC_WIN = win("pub_window"), win("recent_window")
+if PUB_WIN == "?":
+    print("!! trajectory_classes.json has no publication window — re-run resilience/22_trajectories.py")
+NA_REL = "No reliable light data (< 30 lit pixels or noisy)"
+
+_q = TC.get("s24_quintiles_pub", [])
 if len(_q) == 4:
     S24_LBL = [f"< {pct(_q[0])} of H2 2023 (largest loss)", f"{pct(_q[0])} – {pct(_q[1])}",
                f"{pct(_q[1])} – {pct(_q[2])}", f"{pct(_q[2])} – {pct(_q[3])}", f"> {pct(_q[3])} (smallest loss)"]
 else:
     S24_LBL = ["Lowest 20 % (largest loss)", "20–40 %", "40–60 %", "60–80 %", "Highest 20 % (smallest loss)"]
 S24_PAL = [(str(i + 1), c, S24_LBL[i]) for i, c in enumerate(["#d7191c", "#fdae61", "#ffffbf", "#abd9e9", "#2c7bb6"])]
-S24_PAL.append(("na", "#ffffff", "No value (< 10 lit pixels or missing)"))
+S24_PAL.append(("na", "#ffffff", NA_REL))
 CHG_PAL = [("declined", "#d7191c", "Declined (beyond own noise)"), ("stable", "#e0e0e0", "Stable (within ±2 × noise)"),
-           ("improved", "#2c7bb6", "Improved (beyond own noise)"), ("na", "#ffffff", "No value (< 10 lit pixels)")]
+           ("improved", "#2c7bb6", "Improved (beyond own noise)"), ("na", "#ffffff", NA_REL)]
 
 # throwaway first instance (same gpkg quirk as oblast_context on page 18)
 traj_probe = add_vector(RES, "hromada_trajectories (probe, unused)", layer="hromada_trajectories", group=R)
-traj_bv = add_vector(RES, "Recent light deficit × capacity — national terciles", layer="hromada_trajectories",
+traj_bv = add_vector(RES, f"Light deficit {PUB_WIN} × capacity — national terciles", layer="hromada_trajectories",
                      group=R, subset="\"occupied\" = 0")
-bv_style(traj_bv, "bv_rec_cap", a="light deficit")
+bv_style(traj_bv, "bv_rec_cap_pub", a="light deficit", na_label=NA_REL)
 traj_s24 = add_vector(RES, "Summer-2024 outage: light Jun–Jul 2024 vs H2 2023, quintiles", layer="hromada_trajectories",
                       group=R, subset="\"occupied\" = 0")
-cat_style(traj_s24, "s24_q", S24_PAL)
-traj_chg = add_vector(RES, "Change last 12 months vs H2 2023 (against own pre-war noise)", layer="hromada_trajectories",
+cat_style(traj_s24, "s24_q_pub", S24_PAL)
+traj_chg = add_vector(RES, f"Change {PUB_WIN} vs H2 2023 (against own pre-war noise)", layer="hromada_trajectories",
                       group=R, subset="\"occupied\" = 0")
-cat_style(traj_chg, "chg_cls", CHG_PAL)
+cat_style(traj_chg, "chg_cls_pub", CHG_PAL)
 R.setItemVisibilityChecked(False)
 
 for lyr, vis in [(osm, True), (outline, True), (oblasts, False), (hexes, True), (west, False), (settl, True), (pts, False)]:
@@ -715,23 +736,27 @@ N18 = ("reSCORE 2024 (SeeD / UNDP, General Population; n = 7,758, face-to-face, 
        "(scoreforpeace.org); IOM DTM via HDX; JRC GHS-POP; boundaries OCHA COD-AB / SSPE Kartographia (CC BY-IGO); "
        "© OpenStreetMap contributors (ODbL).")
 
-_cs = TC.get("change_share", {})
+_cs = TC.get("change_share_pub", {})
 def _sh(grp):
     d = _cs.get(grp, {})
     return " / ".join(pct(d.get(k, 0)) for k in ("declined", "stable", "improved")) if d else "?"
 _O1, _O2 = "log recent level", "log summer-24 dip vs H2-23"
-N19 = (f"Light deficit = terciles (reversed) of mean lit-pixel radiance {TC.get('recent_window', '?')} relative to the same "
-       "calendar months in 2020–21; non-occupied hromadas with ≥ 10 lit pixels (white = fewer). Capacity terciles as map 14. "
-       f"Within oblasts, capacity goes with a higher recent light level ({tb(_O1, 'M2 FE')}; with controls "
-       f"{tb(_O1, 'M3 FE+ctrl')}; standardised); with pre-war 2021 capacity only ({tb(_O1, 'M5 pre-war cap')}), so part of "
-       "the association runs from local economic activity to both. No buffering: exposure × capacity "
-       f"({tb(_O1, 'M3 FE+ctrl', 'int')}) after oblast effects. Radiance reflects street-lighting policy and grid conditions, "
-       "not only damage; cross-sectional association. ")
-N20 = ("Left: mean radiance Jun–Jul 2024 (rolling outages) as a share of the same hromada's Jul–Dec 2023 level; quintiles. "
-       f"Within oblasts, higher capacity goes with a smaller loss ({tb(_O2, 'M3 FE+ctrl')}), also with pre-war 2021 capacity "
-       f"({tb(_O2, 'M5 pre-war cap')}). Right: last 12 months vs Jul–Dec 2023, change beyond ±2 × the hromada's own "
-       f"pre-war month-to-month noise (2021 vs 2020); declined / stable / improved: all {_sh('national')}, Carpathian "
-       f"oblasts {_sh('carpathian')}. Baseline = same month 2020–21; June 2025 excluded (retrieval artefact). ")
+REL_TXT = (f"Only hromadas with reliable light data are shown ({TC.get('n_light_reliable', '?')}: ≥ 30 lit pixels and "
+           "pre-war month-to-month noise ≤ 0.35; white = not shown). ")
+N19 = (f"Light deficit = terciles (reversed) of mean lit-pixel radiance {PUB_WIN} relative to the same calendar months in "
+       f"2020–21, among the hromadas shown. The map ends in {mon(TC.get('pub_end', '?'))}, at least six months before "
+       "publication. " + REL_TXT + "Capacity terciles as map 14. "
+       f"Models on the latest 12 months ({REC_WIN}, all hromadas with ≥ 10 lit pixels): within oblasts, capacity goes with a "
+       f"higher light level ({tb(_O1, 'M2 FE')}; with controls {tb(_O1, 'M3 FE+ctrl')}; standardised); with pre-war 2021 "
+       f"capacity only ({tb(_O1, 'M5 pre-war cap')}), so part of the association runs from local economic activity to both. "
+       f"No buffering: exposure × capacity ({tb(_O1, 'M3 FE+ctrl', 'int')}) after oblast effects. Radiance reflects "
+       "street-lighting policy and grid conditions, not only damage; cross-sectional association. ")
+N20 = ("Left: mean radiance Jun–Jul 2024 (rolling outages) as a share of the same hromada's Jul–Dec 2023 level; quintiles "
+       f"among the hromadas shown. Within oblasts, higher capacity goes with a smaller loss ({tb(_O2, 'M3 FE+ctrl')}), also "
+       f"with pre-war 2021 capacity ({tb(_O2, 'M5 pre-war cap')}). Right: {PUB_WIN} vs Jul–Dec 2023, change beyond ±2 × the "
+       f"hromada's own pre-war month-to-month noise (2021 vs 2020); declined / stable / improved: all {_sh('national')}, "
+       f"Carpathian oblasts {_sh('carpathian')}. " + REL_TXT +
+       "Baseline = same month 2020–21; June 2025 excluded (retrieval artefact). ")
 
 layouts = [
     make_layout("01_risk_index", "Russian strike risk index — H3 hexagons, recency-weighted",
@@ -795,16 +820,16 @@ layouts = [
                      legend=[(ctx_leg, "reSCORE indicator vs national (0–10 scale)"),
                              (idp_ctx, "IDPs present per 1,000 pre-war residents")]),
     make_bv_layout("19_trajectory_level_capacity",
-                   "Night lights now vs pre-war — light deficit × institutional capacity, hromadas",
+                   f"Night lights {PUB_WIN} vs pre-war — light deficit × institutional capacity, hromadas",
                    traj_bv, [occ, obl_b, outline, cities], N19 + credit_res,
-                   "light deficit, last 12 m", extra_legend=[occ],
+                   f"light deficit, {PUB_WIN}", extra_legend=[occ],
                    bv_notes="magenta = low light, low capacity\n"
                             "dark blue = low light, high capacity\n"
                             "teal = high light, high capacity"),
     make_layout_multi("20_trajectory_outage",
                       "Summer-2024 power outages and change since 2023 — night lights, hromadas",
                       [([osm, traj_s24, occ, obl_b, outline], "Light Jun–Jul 2024 vs Jul–Dec 2023"),
-                       ([osm, traj_chg, occ, obl_b, outline], "Last 12 months vs Jul–Dec 2023")],
+                       ([osm, traj_chg, occ, obl_b, outline], f"{PUB_WIN} vs Jul–Dec 2023")],
                       N20 + credit_res,
                       legend=[(traj_s24, "Outage loss (quintiles)"), (traj_chg, "Change vs own noise"), occ],
                       legend_cols=3, legend_split=False),

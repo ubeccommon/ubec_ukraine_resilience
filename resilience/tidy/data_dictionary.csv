@@ -60,10 +60,13 @@ tr_h2_23,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public doma
 tr_s24,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2024-06..2024-07,hromada,"mean ntl_idx (radiance / same month 2020-21) over 2024-06..2024-07, >= half months valid"
 tr_w2425,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2024-12..2025-02,hromada,"mean ntl_idx (radiance / same month 2020-21) over 2024-12..2025-02, >= half months valid"
 tr_recent,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2025-09..2026-08,hromada,"mean ntl_idx (radiance / same month 2020-21) over 2025-09..2026-08, >= half months valid"
+tr_recent_pub,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2025-04..2026-03,hromada,"mean ntl_idx (radiance / same month 2020-21) over 2025-04..2026-03, >= half months valid"
 tr_trough,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2022Q2-,hromada,minimum quarterly ntl_idx since 2022Q2
 tr_slope_2426,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio/yr,2024-,hromada,"OLS slope of quarterly ntl_idx, >= 8 quarters"
 tr_below50_share,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,share,2022Q2-,hromada,share of quarters with ntl_idx < 0.5
 tr_change_class,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,class,,hromada,"recent vs H2 2023, |dlog| > 2 x own pre-war noise (noise_sd 2021/2020)"
+tr_change_class_pub,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,class,2025-04..2026-03,hromada,"publication window (ends PUB_END, rule R2) vs H2 2023, |dlog| > 2 x own pre-war noise"
+tr_light_reliable,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,flag,,hromada,"1 if >= 30 lit pixels and pre-war noise_sd <= 0.35 (single-hromada light values publishable, R2)"
 bt_pit_recent,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,last 4 q,hromada,"mean pdfo_civ_rel, last 4 complete quarters"
 bt_own_recent,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,last 4 q,hromada,"mean own_gf_rel, last 4 complete quarters"
 bt_pit_2022,derived: 19 (Black Marble VNP46A3) and 20 (openbudget),NASA public domain; CMU 835,ratio,2022Q2-Q4,hromada,mean pdfo_civ_rel 2022Q2-Q4 (relocation effect)

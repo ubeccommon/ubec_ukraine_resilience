@@ -26,5 +26,31 @@
    "improved": 0.081
   }
  },
- "n_light": 1021
+ "n_light": 1021,
+ "pub_end": "2026-03",
+ "pub_window": "2025-04 – 2026-03",
+ "pub_rule": ">= 30 lit pixels and pre-war noise_sd <= 0.35",
+ "n_light_reliable": 622,
+ "recent_terciles_pub": [
+  0.279,
+  0.517
+ ],
+ "s24_quintiles_pub": [
+  0.127,
+  0.257,
+  0.388,
+  0.539
+ ],
+ "change_share_pub": {
+  "national": {
+   "stable": 0.55,
+   "declined": 0.273,
+   "improved": 0.177
+  },
+  "carpathian": {
+   "stable": 0.649,
+   "declined": 0.246,
+   "improved": 0.104
+  }
+ }
 }
