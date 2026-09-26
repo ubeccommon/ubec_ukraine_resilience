@@ -46,6 +46,7 @@ if [[ "${SKIP_RES:-0}" != "1" ]]; then
     python 23_carpathian.py                              # Carpathian profiles + series (docs/carpathian_profiles.xlsx)
     python 24_carpathian_chart.py                        # Figure 1 of the Carpathian brief (docs/fig1_*.png/svg)
     python 25_public_tables.py                           # public copies without R4 fields (public/*.csv)
+    python 26_publication_tables.py                      # paper tables (publication/figures/table*.csv/md)
   ) 2>&1 | tee qgis/step_res.log
 else
   echo "SKIP_RES=1 — resilience layers not rebuilt (maps 14–17 use the existing resilience_maps.gpkg)"
