@@ -1,11 +1,17 @@
 # Ukraine strikes × hromada resilience
 
+> **Public draft for discussion.** This repository is shared so that the concept, methods and
+> interpretation can be discussed, reviewed and refined before the working paper is released.
+> It is not peer reviewed. Results and figures may change, and some tables are held back until
+> the rules in [Security rules](#security-rules) and the upstream terms are settled. Comments are
+> welcome; see [Feedback and review](#feedback-and-review).
+
 A reproducible spatial-analysis pipeline linking Russian strikes and air-raid alerts in Ukraine to
 the capacity and recovery of Ukraine's 1,763 hromadas (territorial communities), 2022–2026.
 It combines open data on strikes, alerts, local budgets, population, displacement and monthly
 night-time lights, and builds a 20-page QGIS map atlas.
 
-**Author:** Michel Garand, UBEC Platform · **Status:** v1.1, step 2 (time dimension) ·
+**Author:** Michel Garand, UBEC Platform · **Status:** public draft for discussion, v1.1 step 2 (time dimension) ·
 **Licences:** code MIT · data ODbL 1.0 · docs and figures CC BY 4.0 (see [`LICENSES.md`](LICENSES.md))
 
 > Aggregated open data only. Nothing below hromada level, no personal data, and no layers that
@@ -162,6 +168,20 @@ The repository follows the publication rules of the companion paper:
 
 If you believe anything here could put people or infrastructure at risk, open a private
 security advisory on GitHub or contact the author before republishing.
+
+## Feedback and review
+
+The draft is open for discussion of the concept, the indicators and their interpretation.
+
+- **Questions, ideas and conceptual critique:** open a thread in GitHub Discussions.
+- **Specific errors** in code, data or documentation: open an issue, naming the file and, where
+  possible, the line or table row.
+- **Anything that could put people or infrastructure at risk:** do not post it publicly. Use
+  GitHub's private vulnerability reporting (Security tab → Report a vulnerability) or email
+  stewardship@ubec.network.
+
+Please keep contributions at the level of aggregated open data: no personal data, no names of
+officials or volunteers, and nothing that locates sites below hromada level.
 
 ## Licences and citation
 
