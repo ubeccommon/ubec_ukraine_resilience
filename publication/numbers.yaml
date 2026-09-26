@@ -55,6 +55,12 @@ rho_cap_alerts_within: "−0.03"
 rho_cap_strikes_2021_within: "0.14"
 rho_cap_alerts_2021_within: "0.03"
 
+# Table 6 (request 26)
+n_hilo_alerts: "104"
+n_hilo_strikes: "55"
+n_hilo_alerts_carp: "0"
+n_hilo_carp_regional: "36"
+
 # --- Monthly night-light panel (trajectory update)
 nl_panel_end: "August 2026"
 nl_panel_end_year: "2026"

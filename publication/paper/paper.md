@@ -291,15 +291,63 @@ The small positive correlation is consistent with larger urban hromadas being bo
 
 Maps 14 and 15 cross capacity terciles with exposure terciles. Each hromada falls into one of nine classes. The class of practical interest is high exposure with low capacity: hromadas that face the most sustained pressure with the weakest own finances.
 
-**Table 6. Hromadas by capacity and exposure tercile** [[PENDING: counts per cell for alert hours and strikes, national and Carpathian — request 26]]
+<!-- begin table: figures/table06_terciles.md (resilience/26_publication_tables.py) -->
+**Table 6. Hromadas by capacity and exposure class**
 
-| | Low capacity | Middle | High capacity |
+Classes as drawn on Maps 14, 15 and 17 (codes = exposure class + capacity class; 1 = low). Capacity and alert hours: terciles among non-occupied hromadas. Strikes: low = no strike since 24 Feb 2022; middle and high split the struck hromadas at their median. Carpathian panels on national classes are subsets of the national tables; the regional panel re-computes terciles within the four oblasts.
+
+**Alert hours, national terciles, Ukraine (non-occupied)**
+
+|  | Low capacity | Middle | High capacity |
 |---|---|---|---|
-| **High exposure** | | | |
-| **Middle** | | | |
-| **Low exposure** | | | |
+| High exposure | 104 | 157 | 169 |
+| Middle | 114 | 157 | 158 |
+| Low exposure | 212 | 115 | 102 |
 
-Because capacity and exposure are nearly independent, all nine cells are populated. [[PENDING: one sentence on where the high-exposure / low-capacity hromadas cluster, based on Table 6]]
+n = 1,288 classified; 1 without a class.
+
+**Strike exposure, national classes, Ukraine (non-occupied)**
+
+|  | Low capacity | Middle | High capacity |
+|---|---|---|---|
+| High exposure | 55 | 25 | 59 |
+| Middle | 30 | 62 | 60 |
+| Low exposure | 345 | 342 | 310 |
+
+n = 1,288 classified; 1 without a class.
+
+**Alert hours, national terciles, Carpathian oblasts**
+
+|  | Low capacity | Middle | High capacity |
+|---|---|---|---|
+| High exposure | 0 | 0 | 0 |
+| Middle | 0 | 0 | 0 |
+| Low exposure | 126 | 58 | 67 |
+
+n = 251 classified.
+
+**Strike exposure, national classes, Carpathian oblasts**
+
+|  | Low capacity | Middle | High capacity |
+|---|---|---|---|
+| High exposure | 0 | 1 | 6 |
+| Middle | 2 | 5 | 8 |
+| Low exposure | 124 | 52 | 53 |
+
+n = 251 classified.
+
+**Alert hours, regional terciles (Map 17), Carpathian oblasts**
+
+|  | Low capacity | Middle | High capacity |
+|---|---|---|---|
+| High exposure | 36 | 30 | 18 |
+| Middle | 23 | 27 | 33 |
+| Low exposure | 25 | 26 | 33 |
+
+n = 251 classified.
+<!-- end table: figures/table06_terciles.md -->
+
+Nationally, all nine cells are populated, but not evenly. Low alert exposure goes with low capacity in 212 hromadas, 126 of them in the four Carpathian oblasts, in line with ρ = {{rho_cap_alerts_2025}} (Table 5). The {{n_hilo_alerts}} hromadas with high alert exposure and low capacity lie in 11 oblasts in the north-east, east and south: Sumy (20), Kharkiv (18), Kherson (15), Dnipropetrovsk (11), and Chernihiv, Donetsk and Zaporizhzhia (9 each). On strikes the same cell holds {{n_hilo_strikes}} hromadas, led by Kharkiv, Sumy and Kherson. No Carpathian hromada reaches the national middle or top alert tercile, so Map 17 classifies the Carpathian oblasts on regional terciles; on that scale {{n_hilo_carp_regional}} hromadas combine relatively high exposure with low capacity.
 
 **Figures:** Map 14 — alert hours × capacity (bivariate 3×3). Map 15 — strikes × capacity (bivariate 3×3).
 

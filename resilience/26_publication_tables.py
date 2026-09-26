@@ -1,13 +1,16 @@
 """26_publication_tables.py — paper Table 1 (coverage and exclusions), Table 3 (exposure descriptives),
-Table 5 (capacity × exposure rank correlations) and Table 11 (Carpathian vs national).
+Table 5 (capacity × exposure rank correlations), Table 6 (capacity × exposure terciles) and Table 11
+(Carpathian vs national).
 
 Run from anywhere with the venv Python.
 Inputs : viina/qgis/unit_stats_hromada.csv, viina/qgis/hromada_control.gpkg,
          resilience/tidy/trajectories_k3.csv, resilience/tidy/resilience_v1_k3.csv,
-         resilience/tidy/resilience_index_v11_k3.csv, resilience/**/units_hromada.gpkg
+         resilience/tidy/resilience_index_v11_k3.csv, resilience/**/units_hromada.gpkg,
+         resilience/resilience_maps.gpkg:hromada_bivariate
 Outputs: publication/figures/table03_exposure.{csv,md}, publication/figures/table11_carpathian.{csv,md},
          publication/figures/table01_coverage.{csv,md}, publication/figures/table01_exclusions.{csv,md},
-         publication/figures/table05_correlations.{csv,md}
+         publication/figures/table05_correlations.{csv,md}, publication/figures/table06_terciles.{csv,md},
+         publication/figures/table06_hilo_oblast.csv
 
 Non-occupied hromadas only. Strikes = settlement-precision events since 24 Feb 2022 (n_all, as used in the
 models via exp_strikes_log); because most hromadas have none, the share with at least one event is reported
@@ -23,7 +26,12 @@ code per stage; the model stage records the first failing condition.
 Table 5: Spearman rho on average ranks; 95 % CI by Fisher z with the Bonett–Wright standard error
 sqrt((1 + rho²/2) / (n − 3)), checked against a percentile bootstrap (2,000 draws, seed 26). Within-oblast
 values (2025 and 2021 capacity): ranks demeaned within oblast, Pearson correlation of the residuals, degrees
-of freedom reduced by the number of oblasts − 1. rho_cap_exp_min/max refer to the 2025 capacity score."""
+of freedom reduced by the number of oblasts − 1. rho_cap_exp_min/max refer to the 2025 capacity score.
+
+Table 6: counts from the classes drawn on Maps 14, 15 and 17 (13_bivariate.py, codes = exposure tercile +
+capacity tercile, 1 = low). Strike classes follow the zero rule of 13: class 1 = no strike, classes 2 and 3
+split the struck hromadas at their median. Carpathian panels are shown on national terciles and, for alert
+hours, on the regional terciles of Map 17."""
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -45,11 +53,16 @@ NAMES = {"Cherkasy": "Cherkasy", "Chernihiv": "Chernihiv", "Chernivtsi": "Cherni
          "Zaporizhzhya": "Zaporizhzhia", "Zhytomyr": "Zhytomyr"}
 
 
-def md_table(df, path, title, note):
+def md_lines(df, title, note):
     cols = list(df.columns)
     lines = [f"**{title}**", "", "| " + " | ".join(cols) + " |", "|" + "|".join("---" for _ in cols) + "|"]
     lines += ["| " + " | ".join(str(x) for x in r) + " |" for r in df.itertuples(index=False)]
     lines += ["", note, ""]
+    return lines
+
+
+def md_table(df, path, title, note):
+    lines = md_lines(df, title, note)
     path.write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
 
@@ -374,3 +387,72 @@ for cap, yr in CAPS.items():
 nat25 = t5[(t5.scope == "national") & (t5.capacity == "capacity_index")]["rho"]
 print(f'  rho_cap_exp_min: "{mn(nat25.min())}"')
 print(f'  rho_cap_exp_max: "{mn(nat25.max())}"')
+
+# --- Table 6: capacity x exposure terciles (request 26) ----------------------------------------------
+print("\n=== Table 6: tercile cross-tab ===")
+bv = pyogrio.read_dataframe(ROOT / "resilience/resilience_maps.gpkg", layer="hromada_bivariate",
+                            read_geometry=False)[["k3", "bv_alt", "bv_str", "bv_carp", "carp", "occupied"]]
+bv["k3"] = bv["k3"].astype(str).str.zfill(7)
+bv = bv[bv["occupied"] == 0].merge(u[["k3", "oblast"]], on="k3", how="left", validate="1:1")
+assert len(bv) == len(u) and bv["oblast"].notna().all(), "bivariate layer and index universe differ"
+carp = bv["carp"] == 1
+print(f"bivariate layer, non-occupied: {len(bv):,} (Carpathian {int(carp.sum())})")
+print(f"strike class 1 (no strike): {(bv['bv_str'].str[0] == '1').sum():,}   "
+      f"struck, split at median: {bv['bv_str'].str.fullmatch(r'[23][123]').sum():,}")
+
+EXP_LAB = {"3": "High exposure", "2": "Middle", "1": "Low exposure"}
+CAP_LAB = {"1": "Low capacity", "2": "Middle", "3": "High capacity"}
+PANELS = [("alerts_national", "bv_alt", slice(None), "Alert hours, national terciles, Ukraine (non-occupied)"),
+          ("strikes_national", "bv_str", slice(None), "Strike exposure, national classes, Ukraine (non-occupied)"),
+          ("alerts_carp", "bv_alt", carp, "Alert hours, national terciles, Carpathian oblasts"),
+          ("strikes_carp", "bv_str", carp, "Strike exposure, national classes, Carpathian oblasts"),
+          ("alerts_carp_regional", "bv_carp", carp, "Alert hours, regional terciles (Map 17), Carpathian oblasts")]
+
+
+def grid(codes):
+    ok = codes.str.fullmatch(r"[123][123]")
+    c = codes[ok]
+    g = pd.crosstab(c.str[0], c.str[1]).reindex(index=list("321"), columns=list("123"), fill_value=0)
+    return g, int((~ok).sum())
+
+
+t6long, md6, hilo = [], [], {}
+for key, col, sel, title in PANELS:
+    g, unc = grid(bv.loc[sel, col])
+    hilo[key] = int(g.loc["3", "1"])
+    for e in "321":
+        for c_ in "123":
+            t6long.append({"panel": key, "exposure_class": e, "capacity_class": c_, "hromadas": int(g.loc[e, c_])})
+    tab = pd.DataFrame({"": [EXP_LAB[e] for e in "321"],
+                        **{CAP_LAB[c_]: [f0(g.loc[e, c_]) for e in "321"] for c_ in "123"}})
+    md6 += md_lines(tab, title, f"n = {int(g.values.sum()):,} classified" + (f"; {unc} without a class." if unc else "."))
+pd.DataFrame(t6long).to_csv(FIG / "table06_terciles.csv", index=False)
+note = ("Classes as drawn on Maps 14, 15 and 17 (codes = exposure class + capacity class; 1 = low). Capacity "
+        "and alert hours: terciles among non-occupied hromadas. Strikes: low = no strike since 24 Feb 2022; "
+        "middle and high split the struck hromadas at their median. Carpathian panels on national classes are "
+        "subsets of the national tables; the regional panel re-computes terciles within the four oblasts.")
+text = ["**Table 6. Hromadas by capacity and exposure class**", "", note, ""] + md6
+(FIG / "table06_terciles.md").write_text("\n".join(text), encoding="utf-8")
+print("\n".join(text))
+
+# where the high-exposure / low-capacity hromadas are (national classes)
+rows = []
+for key, col in (("alerts", "bv_alt"), ("strikes", "bv_str")):
+    hl = bv[bv[col] == "31"]
+    cnt = hl.groupby("oblast").size()
+    tot = bv[bv[col].str.fullmatch(r"[123][123]")].groupby("oblast").size()
+    for ob, v in cnt.items():
+        rows.append({"exposure": key, "oblast": ob, "hromadas_hilo": int(v), "classified": int(tot[ob]),
+                     "share": round(v / tot[ob], 3)})
+hl_ob = pd.DataFrame(rows).sort_values(["exposure", "hromadas_hilo"], ascending=[True, False])
+hl_ob.to_csv(FIG / "table06_hilo_oblast.csv", index=False)
+for key in ("alerts", "strikes"):
+    s = hl_ob[hl_ob["exposure"] == key]
+    print(f"\nhigh exposure / low capacity ({key}), {s['hromadas_hilo'].sum()} hromadas in {len(s)} oblasts:")
+    print(s.head(10).to_string(index=False))
+
+print("\nnumbers.yaml:")
+print(f'  n_hilo_alerts: "{hilo["alerts_national"]}"')
+print(f'  n_hilo_strikes: "{hilo["strikes_national"]}"')
+print(f'  n_hilo_alerts_carp: "{hilo["alerts_carp"]}"   # national terciles')
+print(f'  n_hilo_carp_regional: "{hilo["alerts_carp_regional"]}"   # Map 17 regional terciles')

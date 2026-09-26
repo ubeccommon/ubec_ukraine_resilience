@@ -64,7 +64,7 @@ In the Carpathian oblasts, registered IDPs exceed those actually present by {{id
 ## What this means for recovery programmes
 
 **Target on exposure and capacity together.**
-The two are nearly independent, so a single ranking by budget strength misses many heavily exposed hromadas. The combined classes in Figure 1 identify hromadas with both high exposure and low capacity. There are [[PENDING: count — request 26]] such hromadas nationally.
+The two are nearly independent, so a single ranking by budget strength misses many heavily exposed hromadas. The combined classes in Figure 1 identify hromadas with both high exposure and low capacity. There are {{n_hilo_alerts}} such hromadas nationally on alert hours, most of them in Sumy, Kharkiv and Kherson oblasts.
 
 **Treat energy resilience first as a system-level task.**
 Light tracks the regional grid far more than local finances. Local budgets cannot substitute for investment in generation, transmission and distribution.
