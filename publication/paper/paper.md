@@ -155,7 +155,7 @@ All inputs are open, aggregated data. None contains personal data. Table 2 lists
 |---|---|---|---|---|
 | VIINA 2.0 | Geocoded strike events | Point / settlement | {{period_viina}} | ODbL 1.0 |
 | Air-raid alert records (Klimenko) | Alert start and end times | Oblast / raion / hromada | {{period_alerts}} | MIT |
-| OCHA COD-AB (from SSPE Kartographia) | Administrative boundaries | ADM3 polygons | {{version_codab}} | CC BY-IGO |
+| OCHA COD-AB (from SSPE Kartographia) | Administrative boundaries | ADM3 polygons | {{version_codab}} | CC BY 3.0 IGO |
 | openbudget.gov.ua | Local budget execution: revenue by code, expenditure by economic classification | Hromada budget | 2021 Q1 – 2026 Q2, quarterly | Open data, CMU resolution 835 |
 | NASA Black Marble VNP46A3 | Monthly night-time radiance | ~500 m raster | Jan 2020 – Aug 2026, monthly | Public domain |
 | JRC GHS-POP R2023A | Population, 2020 epoch | 100 m raster | 2020 | EC reuse policy (attribution) |

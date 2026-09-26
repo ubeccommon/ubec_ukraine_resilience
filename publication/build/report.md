@@ -1,17 +1,17 @@
-# Build report — 2026-09-26 07:49 (draft)
+# Build report — 2026-09-26 20:01 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 47 | 28 | 2 | 0 | 0 | 0 |
-| brief | 4 | 2 | 0 | 0 | 0 | 0 |
+| paper | 35 | 15 | 2 | 0 | 0 | 0 |
+| brief | 3 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
 | carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
-| data_package/README.md | 3 | 5 | 0 | 0 | 0 | 0 |
-| data_package/ATTRIBUTION.md | 7 | 6 | 4 | 0 | 0 | 0 |
+| data_package/README.md | 1 | 4 | 0 | 0 | 0 | 6 |
+| data_package/ATTRIBUTION.md | 1 | 4 | 0 | 0 | 0 | 0 |
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 122**
+**Total blocking items: 87**
 
 ## paper
 
@@ -27,18 +27,7 @@
 - PENDING
 - PENDING: Table 4, loadings and leave-one-out correlations — request 3
 - PENDING: definition of "valid" — request 23
-- PENDING: all cells — request 8
-- PENDING: counts per cell for alert hours and strikes, national and Carpathian — request 26
-- PENDING: one sentence on where the high-exposure / low-capacity hromadas cluster, based on Table 6
 - PENDING: wild-cluster bootstrap and spatially robust errors — requests 4, 5
-- PENDING: exact specifications M1–M7 — request 4
-- PENDING: within-R² for each fixed-effects model — request 4
-- PENDING: estimates and bootstrap p-values — request 4
-- PENDING: t-value for the 2021 estimate; estimate with income-tax growth removed from the 2025 index — requests 4 and 6
-- PENDING: which model the spatial lag refers to — request 5
-- PENDING: capacity main effect and interaction in spatial lag and spatial error models with oblast FE — request 5
-- PENDING: all rows — request 7
-- PENDING: request 4
 - PENDING: export — request 14
 - PENDING: request 12
 - PENDING: request 12
@@ -51,7 +40,6 @@
 - PENDING: confirm that all changes use February 2023 as base — request 29
 - PENDING: denominator used for "per 1,000 residents" — request 29
 - PENDING: request 29
-- PENDING: class definitions — request 37
 - PENDING: Lviv trust — request 15
 - PENDING: optional — request 30
 - PENDING: breakdown of the 1,289 → 1,021 drop by reason and oblast — request 1
@@ -72,14 +60,13 @@
 
 **Keys still PENDING in numbers.yaml**
 
-access_dream, access_dtm, access_openbudget, access_rescore, ci_cap_alerts_2021, ci_cap_alerts_2025, ci_cap_strikes_2021, ci_cap_strikes_2025, commit_hash, int_fe_range, n_dtm_oblasts, n_engagement, n_model, n_rescore_oblasts, period_dream, release_date, rho_cap_alerts_2021, rho_cap_alerts_2025, rho_cap_alerts_within, rho_cap_strikes_2021, rho_cap_strikes_2025, rho_cap_strikes_within, run_time, socarxiv_doi, trust_diff_lv, version_codab, version_osm, zenodo_doi
+access_dream, access_dtm, access_openbudget, access_rescore, commit_hash, n_dtm_oblasts, n_rescore_oblasts, period_dream, release_date, run_time, socarxiv_doi, trust_diff_lv, version_codab, version_osm, zenodo_doi
 
 ## brief
 
 **PENDING markers**
 
 - PENDING: export at brief size — request 14
-- PENDING: count — request 26
 - PENDING: export at brief size — request 14
 - PENDING: contact address
 
@@ -112,36 +99,25 @@ socarxiv_doi, zenodo_doi
 
 **PENDING markers**
 
-- PENDING: request 16
 - PENDING: contact address
-- PENDING: request 23
 
 **Keys still PENDING in numbers.yaml**
 
-n_engagement, release_date, run_time, socarxiv_doi, zenodo_doi
+release_date, run_time, socarxiv_doi, zenodo_doi
+
+**Keys not defined in numbers.yaml**
+
+control_date, n_light_reliable, n_package_units, n_r3_hromadas, n_r3_raions, pub_end
 
 ## data_package/ATTRIBUTION.md
 
 **PENDING markers**
 
-- PENDING: URL
-- PENDING: repository name and URL — request 19
-- PENDING: paste the copyright line and MIT notice exactly as in the source repository's LICENSE file
-- PENDING: terms of use and required attribution — request 23
-- PENDING: terms of use and required attribution — request 23
-- PENDING: confirm redistribution terms and required wording — request 23
-- PENDING: offices, tables and use — request 24
-
-**CHECK markers**
-
-- CHECK: exact attribution wording requested by VIINA
-- CHECK: licence version and credited originating agency on the HDX dataset page
-- CHECK: product DOI
-- CHECK: DOI
+- PENDING: DREAM reply
 
 **Keys still PENDING in numbers.yaml**
 
-access_dream, access_dtm, access_openbudget, access_rescore, version_codab, version_osm
+access_dream, access_openbudget, version_codab, version_osm
 
 ## data_package/CITATION.cff
 
@@ -159,4 +135,4 @@ release_date, socarxiv_doi, zenodo_doi
 
 ## Keys defined but not used in any output
 
-cap_main_fe_no_pitgrowth
+carp_strong_steady_lv, int_fe_ci, n_hilo_alerts_carp, n_light_ge10_carp, n_light_ge10_nat, n_light_ge30_nat, n_light_reliable_carp, n_light_reliable_nat

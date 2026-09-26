@@ -62,7 +62,8 @@ a revised method before use.
 
 ### OCHA COD-AB: administrative boundaries
 Ukraine subnational administrative boundaries, UN OCHA via the Humanitarian Data Exchange
-(`cod-ab-ukr`, January 2025). Boundaries originate from SSPE Kartographia. CC BY-IGO.
+(`cod-ab-ukr`, January 2025). Boundaries originate from SSPE Kartographia. CC BY 3.0 IGO
+(https://creativecommons.org/licenses/by/3.0/igo/).
 ADM3 P-code = `"UA" + k3`; 1,757 of 1,763 units match (differences in Crimea only).
 
 ### openbudget.gov.ua: local budgets

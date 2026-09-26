@@ -6,16 +6,16 @@ This dataset combines the sources below. Anyone reusing the data, or maps and fi
 
 ## Short attribution line for maps and figures
 
-> Data: VIINA 2.0 (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM; basemap © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
+> Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM; basemap © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
 
 Only the sources actually used in a given map need to be named.
 
 ## Sources
 
 ### VIINA — strike events
-Contains data from VIINA 2.0 (Violent Incident Information from News Articles), Yuri M. Zhukov, made available under the Open Database License (ODbL) 1.0.
+Contains data from VIINA 2.0 (Violent Incident Information from News Articles), Yuri M. Zhukov and Natalie Ayers, made available under the Open Database License (ODbL) 1.0. Any public use of the database, or of works produced from it, must be attributed in a manner consistent with the ODbL, and a copy of the ODbL must be passed on (`licenses/ODbL-1.0.txt`). An adapted database that is publicly used must also be offered under the ODbL.
+Citation requested by the authors: Zhukov, Yuri and Natalie Ayers (2023). "VIINA 2.0: Violent Incident Information from News Articles on the 2022 Russian Invasion of Ukraine." Cambridge, MA: Harvard University.
 Repository: https://github.com/zhukovyuri/VIINA · Version / access date: {{period_viina}}
-[[CHECK: exact attribution wording requested by VIINA]]
 
 ### Air-raid alert records
 Alert data compiled by Vadym Klymenko (ukrainian-air-raid-sirens-dataset, https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset), licensed under the MIT License. The MIT License requires that the original copyright and permission notice be kept:
@@ -45,8 +45,7 @@ SOFTWARE.
 ```
 
 ### OCHA COD-AB — administrative boundaries
-Ukraine subnational administrative boundaries, United Nations Office for the Coordination of Humanitarian Affairs (OCHA), via the Humanitarian Data Exchange. The boundaries originate from the State Scientific Production Enterprise "Kartographia" (SSPE Kartographia). Licensed under Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO). Version: {{version_codab}}.
-[[CHECK: licence version and credited originating agency on the HDX dataset page]]
+Ukraine subnational administrative boundaries, United Nations Office for the Coordination of Humanitarian Affairs (OCHA), via the Humanitarian Data Exchange. The boundaries originate from the State Scientific Production Enterprise "Kartographia" (SSPE Kartographia). Licensed under Creative Commons Attribution 3.0 IGO (CC BY 3.0 IGO, https://creativecommons.org/licenses/by/3.0/igo/). Version: {{version_codab}}.
 
 ### openbudget.gov.ua — local budgets
 Local budget execution data from openbudget.gov.ua, Ministry of Finance of Ukraine. Published as open data under Cabinet of Ministers of Ukraine Resolution No. 835 (21 October 2015). Accessed {{access_openbudget}}.
@@ -58,7 +57,7 @@ Product DOI: 10.5067/VIIRS/VNP46A3.002.
 
 ### JRC GHS-POP — population
 GHS-POP R2023A, European Commission, Joint Research Centre. Reuse is authorised under the Commission's reuse policy, with acknowledgement of the source.
-Schiavina, M., Freire, S., Carioli, A., & MacManus, K. (2023). *GHS-POP R2023A — GHS population grid multitemporal (1975–2030)*. European Commission, Joint Research Centre. [[CHECK: DOI]]
+Schiavina, M., Freire, S., Carioli, A., & MacManus, K. (2023). *GHS-POP R2023A — GHS population grid multitemporal (1975–2030)*. European Commission, Joint Research Centre. https://doi.org/10.2905/2FF68A52-5B5B-4A22-8F40-C41DA8332CFE
 
 ### DREAM — reconstruction projects
 Project data from DREAM (Digital Restoration Ecosystem for Accountable Management). Accessed {{access_dream}}. Only project counts per hromada are included. No record-level fields are republished. No licence is stated on the DREAM portal; counts are republished with attribution, and confirmation of the terms has been requested from the operators (info@restoration.gov.ua). [[PENDING: DREAM reply]]
