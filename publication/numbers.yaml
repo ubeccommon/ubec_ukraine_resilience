@@ -163,13 +163,21 @@ carp_pit_2025_zk_cv: "6–14 %"
 
 # --- Carpathian profile (from Carpathian dispatch)
 carp_alert_hours_12m: "114"
-nat_alert_hours_12m: "670"
+nat_alert_hours_12m: "674"
 lviv_struck_share: "15 %"
 own_rev_pc_if_zk: "5,800"
 own_rev_pc_nat: "9,300"
 own_rev_pc_cv: "5,000"
 carp_weak_hit: "33"
 carp_weak_hit_if_cv: "27"
+carp_strong_steady: "34"
+carp_strong_steady_lv: "15"
+nat_weak_hit: "136"
+n_light_ge10_nat: "1,021"
+n_light_ge30_nat: "779"
+n_light_reliable_nat: "622"
+n_light_ge10_carp: "209"
+n_light_reliable_carp: "134"
 
 # --- Periods and versions (request 25)
 period_viina: "24 Feb 2022 – 19 Sep 2026"

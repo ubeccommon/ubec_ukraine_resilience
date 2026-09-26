@@ -633,7 +633,7 @@ The national models apply here too. Most of the region's brightness is what obla
 
 ### 10.2 Capacity and outage loss
 
-Within the region, as nationally, hromadas with more fiscal capacity kept relatively more of their light in the 2024 outages. The pattern is also regional. Of the {{carp_weak_hit}} Carpathian hromadas with both low capacity and large outage loss, {{carp_weak_hit_if_cv}} are in Ivano-Frankivsk and Chernivtsi. Lviv holds most of the hromadas with high capacity and small losses. [[PENDING: class definitions — request 37]] Much of what looks like a local story is the grid of the oblast.
+Within the region, as nationally, hromadas with more fiscal capacity kept relatively more of their light in the 2024 outages. The pattern is also regional. Of the {{carp_weak_hit}} Carpathian hromadas with both low capacity and large outage loss, {{carp_weak_hit_if_cv}} are in Ivano-Frankivsk and Chernivtsi. At the other corner, Lviv (15) and Zakarpattia (12) hold most of the {{carp_strong_steady}} hromadas with high capacity and small losses. Both groups are corners of a regional classification: terciles, within the four oblasts, of the 2025 capacity index and of the light kept in June–July 2024 as a share of the second half of 2023. Low capacity is the bottom third (percentile rank below about 30), a large loss the bottom third of retention (at most 24 % of the 2023 level); the top thirds start at about 52 and 47 %. On the same rule with national terciles, {{nat_weak_hit}} hromadas are weak and hit. Much of what looks like a local story is the grid of the oblast.
 
 ### 10.3 Low fiscal capacity, high local trust, but not everywhere
 

@@ -1,16 +1,19 @@
 """26_publication_tables.py — paper Table 1 (coverage and exclusions), Table 3 (exposure descriptives),
-Table 5 (capacity × exposure rank correlations), Table 6 (capacity × exposure terciles) and Table 11
-(Carpathian vs national).
+Table 5 (capacity × exposure rank correlations), Table 6 (capacity × exposure terciles), Table 11
+(Carpathian vs national), the capacity × outage-loss classes (request 37) and the light publication
+threshold counts (request 38).
 
 Run from anywhere with the venv Python.
 Inputs : viina/qgis/unit_stats_hromada.csv, viina/qgis/hromada_control.gpkg,
          resilience/tidy/trajectories_k3.csv, resilience/tidy/resilience_v1_k3.csv,
          resilience/tidy/resilience_index_v11_k3.csv, resilience/**/units_hromada.gpkg,
-         resilience/resilience_maps.gpkg:hromada_bivariate
+         resilience/resilience_maps.gpkg:hromada_bivariate, resilience/tidy/carpathian_profiles_k3.csv,
+         resilience/tidy/nightlights_noise_k3.csv
 Outputs: publication/figures/table03_exposure.{csv,md}, publication/figures/table11_carpathian.{csv,md},
          publication/figures/table01_coverage.{csv,md}, publication/figures/table01_exclusions.{csv,md},
          publication/figures/table05_correlations.{csv,md}, publication/figures/table06_terciles.{csv,md},
-         publication/figures/table06_hilo_oblast.csv
+         publication/figures/table06_hilo_oblast.csv, publication/figures/carp_typology.{csv,md},
+         publication/figures/light_reliability.csv
 
 Non-occupied hromadas only. Strikes = settlement-precision events since 24 Feb 2022 (n_all, as used in the
 models via exp_strikes_log); because most hromadas have none, the share with at least one event is reported
@@ -31,7 +34,15 @@ of freedom reduced by the number of oblasts − 1. rho_cap_exp_min/max refer to 
 Table 6: counts from the classes drawn on Maps 14, 15 and 17 (13_bivariate.py, codes = exposure tercile +
 capacity tercile, 1 = low). Strike classes follow the zero rule of 13: class 1 = no strike, classes 2 and 3
 split the struck hromadas at their median. Carpathian panels are shown on national terciles and, for alert
-hours, on the regional terciles of Map 17."""
+hours, on the regional terciles of Map 17.
+
+Request 37: classes as in 23_carpathian.py — terciles (qcut on first-rank order) of capacity_index and of
+tr_s24_rel (summer-2024 light as share of H2 2023; high = kept most light), each over the hromadas with a
+value. "weak & hit" = low capacity and low retention; "strong & steady" = high and high. Regional = terciles
+within the four Carpathian oblasts (the published definition); national = same rule over all non-occupied.
+
+Request 38: light values are reliable for single-hromada publication if >= 30 pixels lit in 2021 and the
+pre-war month-to-month noise (noise_sd, 19_nl_monthly.py) is <= 0.35 (23_carpathian.py)."""
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -456,3 +467,119 @@ print(f'  n_hilo_alerts: "{hilo["alerts_national"]}"')
 print(f'  n_hilo_strikes: "{hilo["strikes_national"]}"')
 print(f'  n_hilo_alerts_carp: "{hilo["alerts_carp"]}"   # national terciles')
 print(f'  n_hilo_carp_regional: "{hilo["alerts_carp_regional"]}"   # Map 17 regional terciles')
+
+# --- Request 37: capacity x outage-loss classes -------------------------------------------------------
+print("\n=== Request 37: capacity x summer-2024 outage-loss classes ===")
+tj = pd.read_csv(TIDY / "trajectories_k3.csv", dtype=KEYS)[["k3", "tr_s24_rel"]]
+tj["k3"] = tj["k3"].str.zfill(7)
+w = u[["k1", "k3", "oblast", "capacity_index", "ntl_n_lit_px"]].merge(tj, on="k3", how="left", validate="1:1")
+TYPE = {("high", "high"): "strong & steady", ("high", "low"): "strong but hit",
+        ("low", "high"): "weak but steady", ("low", "low"): "weak & hit"}
+
+
+def t3(s):
+    out = pd.Series(pd.NA, index=s.index, dtype="object")
+    ok = s.notna()
+    out[ok] = pd.qcut(s[ok].rank(method="first"), 3, labels=["low", "mid", "high"]).astype(str)
+    return out
+
+
+def classify(x):
+    x = x.copy()
+    x["cap_t"], x["s24_t"] = t3(x["capacity_index"]), t3(x["tr_s24_rel"])
+    both = x["cap_t"].notna() & x["s24_t"].notna()
+    x["type"] = [TYPE.get((a, b), "") if ok else "" for a, b, ok in zip(x["cap_t"], x["s24_t"], both)]
+    return x, both
+
+
+def cuts(x, col, tcol, scale=1):
+    return {t: f"{x.loc[x[tcol] == t, col].min() * scale:.2f}–{x.loc[x[tcol] == t, col].max() * scale:.2f}"
+            for t in ("low", "mid", "high")}
+
+
+cw = w[w["k1"].isin(CARP)]
+rg, rboth = classify(cw)
+na_, nboth = classify(w)
+
+# check against 23_carpathian.py
+prof = pd.read_csv(TIDY / "carpathian_profiles_k3.csv", dtype={"k3": str})
+prof["k3"] = prof["k3"].str.zfill(7)
+chk = rg.merge(prof[["k3", "cap_t_carp", "s24_t_carp", "type_carp"]], on="k3", how="left", validate="1:1")
+for a, b in (("cap_t", "cap_t_carp"), ("s24_t", "s24_t_carp")):
+    mis = (chk[a].fillna("") != chk[b].fillna("")).sum()
+    print(f"check vs 23 ({b}): {mis} mismatches")
+print(f"check vs 23 (type_carp, 4 corners): {((chk['type'] != '') != chk['type_carp'].isin(TYPE.values())).sum()} "
+      f"mismatches; 23 weak & hit = {(chk['type_carp'] == 'weak & hit').sum()}")
+
+rows, mdp = [], []
+for scope, x, both in (("carpathian_regional", rg, rboth), ("national", na_, nboth)):
+    xt = pd.crosstab(x.loc[both, "cap_t"], x.loc[both, "s24_t"]).reindex(
+        index=["high", "mid", "low"], columns=["low", "mid", "high"], fill_value=0)
+    for a in xt.index:
+        for b in xt.columns:
+            rows.append({"scope": scope, "capacity_tercile": a, "retention_tercile": b, "hromadas": int(xt.loc[a, b]),
+                         "type": TYPE.get((a, b), "")})
+    cc, sc = cuts(x, "capacity_index", "cap_t", 100), cuts(x, "tr_s24_rel", "s24_t")
+    tab = pd.DataFrame({"Capacity tercile (range, 0–100)": [f"{a} ({cc[a]})" for a in xt.index],
+                        **{f"Retention {b} ({sc[b]})": [f0(xt.loc[a, b]) for a in xt.index] for b in xt.columns}})
+    lab = "within the four Carpathian oblasts" if scope != "national" else "all non-occupied hromadas"
+    mdp += md_lines(tab, f"Capacity × summer-2024 light retention, terciles {lab}",
+                    f"n = {int(both.sum()):,} with both values (capacity {x['capacity_index'].notna().sum():,}, "
+                    f"retention {x['tr_s24_rel'].notna().sum():,}). Corners: weak & hit = low/low; strong & steady "
+                    "= high/high; strong but hit = high/low; weak but steady = low/high.")
+typ = pd.DataFrame(rows)
+typ.to_csv(FIG / "carp_typology.csv", index=False)
+intro = ("Retention = light in Jun–Jul 2024 as a share of H2 2023 (tr_s24_rel); low retention = large outage "
+         "loss. Terciles by rank order (ties broken by position), as in 23_carpathian.py.")
+text = ["**Capacity and outage-loss classes (request 37)**", "", intro, ""] + mdp
+(FIG / "carp_typology.md").write_text("\n".join(text), encoding="utf-8")
+print("\n".join(text))
+
+wh_r = rg[rg["type"] == "weak & hit"]
+ss_r = rg[rg["type"] == "strong & steady"]
+wh_n = na_[na_["type"] == "weak & hit"]
+wh_c_nat = na_[(na_["type"] == "weak & hit") & na_["k1"].isin(CARP)]
+print("\nweak & hit, regional, by oblast:", wh_r.groupby("oblast").size().to_dict())
+print("strong & steady, regional, by oblast:", ss_r.groupby("oblast").size().to_dict())
+print("weak & hit, national terciles, top oblasts:",
+      wh_n.groupby("oblast").size().sort_values(ascending=False).head(8).to_dict())
+
+# --- Request 38: light publication threshold ----------------------------------------------------------
+print("\n=== Request 38: light reliability ===")
+REL_NLIT, REL_NOISE = 30, 0.35
+nz = pd.read_csv(TIDY / "nightlights_noise_k3.csv", dtype={"k3": str})
+assert "noise_sd" in nz, f"nightlights_noise_k3.csv columns: {list(nz.columns)}"
+nz["k3"] = nz["k3"].str.zfill(7)
+w = w.merge(nz[["k3", "noise_sd"]], on="k3", how="left", validate="1:1")
+w["reliable"] = (w["ntl_n_lit_px"] >= REL_NLIT) & (w["noise_sd"] <= REL_NOISE)
+pchk = w.merge(prof[["k3", "light_reliable"]], on="k3", how="inner")
+print(f"check vs 23 light_reliable (Carpathian): {(pchk['reliable'].astype(int) != pchk['light_reliable']).sum()} "
+      "mismatches")
+rel = []
+for scope, x in (("national", w), ("carpathian", w[w["k1"].isin(CARP)])):
+    rel.append({"scope": scope, "non_occupied": len(x),
+                "lit_ge10": int((x["ntl_n_lit_px"] >= MIN_LIT_PIX).sum()),
+                "lit_ge30": int((x["ntl_n_lit_px"] >= REL_NLIT).sum()),
+                "reliable": int(x["reliable"].sum()),
+                "ge10_not_reliable": int(((x["ntl_n_lit_px"] >= MIN_LIT_PIX) & ~x["reliable"]).sum()),
+                "ge30_noise_fail": int(((x["ntl_n_lit_px"] >= REL_NLIT) & ~(x["noise_sd"] <= REL_NOISE)).sum())})
+rel = pd.DataFrame(rel)
+rel.to_csv(FIG / "light_reliability.csv", index=False)
+print(rel.to_string(index=False))
+
+# alert-hours medians for the 670 / 674 check
+print("\nalert hours, median 1 Sep 2025 – 31 Aug 2026:")
+print(f"  national (u, n={u['alert_h_12m'].notna().sum()}): {u['alert_h_12m'].median():.1f}   "
+      f"national (Table 3 frame, n={len(d)}): {d['alert_h_12m'].median():.1f}   "
+      f"Carpathian: {u.loc[u['k1'].isin(CARP), 'alert_h_12m'].median():.1f}")
+
+print("\nnumbers.yaml:")
+print(f'  carp_weak_hit: "{len(wh_r)}"')
+print(f'  carp_weak_hit_if_cv: "{int(wh_r["k1"].isin(["26", "73"]).sum())}"')
+print(f'  carp_strong_steady: "{len(ss_r)}"')
+print(f'  carp_strong_steady_lv: "{int((ss_r["k1"] == "46").sum())}"')
+print(f'  nat_weak_hit: "{len(wh_n)}"   # national terciles')
+print(f'  carp_weak_hit_natcuts: "{len(wh_c_nat)}"')
+for k, r in rel.set_index("scope").iterrows():
+    tag = "nat" if k == "national" else "carp"
+    print(f'  n_light_reliable_{tag}: "{r["reliable"]:,}"   n_light_ge10_{tag}: "{r["lit_ge10"]:,}"')

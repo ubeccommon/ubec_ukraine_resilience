@@ -1,0 +1,19 @@
+scope,capacity_tercile,retention_tercile,hromadas,type
+carpathian_regional,high,low,12,strong but hit
+carpathian_regional,high,mid,34,
+carpathian_regional,high,high,34,strong & steady
+carpathian_regional,mid,low,25,
+carpathian_regional,mid,mid,21,
+carpathian_regional,mid,high,24,
+carpathian_regional,low,low,33,weak & hit
+carpathian_regional,low,mid,14,
+carpathian_regional,low,high,12,weak but steady
+national,high,low,94,strong but hit
+national,high,mid,121,
+national,high,high,174,strong & steady
+national,mid,low,111,
+national,mid,mid,130,
+national,mid,high,109,
+national,low,low,136,weak & hit
+national,low,mid,89,
+national,low,high,56,weak but steady
