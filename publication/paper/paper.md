@@ -408,13 +408,13 @@ We treat the pre-war estimate as the primary result. It is modest: with only 24 
 
 ### 7.5 Spatial dependence
 
-Recovery is strongly spatially dependent. A spatial lag model gives ρ = {{spatial_lag_rho}}. [[PENDING: which model the spatial lag refers to — request 5]] Even with oblast fixed effects, residuals remain clustered (Moran's I = {{resid_moran_fe}}). There is therefore spatial structure below the oblast level, plausibly grid districts and outage groups, that the models do not capture.
+Recovery is strongly spatially dependent. A spatial lag model on the M3 specification, with oblast fixed effects and six nearest neighbours (M7, S2SLS), gives ρ = {{spatial_lag_rho}}. Even with oblast fixed effects, residuals remain clustered (Moran's I = {{resid_moran_fe}}). There is therefore spatial structure below the oblast level, plausibly grid districts and outage groups, that the models do not capture.
 
 This has two consequences:
 - Standard errors that ignore spatial dependence overstate precision.
 - The capacity main effect could partly reflect neighbourhood patterns rather than anything specific to each hromada.
 
-[[PENDING: capacity main effect and interaction in spatial lag and spatial error models with oblast FE — request 5]]
+We therefore re-estimate the M3 and M5 specifications, with oblast fixed effects and controls, as spatial models. In a spatial error model (GMM, robust to heteroskedasticity), λ = {{sem_lambda}}, and the filtered residuals show no remaining dependence (Moran's I = {{sem_moran}}). The capacity estimates barely move: +{{sem_cap_2025}} for 2025 capacity (z {{sem_cap_2025_z}}) and +{{sem_cap_2021}} for pre-war capacity (z {{sem_cap_2021_z}}), against +0.18 and +0.08 without the spatial term. The interaction stays at zero (z {{sem_int_z_range}}). The spatial lag model gives similar capacity coefficients, but its ρ approaches one with pre-war capacity ({{spatial_lag_rho_prewar}}) and its residuals are negatively autocorrelated (Moran's I {{lag_resid_moran}}), a sign that the lag term over-corrects. We therefore rely on the error model. Spatially correlated errors do not account for the capacity association.
 
 ### 7.6 Sensitivity
 

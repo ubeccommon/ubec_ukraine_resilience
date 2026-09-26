@@ -21,14 +21,16 @@ Models (all standardised, HC1 robust SE):
   M4 M3 with alert hours as exposure
   M5 M3 with pre-war (2021) capacity (unchanged by --cap)
   M6 M3 without frontline oblasts (Donetsk 14, Zaporizhzhia 23, Kherson 65)
-  M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification
+  M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification; M7b the same with pre-war capacity
+  M8 spatial error (spreg GM_Error_Het, GMM, heteroskedasticity-robust) on the M3 specification;
+     M8b the same with pre-war capacity. Moran's I for M8/M8b on the filtered residuals.
 Robust inference for capacity and interaction in M1-M6 (robust_inference.py): restricted wild-cluster
   bootstrap p-values by oblast (Webb weights, B = 9,999; t with CR1 SE) and Conley spatial-HAC t-values
   (Bartlett kernel, 50 and 100 km, representative points in UA_LAEA metres). Main run only: 95 % interval
   for the interaction by inverting the wild-cluster test (ci_lo/ci_hi_interaction).
 Within-R2 for fixed-effects models: 1 - SSR / sum of squares of y around its oblast mean.
 Spatial weights: KNN k=6 on polygon centroids, row-standardised; Moran's I of residuals
-  (999 permutations) for M1-M6.
+  (999 permutations) for M1-M8b.
 Output: tidy/moderation_results[_TAG].csv (incl. se/t of the capacity main effect and the robust inference),
   logs/12_moderation[_TAG].log
 Caveat: cross-sectional and descriptive; the interaction is an association, not a causal effect.
@@ -116,7 +118,7 @@ def s2sls_lag(y, X, lag_cols, w):
     s2 = e @ e / len(yv)
     se = np.sqrt(np.diag(s2 * A))
     names = ["rho_Wy"] + list(X.columns)
-    return pd.Series(b, names), pd.Series(se, names)
+    return pd.Series(b, names), pd.Series(se, names), e
 
 
 def parse():
@@ -283,16 +285,51 @@ def main():
     run("M6 without frontline oblasts", sub, ["exp", "cap", "int"] + ctrl + fe_sub,
         f"dropped k1 {sorted(FRONTLINE)}")
 
-    X = s[["exp", "cap", "int"] + ctrl + fe_cols].copy()
-    X.insert(0, "const", 1.0)
-    b, se = s2sls_lag(s["y"], X, ["exp", "cap", "int"] + ctrl, w)
-    log(f"\nM7 spatial lag (S2SLS, KNN {K})  n={len(s)}")
-    for c in ("rho_Wy", "exp", "cap", "int"):
-        log(f"    {c:10s} b={b[c]:+.3f}  se={se[c]:.3f}  t={b[c] / se[c]:+.2f}")
-    results.append({"model": "M7 spatial lag", "n": len(s), "r2": np.nan, "moran_I": np.nan, "moran_p": np.nan,
-                    "b_exposure": b["exp"], "b_capacity": b["cap"], "b_interaction": b["int"],
-                    "se_interaction": se["int"], "t_interaction": b["int"] / se["int"],
-                    "note": f"rho={b['rho_Wy']:.3f}", "se_capacity": se["cap"], "t_capacity": b["cap"] / se["cap"]})
+    # spatial models (M3 specification) ---------------------------------------------------------------
+    def weights_for(data):
+        return w if len(data) == len(s) else knn_w(data)
+
+    def lag(name, data, capc, intc):
+        ww = weights_for(data)
+        X = data[["exp", capc, intc] + ctrl + fe_cols].copy()
+        X.insert(0, "const", 1.0)
+        b, se, e = s2sls_lag(data["y"], X, ["exp", capc, intc] + ctrl, ww)
+        I, p = moran(e, ww)
+        log(f"\n{name} (S2SLS, KNN {K})  n={len(data)}  Moran's I(resid)={I:.3f} (p={p:.3f})")
+        for c in ("rho_Wy", "exp", capc, intc):
+            log(f"    {c:10s} b={b[c]:+.3f}  se={se[c]:.3f}  t={b[c] / se[c]:+.2f}")
+        results.append({"model": name, "n": len(data), "r2": np.nan, "moran_I": I, "moran_p": p,
+                        "b_exposure": b["exp"], "b_capacity": b[capc], "b_interaction": b[intc],
+                        "se_interaction": se[intc], "t_interaction": b[intc] / se[intc],
+                        "note": f"rho={b['rho_Wy']:.3f}", "se_capacity": se[capc], "t_capacity": b[capc] / se[capc]})
+
+    def err(name, data, capc, intc):
+        from spreg import GM_Error_Het
+        ww = weights_for(data)
+        cols = ["exp", capc, intc] + ctrl + fe_cols
+        m = GM_Error_Het(data[["y"]].values.astype(float), data[cols].values.astype(float), w=ww,
+                         name_y="y", name_x=cols)
+        nm = list(m.name_x)
+        bb = dict(zip(nm, np.asarray(m.betas, float).flatten()))
+        ss = dict(zip(nm, np.asarray(m.std_err, float).flatten()))
+        lam = bb.get("lambda", np.nan)
+        I, p = moran(np.asarray(m.e_filtered, float).flatten(), ww)
+        log(f"\n{name} (GM_Error_Het, KNN {K})  n={len(data)}  lambda={lam:.3f}  "
+            f"Moran's I(filtered resid)={I:.3f} (p={p:.3f})")
+        for c in ("exp", capc, intc):
+            log(f"    {c:10s} b={bb[c]:+.3f}  se={ss[c]:.3f}  z={bb[c] / ss[c]:+.2f}")
+        results.append({"model": name, "n": len(data), "r2": np.nan, "moran_I": I, "moran_p": p,
+                        "b_exposure": bb["exp"], "b_capacity": bb[capc], "b_interaction": bb[intc],
+                        "se_interaction": ss[intc], "t_interaction": bb[intc] / ss[intc],
+                        "note": f"lambda={lam:.3f}", "se_capacity": ss[capc], "t_capacity": bb[capc] / ss[capc]})
+
+    lag("M7 spatial lag", s, "cap", "int")
+    if "cap_pre" in s:
+        sp = s.dropna(subset=["cap_pre"])
+        lag("M7b spatial lag, pre-war capacity", sp, "cap_pre", "int_pre")
+    err("M8 spatial error", s, "cap", "int")
+    if "cap_pre" in s:
+        err("M8b spatial error, pre-war capacity", sp, "cap_pre", "int_pre")
 
     # tercile tables -------------------------------------------------------------
     def terciles(col, label):
