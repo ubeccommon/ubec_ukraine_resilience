@@ -1,0 +1,13 @@
+variant,label,capacity,n,b_capacity,t_capacity,b_interaction,t_interaction
+primary,Primary specification,2021,1020,0.0763,2.2643,-0.0056,-0.2465
+primary,Primary specification,2025,1020,0.1821,6.1011,-0.0116,-0.6953
+no_garrison,Excluding garrison hromadas,2021,993,0.0813,2.3983,-0.0044,-0.1937
+no_garrison,Excluding garrison hromadas,2025,993,0.1824,5.9691,-0.0144,-0.8299
+no_front_border,Excluding frontline and Russian-border oblasts,2021,881,0.0845,2.0285,0.0015,0.0484
+no_front_border,Excluding frontline and Russian-border oblasts,2025,881,0.2082,5.7938,0.0141,0.5223
+winter,Outcome: winter light ratio only,2021,1006,0.0824,2.3655,-0.0063,-0.2514
+winter,Outcome: winter light ratio only,2025,1006,0.1724,5.5316,-0.0083,-0.4302
+annual,Outcome: annual light ratio only,2021,1020,0.0661,1.9301,-0.0009,-0.039
+annual,Outcome: annual light ratio only,2025,1020,0.1792,5.9893,-0.0112,-0.6959
+no_pitgrowth,2025 capacity without income-tax growth,2021,1020,,,,
+no_pitgrowth,2025 capacity without income-tax growth,2025,1020,0.1496,4.6099,-0.0091,-0.488

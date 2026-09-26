@@ -24,7 +24,7 @@ Models (all standardised, HC1 robust SE):
   M7 spatial lag (S2SLS, instruments WX, W2X) on the M3 specification
 Spatial weights: KNN k=6 on polygon centroids, row-standardised; Moran's I of residuals
   (999 permutations) for M1-M6.
-Output: tidy/moderation_results[_TAG].csv, logs/12_moderation[_TAG].log
+Output: tidy/moderation_results[_TAG].csv (incl. se/t of the capacity main effect), logs/12_moderation[_TAG].log
 Caveat: cross-sectional and descriptive; the interaction is an association, not a causal effect.
 """
 import argparse
@@ -222,9 +222,11 @@ def main():
         for c in focus:
             log(f"    {c:10s} b={b[c]:+.3f}  se={se[c]:.3f}  t={b[c] / se[c]:+.2f}")
         ic = [c for c in focus if c.startswith("int")][0]
+        cc = focus[1]
         results.append({"model": name, "n": int(ok.sum()), "r2": r2, "moran_I": I, "moran_p": p,
-                        "b_exposure": b[focus[0]], "b_capacity": b[focus[1]], "b_interaction": b[ic],
-                        "se_interaction": se[ic], "t_interaction": b[ic] / se[ic], "note": note})
+                        "b_exposure": b[focus[0]], "b_capacity": b[cc], "b_interaction": b[ic],
+                        "se_interaction": se[ic], "t_interaction": b[ic] / se[ic], "note": note,
+                        "se_capacity": se[cc], "t_capacity": b[cc] / se[cc]})
 
     run("M1 baseline", s, ["exp", "cap", "int"])
     run("M2 + oblast FE", s, ["exp", "cap", "int"] + fe_cols)
@@ -256,7 +258,7 @@ def main():
     results.append({"model": "M7 spatial lag", "n": len(s), "r2": np.nan, "moran_I": np.nan, "moran_p": np.nan,
                     "b_exposure": b["exp"], "b_capacity": b["cap"], "b_interaction": b["int"],
                     "se_interaction": se["int"], "t_interaction": b["int"] / se["int"],
-                    "note": f"rho={b['rho_Wy']:.3f}"})
+                    "note": f"rho={b['rho_Wy']:.3f}", "se_capacity": se["cap"], "t_capacity": b["cap"] / se["cap"]})
 
     # tercile tables -------------------------------------------------------------
     def terciles(col, label):
