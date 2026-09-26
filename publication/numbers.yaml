@@ -31,7 +31,12 @@ rho_rec_strikes: "−0.29"
 rho_rec_alerts: "−0.60"
 int_baseline_coef: "0.15"
 int_baseline_t: "6.3"
-int_fe_range: "PENDING"            # request 4
+int_fe_range: "−0.03 to 0.00"          # request 4
+int_fe_p_range: "0.29–0.89"             # wild-cluster bootstrap by oblast, M2–M6
+cap_main_fe_2021_p: "0.06"
+cap_main_fe_2021_conley: "2.1"
+outage_cap_prewar_p: "0.001"
+slope_int_p_wcb: "0.06"
 cap_main_fe_min: "0.16"
 cap_main_fe_max: "0.19"
 cap_main_fe_t: "≈ 6"
