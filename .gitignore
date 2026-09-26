@@ -37,8 +37,7 @@
 /viina/qgis/maps/preview/01_*
 /viina/qgis/maps/preview/02_*
 /viina/qgis/maps/preview/03_*
-/viina/qgis/maps/preview/19_*
-/viina/qgis/maps/preview/20_*
+/viina/qgis/maps/preview/11_*
 
 # ---- 4. resilience/: scripts, styles, docs, small tidy tables -------
 !/resilience/

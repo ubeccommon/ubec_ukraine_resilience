@@ -10,24 +10,19 @@ Pages held back pending review:
 - 01: risk index with strike detail, last 12 months (R5 review)
 - 02: strikes by settlement, last 12 months (R1/R5)
 - 03: strike points, last 12 months (R5)
-- 18: IOM DTM and reSCORE context (upstream terms)
-- 19: recent light level, last 12 months (R2)
-- 20: change class to the most recent 12 months (R2)
 - 05: strike points, last 12 months, on H3 r7 cells (R1/R5)
 - 06: interpolated strike surface, 5 km grid, marks reported targets (R1/R3)
 - 07: interpolated strike surfaces (R1)
 - 08: interpolated strike surfaces (R1/R3)
 - 09: interpolated alert surface; hromada choropleth is page 04 (R1)
 - 10: kernel density from event locations (R1/R5)
+- 11: Gi* hot spots at hromada level, incl. the front-line and border zone (R3)
 - 12: kernel density on 1 km grid with strike points (R1/R5)
+- 18: IOM DTM and reSCORE context (upstream terms)
 
 ## 04 · alert hours
 
 ![alert hours](04_alert_hours.png)
-
-## 11 · gi star
-
-![gi star](11_gi_star.png)
 
 ## 13 · carpathian hotspots
 
@@ -48,3 +43,11 @@ Pages held back pending review:
 ## 17 · carpathian resilience
 
 ![carpathian resilience](17_carpathian_resilience.png)
+
+## 19 · trajectory level capacity
+
+![trajectory level capacity](19_trajectory_level_capacity.png)
+
+## 20 · trajectory outage
+
+![trajectory outage](20_trajectory_outage.png)

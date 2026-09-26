@@ -23,24 +23,24 @@ MAPS = HERE / "qgis" / "maps"
 OUT = MAPS / "preview"
 WIDTH = 1600
 
-# hromada- or oblast-level choropleths, cleared for publication
-DEFAULT = ["04", "11", "13", "14", "15", "16", "17"]
+# hromada- or oblast-level choropleths, cleared for publication (14–16, 19–20: rule R3 raion values in the
+# front-line and border zone; 19–20: rule R2 publication window and reliable light data)
+DEFAULT = ["04", "13", "14", "15", "16", "17", "19", "20"]
 
 # never previewed until the reason is resolved (mirrors .gitignore section 3 / 4b)
 HELD = {
     "01": "risk index with strike detail, last 12 months (R5 review)",
     "02": "strikes by settlement, last 12 months (R1/R5)",
     "03": "strike points, last 12 months (R5)",
-    "18": "IOM DTM and reSCORE context (upstream terms)",
-    "19": "recent light level, last 12 months (R2)",
-    "20": "change class to the most recent 12 months (R2)",
     "05": "strike points, last 12 months, on H3 r7 cells (R1/R5)",
     "06": "interpolated strike surface, 5 km grid, marks reported targets (R1/R3)",
     "07": "interpolated strike surfaces (R1)",
     "08": "interpolated strike surfaces (R1/R3)",
     "09": "interpolated alert surface; hromada choropleth is page 04 (R1)",
     "10": "kernel density from event locations (R1/R5)",
+    "11": "Gi* hot spots at hromada level, incl. the front-line and border zone (R3)",
     "12": "kernel density on 1 km grid with strike points (R1/R5)",
+    "18": "IOM DTM and reSCORE context (upstream terms)",
 }
 
 ATTRIBUTION = ("Data: VIINA 2.0 (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
