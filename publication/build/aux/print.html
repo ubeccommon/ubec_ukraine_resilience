@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- Print template for the A4 PDF (WeasyPrint). Used by build.py with --pdf-engine weasyprint (default).
+     Hand-maintained; the screen HTML keeps pandoc's default template and style.css. -->
+<html lang="$lang$">
+<head>
+  <meta charset="utf-8" />
+  <title>$pagetitle$</title>
+  <meta name="author" content="$author-meta$" />
+  <meta name="dcterms.date" content="$date-meta$" />
+$for(css)$
+  <link rel="stylesheet" href="$css$" />
+$endfor$
+</head>
+<body class="doc-$docname$">
+
+<section class="cover">
+  <div class="cover-band">
+    <p class="cover-series">UBEC Platform · $if(series)$$series$$else$Working paper$endif$</p>
+  </div>
+  <div class="cover-body">
+$if(draft)$
+    <p class="cover-status">Draft for review — not for citation</p>
+$endif$
+    <h1 class="cover-title">$title$</h1>
+$if(subtitle)$
+    <p class="cover-subtitle">$subtitle$</p>
+$endif$
+    <p class="cover-author">$for(author)$$author$$sep$ · $endfor$</p>
+    <p class="cover-date">$date$</p>
+  </div>
+  <div class="cover-foot">
+$if(draft)$
+    <div class="cover-draftnote">
+      <p><strong>$version$.</strong> This build still contains <strong>$pending_count$ open items</strong>
+      (results, values and checks not yet available). They are highlighted in the text like
+      <span class="pending">«this»</span> and listed in <code>publication/build/report.md</code>.</p>
+    </div>
+$else$
+    <p class="cover-version">$version$</p>
+$endif$
+    <p class="cover-meta">Built $buildstamp$$if(commit)$ from commit $commit$$endif$ ·
+      github.com/ubeccommon/ubec_ukraine_resilience</p>
+    <p class="cover-licence">$licence$</p>
+  </div>
+</section>
+
+<span class="running-title">$if(short-title)$$short-title$$else$$title$$endif$</span>
+<span class="running-version">$version$</span>
+
+$if(toc)$
+<nav class="toc" role="doc-toc">
+  <h2 class="toc-heading">Contents</h2>
+$table-of-contents$
+</nav>
+$endif$
+
+<main>
+$body$
+</main>
+
+</body>
+</html>

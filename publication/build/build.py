@@ -23,10 +23,17 @@ Usage (from anywhere):
   python publication/build/build.py                  # draft, all outputs
   python publication/build/build.py --only paper     # one document
   python publication/build/build.py --no-pdf         # HTML + Markdown only
-  python publication/build/build.py --pdf-engine weasyprint
+  python publication/build/build.py --pdf-engine xelatex   # LaTeX layout instead
   python publication/build/build.py --release        # fails on any placeholder
 
-Requires: pandoc >= 3, and xelatex (default) or weasyprint for PDF.
+PDF layout (default engine: WeasyPrint): aux/print.html (cover, contents, running
+heads) and aux/print.css with the bundled fonts in aux/fonts (Source Serif 4 /
+Source Sans 3, SIL OFL; aux/fonts.css). Figures and map plates are referenced in
+the Markdown relative to the repository root. Map plates: a fenced div
+`::: {.plate}` around one image puts it on its own A4 landscape page.
+
+Requires: pandoc >= 3, and weasyprint (pip install weasyprint; default) or
+xelatex for PDF.
 """
 from __future__ import annotations
 
@@ -40,6 +47,7 @@ from datetime import datetime
 from pathlib import Path
 
 PUB = Path(__file__).resolve().parent.parent          # publication/
+ROOT = PUB.parent                                       # repository root (figure paths)
 BUILD = PUB / "build"
 OUT = BUILD / "out"
 AUX = BUILD / "aux"
@@ -274,10 +282,28 @@ def fallback_block(main: str | None, fallback: str | None) -> str:
     return "\n".join(lines)
 
 
+def weasyprint_cmd() -> list[str] | None:
+    """weasyprint as a module of this Python (venv), else the CLI on PATH."""
+    try:
+        import weasyprint  # noqa: F401
+        return [sys.executable, "-m", "weasyprint"]
+    except ImportError:
+        exe = shutil.which("weasyprint")
+        return [exe] if exe else None
+
+
+def git_commit() -> str:
+    try:
+        r = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True, text=True)
+        return r.stdout.strip()
+    except OSError:
+        return ""
+
+
 def build_doc(name: str, md_path: Path, src_dir: Path, args,
-              fonts: tuple[str | None, str | None, str | None], stamp: str) -> None:
+              fonts: tuple[str | None, str | None, str | None], stamp: str, pending: int = 0) -> None:
     opts = PDF_OPTIONS[name]
-    resource = f"{src_dir}:{PUB / 'figures'}:{PUB}"
+    resource = f"{src_dir}:{PUB / 'figures'}:{PUB}:{ROOT}"
     lua = AUX / "pending.lua"
     css = AUX / "style.css"
 
@@ -310,11 +336,23 @@ def build_doc(name: str, md_path: Path, src_dir: Path, args,
         if opts["toc"]:
             cmd += ["--toc", "--toc-depth=2"]
     else:
-        cmd = ["pandoc", str(md_path), "-f", MD_FORMAT, "-o", str(pdf), "--pdf-engine=weasyprint",
-               "--standalone", "--css", str(css), "--lua-filter", str(lua),
-               "--resource-path", resource, "--metadata", "lang=en"]
+        # pandoc -> print HTML (template, fonts, print.css), then WeasyPrint with the repository as base URL
+        html = OUT / f"{name}.print.html"
+        cmd = ["pandoc", str(md_path), "-f", MD_FORMAT, "-t", "html5", "-o", str(html), "--standalone",
+               "--template", str(AUX / "print.html"), "--section-divs",
+               "--css", (AUX / "fonts.css").as_uri(), "--css", (AUX / "print.css").as_uri(),
+               "--lua-filter", str(lua), "--resource-path", resource, "--metadata", "lang=en",
+               "-M", f"docname={name}", "-M", f"buildstamp={stamp}", "-M", f"pending_count={pending}"]
+        if pending or not args.release:
+            cmd += ["-M", "draft=true"]
+        commit = git_commit()
+        if commit:
+            cmd += ["-M", f"commit={commit}"]
         if opts["toc"]:
             cmd += ["--toc", "--toc-depth=2"]
+        if not run(cmd, f"{name}.print.html"):
+            return
+        cmd = weasyprint_cmd() + ["--base-url", str(ROOT), str(html), str(pdf)]
     run(cmd, f"{name}.pdf ({args.pdf_engine})")
 
 
@@ -363,14 +401,16 @@ def main() -> int:
     ap.add_argument("--only", nargs="+", choices=[*DOCS, "data"], help="build only these outputs")
     ap.add_argument("--release", action="store_true", help="fail if any placeholder remains")
     ap.add_argument("--no-pdf", action="store_true", help="skip PDF output")
-    ap.add_argument("--pdf-engine", choices=["xelatex", "weasyprint"], default="xelatex")
+    ap.add_argument("--pdf-engine", choices=["weasyprint", "xelatex"], default="weasyprint")
     ap.add_argument("--font", help="main serif font for xelatex (default: auto)")
     args = ap.parse_args()
 
     if not shutil.which("pandoc"):
         sys.exit("pandoc not found on PATH")
-    if not args.no_pdf and not shutil.which(args.pdf_engine):
-        sys.exit(f"{args.pdf_engine} not found on PATH (use --no-pdf or another --pdf-engine)")
+    if not args.no_pdf:
+        ok = weasyprint_cmd() if args.pdf_engine == "weasyprint" else shutil.which(args.pdf_engine)
+        if not ok:
+            sys.exit(f"{args.pdf_engine} not found (pip install weasyprint, or use --no-pdf / --pdf-engine xelatex)")
 
     numbers = load_numbers(NUMBERS)
     targets = args.only or [*DOCS, "data"]
@@ -383,7 +423,7 @@ def main() -> int:
     (AUX / "style.css").write_text(CSS, encoding="utf-8")
 
     # Pass 1: process text, collect report
-    processed: dict[str, tuple[Path, str]] = {}
+    processed: dict[str, tuple[Path, str, FileReport]] = {}
     reports: list[FileReport] = []
     for name in [t for t in targets if t in DOCS]:
         src = DOCS[name]
@@ -391,7 +431,7 @@ def main() -> int:
             print(f"skip {name}: {src} not found")
             continue
         rep = FileReport(name)
-        processed[name] = (src, process_markdown(src, numbers, rep))
+        processed[name] = (src, process_markdown(src, numbers, rep), rep)
         reports.append(rep)
 
     data_out: dict[str, str] = {}
@@ -427,10 +467,10 @@ def main() -> int:
         print(f"Fonts: main = {serif or 'LaTeX default'}, mono = {mono or 'LaTeX default'}{fb}")
 
     build_stamp = f"{mode} build {stamp}"
-    for name, (src, text) in processed.items():
+    for name, (src, text, rep) in processed.items():
         md_out = OUT / f"{name}.md"
         md_out.write_text(text, encoding="utf-8")
-        build_doc(name, md_out, src.parent, args, (serif, mono, fallback), build_stamp)
+        build_doc(name, md_out, src.parent, args, (serif, mono, fallback), build_stamp, rep.blocking)
 
     if data_out:
         dp = OUT / "data_package"

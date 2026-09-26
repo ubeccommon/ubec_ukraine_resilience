@@ -49,3 +49,4 @@ spreg==1.9.1
 threadpoolctl==3.7.0
 typing_extensions==4.16.0
 urllib3==2.8.0
+weasyprint==70.0   # PDF layout of the publication documents (publication/build/build.py)

@@ -111,6 +111,9 @@ never run `git clean`. Send the output of `git status` and `git log --oneline -3
 - `resilience/`: resilience layers, numbered `00_…` to `30_…`. **Run them from `resilience/`.**
   Scripts locate each other through relative paths (`BASE.parent / "viina"`); do not move folders.
 - `publication/`: working paper, essay, brief and data-package sources.
+  PDFs: `python publication/build/build.py --only paper` (A4, WeasyPrint; layout in
+  `publication/build/aux/print.html` and `print.css`, bundled fonts in `aux/fonts/`). Output goes to
+  `publication/build/out/` (not in git). Map plates: a `::: {.plate}` div around one image.
 - `tools/`: `publish_outputs.sh`.
 
 `viina/run_all.sh` rebuilds everything **from cache** (no downloads) and runs from any directory:

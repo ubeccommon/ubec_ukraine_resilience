@@ -1,0 +1,157 @@
+/* A4 print stylesheet for WeasyPrint (publication/build/aux/print.html).
+   Body: Source Serif 4; headings, tables, captions: Source Sans 3 (fonts.css, SIL OFL).
+   DejaVu is only a fallback for symbols the Source fonts lack (subscripts, arrows). */
+
+:root {
+  --ink: #1b1f24;
+  --muted: #5a626c;
+  --rule: #c9ced6;
+  --accent: #1f3a5f;        /* deep blue: cover band, headings, table heads */
+  --accent-soft: #e8eef5;
+  --zebra: #f5f7fa;
+  --pending-bg: #fff1a8;
+  --pending-ink: #8a1c00;
+}
+
+/* ------------------------------------------------------------ pages */
+@page {
+  size: A4;
+  margin: 24mm 22mm 24mm 22mm;
+  @top-left   { content: string(doctitle); font: 400 7.5pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                color: var(--muted); vertical-align: bottom; padding-bottom: 3mm; }
+  @top-right  { content: string(section); font: 600 7.5pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                color: var(--accent); vertical-align: bottom; padding-bottom: 3mm; }
+  @bottom-left  { content: string(version); font: 400 7pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                  color: var(--pending-ink); vertical-align: top; padding-top: 3mm; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 400 8pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                  color: var(--muted); vertical-align: top; padding-top: 3mm; }
+}
+@page :first { margin: 0; @top-left { content: none; } @top-right { content: none; }
+               @bottom-left { content: none; } @bottom-right { content: none; } }
+@page toc { @top-right { content: "Contents"; } }
+
+/* full-page landscape map plates */
+@page plate {
+  size: A4 landscape;
+  margin: 9mm 10mm 13mm 10mm;
+  @top-left { content: none; } @top-right { content: none; }
+  @bottom-left  { content: string(doctitle); font: 400 7pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                  color: var(--muted); vertical-align: top; padding-top: 2mm; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 400 8pt "Source Sans 3", "DejaVu Sans", sans-serif;
+                  color: var(--muted); vertical-align: top; padding-top: 2mm; }
+}
+
+.running-title   { string-set: doctitle content(); display: none; }
+.running-version { string-set: version content(); display: none; }
+
+/* ------------------------------------------------------------ base */
+html {
+  font-family: "Source Serif 4", "DejaVu Serif", serif;
+  font-size: 10.2pt;
+  line-height: 1.48;
+  color: var(--ink);
+  font-variant-numeric: lining-nums;
+  hyphenate-character: "-";
+}
+body { margin: 0; }
+p { margin: 0 0 0.62em; text-align: justify; hyphens: auto; orphans: 3; widows: 3; }
+a { color: var(--accent); text-decoration: none; }
+strong { font-weight: 700; }
+code, pre { font-family: "DejaVu Sans Mono", monospace; font-size: 0.82em; }
+code { background: #f1f3f6; padding: 0 0.2em; border-radius: 2px; hyphens: none; }
+pre { background: #f1f3f6; padding: 0.6em 0.8em; white-space: pre-wrap; break-inside: avoid; }
+sub, sup { font-family: "DejaVu Serif", serif; font-size: 0.7em; line-height: 0; }
+
+/* ------------------------------------------------------------ cover */
+.cover { page: cover; height: 297mm; position: relative; break-after: page;
+         font-family: "Source Sans 3", "DejaVu Sans", sans-serif; }
+.cover-band { background: var(--accent); color: #fff; height: 62mm; padding: 0 22mm;
+              display: flex; align-items: flex-end; }
+.cover-series { color: #fff; font-size: 10pt; letter-spacing: 0.14em; text-transform: uppercase;
+                font-weight: 600; margin: 0 0 9mm; text-align: left; }
+.cover-body { padding: 22mm 22mm 0; }
+.cover-status { display: inline-block; color: var(--pending-ink); border: 1.2pt solid var(--pending-ink);
+                font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+                padding: 1.2mm 3mm; margin: 0 0 9mm; text-align: left; }
+.cover-title { font-family: "Source Sans 3", sans-serif; font-weight: 700; font-size: 27pt; line-height: 1.13;
+               color: var(--accent); margin: 0 0 6mm; string-set: none; hyphens: none; }
+.cover-subtitle { font-size: 14pt; line-height: 1.3; color: var(--muted); margin: 0 0 16mm; text-align: left; }
+.cover-author { font-size: 12pt; font-weight: 600; margin: 0 0 1mm; text-align: left; }
+.cover-date { font-size: 11pt; color: var(--muted); text-align: left; }
+.cover-foot { position: absolute; left: 22mm; right: 22mm; bottom: 20mm; }
+.cover-draftnote { background: var(--accent-soft); border-left: 3pt solid var(--accent); padding: 4mm 5mm;
+                   margin-bottom: 7mm; }
+.cover-draftnote p { font-size: 9.5pt; line-height: 1.45; margin: 0; text-align: left; }
+.cover-meta, .cover-licence, .cover-version { font-size: 8.5pt; color: var(--muted); margin: 0 0 1.2mm; text-align: left; }
+
+/* ------------------------------------------------------------ contents */
+nav.toc { page: toc; break-after: page; font-family: "Source Sans 3", "DejaVu Sans", sans-serif; }
+nav.toc h2.toc-heading { font-size: 20pt; color: var(--accent); border: none; margin: 0 0 8mm;
+                         string-set: section "Contents"; break-before: auto; }
+nav.toc ul { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 0; }
+nav.toc > ul > li > a { display: block; font-size: 10.5pt; font-weight: 600; color: var(--ink);
+                        padding: 1.9mm 0; border-bottom: 0.4pt solid var(--rule); }
+nav.toc ul ul a { display: block; font-size: 9pt; font-weight: 400; color: var(--muted); padding: 0.6mm 0 0.6mm 7mm; }
+nav.toc a::after { content: leader(" ") target-counter(attr(href), page); color: var(--muted); font-weight: 400; }
+
+/* ------------------------------------------------------------ headings */
+h1, h2, h3, h4 { font-family: "Source Sans 3", "DejaVu Sans", sans-serif; color: var(--accent);
+                 hyphens: none; break-after: avoid; line-height: 1.22; }
+main h2 { font-size: 17pt; font-weight: 700; margin: 0 0 5mm; padding-bottom: 2mm;
+          border-bottom: 1.2pt solid var(--accent); break-before: page; string-set: section content(); }
+main h3 { font-size: 11.8pt; font-weight: 700; margin: 6mm 0 2mm; }
+main h4 { font-size: 10.5pt; font-weight: 600; margin: 4mm 0 1.5mm; color: var(--ink); }
+
+/* ------------------------------------------------------------ lists, quotes */
+ul, ol { margin: 0 0 0.7em; padding-left: 5.5mm; }
+li { margin: 0 0 0.3em; }
+li > p { margin-bottom: 0.3em; }
+blockquote { margin: 1em 0; padding: 2.5mm 4mm; background: var(--accent-soft);
+             border-left: 2.5pt solid var(--accent); color: var(--ink); }
+blockquote p { text-align: left; margin-bottom: 0.3em; }
+
+/* key findings: numbered cards */
+#key-findings + p { font-size: 10.8pt; }
+section#key-findings > ol > li, h2#key-findings ~ ol > li { break-inside: avoid; }
+
+/* ------------------------------------------------------------ tables */
+table { width: 100%; table-layout: auto; border-collapse: collapse; margin: 3mm 0 5mm; font-family: "Source Sans 3", "DejaVu Sans", sans-serif;
+        font-size: 8.3pt; line-height: 1.3; font-variant-numeric: tabular-nums; }
+thead { display: table-header-group; }
+col { width: auto !important; }   /* ignore pandoc's fixed column widths: they overflow on wide tables */
+th { background: var(--accent); color: #fff; font-weight: 600; text-align: left; vertical-align: bottom;
+     padding: 1.4mm 1.3mm; border: none; hyphens: none; }
+td { padding: 1.1mm 1.3mm; border: none; border-bottom: 0.4pt solid var(--rule); vertical-align: top; }
+tbody tr:nth-child(even) td { background: var(--zebra); }
+tr { break-inside: avoid; }
+td p, th p { margin: 0; text-align: left; hyphens: none; }
+caption { caption-side: top; text-align: left; font-weight: 600; color: var(--accent); padding-bottom: 1.5mm; }
+
+/* wide tables (9+ columns): smaller type so they fit the text width */
+table:has(tr > th:nth-child(9)) { font-size: 7.4pt; }
+
+/* "**Table n.** …" and "**Figure n.** …" lines directly above tables/figures */
+p:has(> strong:first-child) { text-align: left; }
+
+/* ------------------------------------------------------------ figures */
+figure { margin: 4mm 0 5mm; break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; max-height: 150mm; }
+figcaption { font-family: "Source Sans 3", "DejaVu Sans", sans-serif; font-size: 8.5pt; color: var(--muted);
+             text-align: left; margin-top: 2mm; line-height: 1.35; }
+
+/* full-page map plates: the preview already carries title, legend and caption */
+div.plate { page: plate; break-before: page; break-after: page; margin: 0; }
+div.plate figure { margin: 0; height: 186mm; display: flex; flex-direction: column; justify-content: center; }
+div.plate figure img { max-width: 100%; max-height: 180mm; width: auto; margin: 0 auto; display: block; }
+div.plate figcaption { font-size: 8pt; text-align: center; margin-top: 1.5mm; }
+div.withheld p { font-family: "Source Sans 3", "DejaVu Sans", sans-serif; font-size: 8.5pt; color: var(--muted);
+             border: 0.5pt dashed var(--rule); padding: 2mm 3mm; text-align: left; }
+
+/* ------------------------------------------------------------ draft markers */
+.pending { background: var(--pending-bg); color: var(--pending-ink); font-family: "Source Sans 3", "DejaVu Sans", sans-serif;
+           font-size: 0.86em; font-weight: 600; }
+
+/* ------------------------------------------------------------ references, annexes */
+h2#references ~ ul, h2#references ~ p { font-size: 9pt; text-align: left; }
+hr { border: none; border-top: 0.5pt solid var(--rule); margin: 5mm 0; }

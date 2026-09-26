@@ -223,9 +223,18 @@ Map 01 shows a recency-weighted strike index on H3 resolution-5 cells: each sett
 Strikes: VIINA settlement-precision events attributed to Russian forces, 24 Feb 2022 – 19 Sep 2026, per hromada. Alert hours: hours under air-raid alert, 1 Sep 2025 – 31 Aug 2026 (hromada, raion or oblast alert; overlaps merged). IQR = interquartile range.
 <!-- end table: figures/table03_exposure.md -->
 
-Exposure has a clear east–west gradient, with concentrations along the front line, in the border oblasts and around major cities (Maps 01 and 04). Kernel density estimation (Map 07) and hot-spot analysis (Getis-Ord Gi*, Map 09) identify the same clusters. IDW and kriging surfaces (Annex D) are shown for comparison only. They interpolate between reported locations and should not be read as estimates for places without recorded events.
+Exposure has a clear east–west gradient, with concentrations along the front line, in the border oblasts and around major cities (Maps 01 and 04). Kernel density estimation (Map 10) and hot-spot analysis (Getis-Ord Gi*, Map 11) identify the same clusters. IDW and kriging surfaces (Annex D) are shown for comparison only. They interpolate between reported locations and should not be read as estimates for places without recorded events.
 
-**Figures:** Map 01 — risk index by hromada. Map 04 — cumulative alert hours. Map 07 — strike density (KDE). Map 09 — Gi* hot and cold spots.
+**Figures:** Map 01 — risk index by hromada. Map 04 — cumulative alert hours. Map 10 — strike density (KDE). Map 11 — Gi* hot and cold spots.
+
+::: {.withheld}
+Maps 01, 10 and 11 are withheld from publication under rules R1, R3 and R5 (section 12) and are not reproduced here; Map 04 follows.
+:::
+
+::: {.plate}
+![Map 04 — alert hours per hromada, last 12 months](viina/qgis/maps/preview/04_alert_hours.png)
+:::
+
 
 ## 5. Indices
 
@@ -267,6 +276,11 @@ Using lit pixels rather than all pixels reduces the influence of newly lit or ve
 Engagement is the number of valid DREAM reconstruction projects per 10,000 residents ([[PENDING: definition of "valid" — request 23]]). It is kept separate from capacity and recovery because projects are registered in response to damage. Combining it with the other indices would mix a response to exposure with the outcomes we want to compare against exposure.
 
 **Figures and tables:** Map 16 — recovery ratio quintiles. Table 4 — capacity index loadings and robustness.
+
+::: {.plate}
+![Map 16 — night-light recovery ratio, quintiles](viina/qgis/maps/preview/16_resilience_recovery.png)
+:::
+
 
 ## 6. Capacity and exposure
 
@@ -350,6 +364,16 @@ n = 251 classified.
 Nationally, all nine cells are populated, but not evenly. Low alert exposure goes with low capacity in 212 hromadas, 126 of them in the four Carpathian oblasts, in line with ρ = {{rho_cap_alerts_2025}} (Table 5). The {{n_hilo_alerts}} hromadas with high alert exposure and low capacity lie in 11 oblasts in the north-east, east and south: Sumy (20), Kharkiv (18), Kherson (15), Dnipropetrovsk (11), and Chernihiv, Donetsk and Zaporizhzhia (9 each). On strikes the same cell holds {{n_hilo_strikes}} hromadas, led by Kharkiv, Sumy and Kherson. No Carpathian hromada reaches the national middle or top alert tercile, so Map 17 classifies the Carpathian oblasts on regional terciles; on that scale {{n_hilo_carp_regional}} hromadas combine relatively high exposure with low capacity.
 
 **Figures:** Map 14 — alert hours × capacity (bivariate 3×3). Map 15 — strikes × capacity (bivariate 3×3).
+
+::: {.plate}
+![Map 14 — alert hours × fiscal capacity](viina/qgis/maps/preview/14_resilience_alerts_capacity.png)
+:::
+
+
+::: {.plate}
+![Map 15 — strikes × fiscal capacity](viina/qgis/maps/preview/15_resilience_strikes_capacity.png)
+:::
+
 
 ## 7. Recovery models
 
@@ -444,7 +468,9 @@ The models support three statements:
 
 They do not support the claim that strengthening local finances would, by itself, speed recovery from attacks. Section 8 tests whether monthly trajectories reveal local differences that the annual ratio hides.
 
-**Figures and tables:** Table 7 — specifications. Table 8 — sensitivity. Figure 1 — β₃ with 95 % intervals across M1–M7 (figures/fig01_interaction.svg). Map 16 — recovery quintiles.
+**Figures and tables:** Table 7 — specifications. Table 8 — sensitivity. Figure 1 — β₃ with 95 % intervals across M1–M7. Map 16 — recovery quintiles (section 5.2).
+
+![Figure 1 — Interaction coefficient β₃ (exposure × capacity) with 95 % intervals across models M1–M7.](publication/figures/fig01_interaction.png){width=100%}
 
 ## 8. Trajectories, 2021–2026
 
@@ -493,6 +519,8 @@ For {{nl_worstq_2022_share}} of hromadas the worst quarter fell in 2022. Measure
 
 Carpathian hromadas were brighter throughout, and lost a smaller share of their light in the 2024 outages. They were not spared: in July 2024 they too fell to well below their usual level. Section 10 describes differences between the four oblasts.
 
+![Carpathian oblasts: monthly night-light index, oblast medians (Figure 1 of the Carpathian brief).](resilience/docs/fig1_carpathian_light.png){width=100%}
+
 ### 8.4 Trajectory metrics
 
 For each hromada:
@@ -534,6 +562,16 @@ Four results follow.
 Residual spatial dependence remains for level and worst quarter (Moran's I {{level_trough_moran}}), so HC1 t-values for these outcomes are optimistic. With Conley spatial-HAC errors (50 and 100 km) and a wild-cluster bootstrap by oblast, the capacity estimates for level and outage loss and the 2025 estimate for the worst quarter remain clearly different from zero (p ≤ 0.004).
 
 **Figures:** Map 19 — recent light deficit × fiscal capacity (bivariate 3×3, national terciles). Map 20 — outage loss in quintiles (left) and change classes since H2 2023 (right). Both are subject to the rule in section 8.7.
+
+::: {.plate}
+![Map 19 — recent light deficit × fiscal capacity](viina/qgis/maps/preview/19_trajectory_level_capacity.png)
+:::
+
+
+::: {.plate}
+![Map 20 — summer-2024 outage loss and change since H2 2023](viina/qgis/maps/preview/20_trajectory_outage.png)
+:::
+
 
 ### 8.6 Budget trajectories
 
@@ -599,7 +637,12 @@ A plausible reading is that many people registered in the west early in the war,
 
 [[PENDING: denominator used for "per 1,000 residents" — request 29]]
 
-**Figures:** Map 18 — oblast context grid: reSCORE differences and IDPs per 1,000. Figure 3 — registered vs present IDPs per 1,000 by oblast [[PENDING: request 29]].
+**Figures:** Map 18 — oblast context grid: reSCORE 2024 differences from the national score (the IOM DTM panel is left empty; IOM terms do not allow redistribution). Figure 3 — registered vs present IDPs per 1,000 by oblast [[PENDING: request 29]].
+
+::: {.plate}
+![Map 18 — reSCORE 2024 by oblast, difference from national](viina/qgis/maps/preview/18_oblast_context.png)
+:::
+
 
 ### 9.3 Why these data stay at oblast level
 
@@ -608,6 +651,16 @@ Displacement is the most obvious candidate explanation for the within-oblast cap
 ## 10. The Carpathian region
 
 This section applies the national results to the {{n_carp_hromadas}} non-occupied hromadas of four oblasts: {{carpathian_oblasts}}. All figures use the same methods and thresholds as the national analysis. Map 17 shows capacity and exposure as terciles computed within the region, so that differences between Carpathian hromadas are visible rather than lost in the national range.
+
+::: {.plate}
+![Map 17 — Carpathian region, alert hours × capacity (regional terciles)](viina/qgis/maps/preview/17_carpathian_resilience.png)
+:::
+
+
+::: {.plate}
+![Map 13 — Carpathian region, strike hot and cold spots](viina/qgis/maps/preview/13_carpathian_hotspots.png)
+:::
+
 
 ### 10.1 Profile
 
