@@ -9,7 +9,7 @@ license: ODbL-1.0
 authors:
   - family-names: Garand
     given-names: Michel
-    affiliation: "UBEC Platform"
+    affiliation: "Ubuntu Bioregional Economic Commons"
 abstract: >-
   Hromada-level dataset for Ukraine joining strike and air-raid-alert
   exposure, local budget indicators and night-light recovery measures,
@@ -29,7 +29,7 @@ preferred-citation:
   authors:
     - family-names: Garand
       given-names: Michel
-      affiliation: "UBEC Platform"
+      affiliation: "Ubuntu Bioregional Economic Commons"
   year: {{release_year}}
   publisher:
     name: SocArXiv

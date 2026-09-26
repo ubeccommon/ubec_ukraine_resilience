@@ -6,7 +6,7 @@ This dataset combines the sources below. Anyone reusing the data, or maps and fi
 
 ## Short attribution line for maps and figures
 
-> Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM; basemap © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
+> Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE Kartographia (CC BY 3.0 IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM; basemap © OpenStreetMap contributors (ODbL). Analysis: M. Garand, Ubuntu Bioregional Economic Commons, CC BY 4.0.
 
 Only the sources actually used in a given map need to be named.
 
@@ -73,7 +73,7 @@ The companion paper also uses reSCORE Ukraine (SeeD–UNDP) survey indicators an
 
 ## This dataset
 
-Analysis, indices and documentation: Michel Garand, UBEC Platform.
+Analysis, indices and documentation: Michel Garand, Ubuntu Bioregional Economic Commons.
 - Data: ODbL 1.0.
 - Documentation: CC BY 4.0.
 - Code: MIT (in the repository).

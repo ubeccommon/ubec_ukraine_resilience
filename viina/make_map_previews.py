@@ -45,7 +45,7 @@ HELD = {
 
 ATTRIBUTION = ("Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
                "SSPE Kartographia (CC BY 3.0 IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; "
-               "DREAM. Analysis and maps: M. Garand, UBEC Platform, CC BY 4.0.")
+               "DREAM. Analysis and maps: M. Garand, Ubuntu Bioregional Economic Commons, CC BY 4.0.")
 
 
 def find_source(page):

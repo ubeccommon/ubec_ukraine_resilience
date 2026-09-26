@@ -1,7 +1,7 @@
 ---
 title: "Local finances help in outages, not against heavier attacks"
 subtitle: "What open data show about strikes, local capacity and night-time light in Ukraine's hromadas, 2022–2026"
-author: "Michel Garand, UBEC Platform"
+author: "Michel Garand, Ubuntu Bioregional Economic Commons"
 version: "Policy brief v0.2 — internal draft (trajectory results added)"
 date: "September 2026"
 licence: "CC BY 4.0"

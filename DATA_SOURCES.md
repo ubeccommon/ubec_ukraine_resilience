@@ -12,7 +12,7 @@ The scripts that retrieve each source are included.
 
 > Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / SSPE
 > Kartographia (CC BY-IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; DREAM;
-> © OpenStreetMap contributors (ODbL). Analysis: M. Garand, UBEC Platform, CC BY 4.0.
+> © OpenStreetMap contributors (ODbL). Analysis: M. Garand, Ubuntu Bioregional Economic Commons, CC BY 4.0.
 
 Name only the sources actually used in a given map. Page 18 (oblast context) also credits
 *SCORE Ukraine 2024, SeeD and UNDP*; its IOM DTM panel is left empty (DTM terms forbid redistribution).

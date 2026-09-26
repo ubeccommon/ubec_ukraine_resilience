@@ -11,7 +11,7 @@ the capacity and recovery of Ukraine's 1,763 hromadas (territorial communities),
 It combines open data on strikes, alerts, local budgets, population, displacement and monthly
 night-time lights, and builds a 20-page QGIS map atlas.
 
-**Author:** Michel Garand, UBEC Platform · **Status:** public draft for discussion, v1.1 step 2 (time dimension) ·
+**Author:** Michel Garand, Ubuntu Bioregional Economic Commons · **Status:** public draft for discussion, v1.1 step 2 (time dimension) ·
 **Licences:** code MIT · data ODbL 1.0 · docs and figures CC BY 4.0 (see [`LICENSES.md`](LICENSES.md))
 
 > Aggregated open data only. Nothing below hromada level, no personal data, and no layers that

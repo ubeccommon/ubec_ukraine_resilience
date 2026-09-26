@@ -2,7 +2,7 @@
 title: "Hromada resilience under strikes in Ukraine, 2022–2026"
 subtitle: "Part I: local capacity, recovery and exposure · Part II: trust, cohesion and reception — an associational analysis with open data"
 short-title: "Hromada resilience under strikes, 2022–2026"
-author: "Michel Garand, UBEC Platform"
+author: "Michel Garand, Ubuntu Bioregional Economic Commons"
 version: "v0.3 — internal draft (two-part structure: resilience and its relationships)"
 date: "September 2026"
 licence: "Text and figures CC BY 4.0. Data package ODbL 1.0. Code MIT."

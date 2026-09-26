@@ -11,7 +11,7 @@ repository-code: "https://github.com/ubeccommon/ubec_ukraine_resilience"
 authors:
   - family-names: Garand
     given-names: Michel
-    affiliation: "UBEC Platform"
+    affiliation: "Ubuntu Bioregional Economic Commons"
 abstract: >-
   Reproducible Python and QGIS pipeline linking Russian strikes and
   air-raid alerts in Ukraine to hromada-level fiscal capacity, local
@@ -35,7 +35,7 @@ preferred-citation:
   authors:
     - family-names: Garand
       given-names: Michel
-      affiliation: "UBEC Platform"
+      affiliation: "Ubuntu Bioregional Economic Commons"
   year: 2026
   publisher:
     name: SocArXiv
