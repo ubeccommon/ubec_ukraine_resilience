@@ -1,0 +1,31 @@
+measure,statistic,group,value,n
+struck,mean,Zakarpattia,8.0,64
+struck,mean,Ivano-Frankivsk,5.0,62
+struck,mean,Lviv,15.0,73
+struck,mean,Chernivtsi,6.0,52
+struck,mean,Carpathian (4 oblasts),9.0,251
+struck,mean,Ukraine (non-occupied),23.0,1289
+alert_h_12m,median,Zakarpattia,92.0,64
+alert_h_12m,median,Ivano-Frankivsk,113.0,62
+alert_h_12m,median,Lviv,113.0,73
+alert_h_12m,median,Chernivtsi,132.0,52
+alert_h_12m,median,Carpathian (4 oblasts),114.0,251
+alert_h_12m,median,Ukraine (non-occupied),674.0,1289
+capacity_prewar,median,Zakarpattia,15.2,64
+capacity_prewar,median,Ivano-Frankivsk,12.9,62
+capacity_prewar,median,Lviv,44.3,73
+capacity_prewar,median,Chernivtsi,9.9,52
+capacity_prewar,median,Carpathian (4 oblasts),18.5,251
+capacity_prewar,median,Ukraine (non-occupied),51.3,1288
+capacity_index,median,Zakarpattia,35.6,64
+capacity_index,median,Ivano-Frankivsk,35.3,62
+capacity_index,median,Lviv,57.4,73
+capacity_index,median,Chernivtsi,28.9,52
+capacity_index,median,Carpathian (4 oblasts),39.9,251
+capacity_index,median,Ukraine (non-occupied),49.3,1288
+ntl_recovery_2124,median,Zakarpattia,0.84,57
+ntl_recovery_2124,median,Ivano-Frankivsk,0.25,48
+ntl_recovery_2124,median,Lviv,0.44,65
+ntl_recovery_2124,median,Chernivtsi,0.43,39
+ntl_recovery_2124,median,Carpathian (4 oblasts),0.46,209
+ntl_recovery_2124,median,Ukraine (non-occupied),0.29,1021

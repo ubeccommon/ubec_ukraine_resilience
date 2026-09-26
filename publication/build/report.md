@@ -1,8 +1,8 @@
-# Build report — 2026-09-26 07:42 (draft)
+# Build report — 2026-09-26 07:49 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 49 | 28 | 2 | 0 | 0 | 0 |
+| paper | 47 | 28 | 2 | 0 | 0 | 0 |
 | brief | 4 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
 | carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -11,7 +11,7 @@
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 124**
+**Total blocking items: 122**
 
 ## paper
 
@@ -25,7 +25,6 @@
 - PENDING: terms — request 23
 - PENDING
 - PENDING
-- PENDING: exposure descriptives — median, IQR and maximum of strikes and alert hours, national and by oblast — request 2
 - PENDING: Table 4, loadings and leave-one-out correlations — request 3
 - PENDING: definition of "valid" — request 23
 - PENDING: all cells — request 8
@@ -52,11 +51,10 @@
 - PENDING: confirm that all changes use February 2023 as base — request 29
 - PENDING: denominator used for "per 1,000 residents" — request 29
 - PENDING: request 29
-- PENDING: Table 11 with Carpathian and national medians for capacity 2021, capacity 2025 and recovery ratio — request 10
 - PENDING: class definitions — request 37
 - PENDING: Lviv trust — request 15
 - PENDING: optional — request 30
-- PENDING: breakdown of the 1,290 → 1,021 drop by reason and oblast — request 1
+- PENDING: breakdown of the 1,289 → 1,021 drop by reason and oblast — request 1
 - PENDING: oblast sample sizes and confidence intervals for the trust differences — request 9
 - PENDING: hromada-level DTM data requested from IOM
 - PENDING: wild-cluster bootstrap p-values and spatially robust errors — requests 4, 5
