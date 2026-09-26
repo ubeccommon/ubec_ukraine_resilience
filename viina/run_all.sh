@@ -47,6 +47,7 @@ if [[ "${SKIP_RES:-0}" != "1" ]]; then
     python 24_carpathian_chart.py                        # Figure 1 of the Carpathian brief (docs/fig1_*.png/svg)
     python 25_public_tables.py                           # public copies without R4 fields (public/*.csv)
     python 28_frontline_zone.py                        # R3 front-line and border zone (request 31)
+    python 29_r3_aggregate.py                          # R3 raion values in the zone (maps 14–16, 19–20)
     python 26_publication_tables.py                      # paper tables (publication/figures/table*.csv/md)
     python 27_sensitivity.py                            # Table 8 sensitivity (runs 12 variants)
   ) 2>&1 | tee qgis/step_res.log

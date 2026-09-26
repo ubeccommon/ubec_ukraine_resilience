@@ -15,19 +15,20 @@ Creates qgis/ukraine_strikes.qgz with styled layers and A4 landscape layouts, ex
  11     Getis-Ord Gi* (60 km band, FDR) + LISA outliers: strikes / alert hours
  12     Carpathian zoom — KDE 10 km (1 km grid), points, alert isobars
  13     Carpathian zoom — Gi*/LISA
- 14     resilience: alert-hour exposure x institutional capacity (bivariate 3x3, national terciles)
- 15     resilience: strike exposure x capacity (bivariate, variant)
- 16     resilience: night-light recovery quintiles (lit pixels)
+ 14     resilience: alert-hour exposure x institutional capacity (bivariate 3x3, national terciles; R3 raion values)
+ 15     resilience: strike exposure x capacity (bivariate, variant; R3 raion values)
+ 16     resilience: night-light recovery quintiles (lit pixels; R3 raion values)
  17     Carpathian zoom — alert exposure x capacity, regional terciles
  18     oblast context — reSCORE 2024 citizen resilience (difference from national) + IDPs present
- 19     trajectories: night-light deficit x capacity (bivariate 3x3), publication window and reliable hromadas (R2)
- 20     trajectories: summer-2024 outage loss (quintiles) | change since H2 2023 vs own noise, publication window (R2)
+ 19     trajectories: night-light deficit x capacity (bivariate 3x3), publication window, reliable hromadas (R2, R3)
+ 20     trajectories: summer-2024 outage loss (quintiles) | change since H2 2023 vs own noise (R2, R3)
 Inputs from the venv steps: qgis/*.gpkg, qgis/surfaces/*.tif, qgis/hotspots/*, qgis/fgb/*.fgb (export_fgb.py),
 qgis/meta.json (write_meta.py: data dates for the captions),
-../resilience/resilience_maps.gpkg (resilience/13_bivariate.py) for maps 14–17,
-layer hromada_trajectories + tidy/trajectory_classes.json + tidy/trajectory_models.csv
-(resilience/22_trajectories.py) for maps 19–20 (captions read the current model results; the map fields *_pub
-end at PUB_END and show only hromadas with reliable light data, rule R2).
+../resilience/resilience_maps.gpkg: hromada_bivariate (13_bivariate.py) for map 17; hromada_bivariate_r3 and
+hromada_trajectories_r3 (29_r3_aggregate.py: zone parts within 30 km of the front line or the Russian/Belarusian
+border carry raion values, rule R3) for maps 14–16 and 19–20; tidy/trajectory_classes.json and
+tidy/trajectory_models.csv (22_trajectories.py) for the captions of maps 19–20 (map fields *_pub end at PUB_END and
+show only hromadas with reliable light data, rule R2).
 Requires: sudo apt install qgis python3-qgis
 """
 import os, json, csv, resource, datetime
@@ -364,27 +365,40 @@ REC_PAL = [("1", "#d7191c", "Lowest 20 % (least recovered)"), ("2", "#fdae61", "
            ("4", "#abd9e9", "60–80 %"), ("5", "#2c7bb6", "Highest 20 % (most recovered)"),
            ("na", "#ffffff", "No value (< 10 lit pixels or missing)")]
 E_LBL = {"1": "low", "2": "medium", "3": "high"}
+NA_OUTLINE = ("#bdbdbd", 0.15)      # visible legend swatch and faint border for 'no reliable light data'
 
-def cat_style(lyr, field, spec, outline="#ffffff", outline_w=0.05):
+def cat_style(lyr, field, spec, outline="#ffffff", outline_w=0.05, na_outline=False):
     if lyr:
-        cats = [QgsRendererCategory(v, QgsFillSymbol.createSimple({"color": c, "outline_color": outline,
-                                                                    "outline_width": str(outline_w)}), lab)
-                for v, c, lab in spec]
+        cats = []
+        for v, c, lab in spec:
+            oc, ow = NA_OUTLINE if (na_outline and v == "na") else (outline, outline_w)
+            cats.append(QgsRendererCategory(v, QgsFillSymbol.createSimple({"color": c, "outline_color": oc,
+                                                                           "outline_width": str(ow)}), lab))
         lyr.setRenderer(QgsCategorizedSymbolRenderer(field, cats))
 
-def bv_style(lyr, field, a="exposure", b="capacity", na_label="No data"):
+def bv_style(lyr, field, a="exposure", b="capacity", na_label="No data", na_outline=False):
     spec = [(k, c, f"{a} {E_LBL[k[0]]} · {b} {E_LBL[k[1]]}") for k, c in BV_PAL.items()]
     spec.append(("na", "#ffffff", na_label))
-    cat_style(lyr, field, spec)
+    cat_style(lyr, field, spec, na_outline=na_outline)
 
-bv_alt = add_vector(RES, "Exposure (alert hours) × capacity — national terciles", layer="hromada_bivariate",
+def zone_style(lyr):
+    if lyr:
+        lyr.renderer().setSymbol(QgsFillSymbol.createSimple({"color": "0,0,0,0", "outline_color": "#222222",
+                                                             "outline_width": "0.45", "outline_style": "dash"}))
+
+# R3 layers (29_r3_aggregate.py): throwaway first instance (gpkg quirk, see page 18)
+bv3_probe = add_vector(RES, "hromada_bivariate_r3 (probe, unused)", layer="hromada_bivariate_r3", group=R)
+bv_alt = add_vector(RES, "Exposure (alert hours) × capacity — national terciles", layer="hromada_bivariate_r3",
                     group=R, subset="\"occupied\" = 0"); bv_style(bv_alt, "bv_alt")
-bv_str = add_vector(RES, "Exposure (strikes since 2022) × capacity — national classes", layer="hromada_bivariate",
+bv_str = add_vector(RES, "Exposure (strikes since 2022) × capacity — national classes", layer="hromada_bivariate_r3",
                     group=R, subset="\"occupied\" = 0"); bv_style(bv_str, "bv_str")
 bv_carp = add_vector(RES, "Carpathian: exposure × capacity — regional terciles", layer="hromada_bivariate",
                      group=R, subset="\"carp\" = 1 AND \"occupied\" = 0"); bv_style(bv_carp, "bv_carp")
-rec_q = add_vector(RES, "Night-light recovery 2021→2024 (lit pixels), quintiles", layer="hromada_bivariate",
+rec_q = add_vector(RES, "Night-light recovery 2021→2024 (lit pixels), quintiles", layer="hromada_bivariate_r3",
                    group=R, subset="\"occupied\" = 0"); cat_style(rec_q, "recovery_q", REC_PAL)
+zone_r3 = add_vector(RES, "Front-line and border zone (≤ 30 km): raion values (rule R3)", layer="hromada_bivariate_r3",
+                     group=R, subset="\"r3\" = 1"); zone_style(zone_r3)
+ZONE_LEG = (zone_r3, "Zone ≤ 30 km: raion values (R3)")
 # oblast context (resilience/16_oblast_context.py): reSCORE 2024 vs national, IDPs present
 CTX = [("trust_local_admin", "Trust in town or village administration"),
        ("community_cohesion", "Community cohesion"),
@@ -423,7 +437,7 @@ if idp_ctx:
     graduated_fixed(idp_ctx, "idp_present_est_per1k", [0, 50, 75, 100, 150, 250],
                     ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"], outline="#666666", outline_w=0.15)
 
-# trajectories (resilience/22_trajectories.py): maps 19–20
+# trajectories (resilience/22_trajectories.py, R3 layer from 29_r3_aggregate.py): maps 19–20
 RES_TIDY = os.path.normpath(os.path.join(HERE, "..", "resilience", "tidy"))
 TC = {}
 _tc = os.path.join(RES_TIDY, "trajectory_classes.json")
@@ -480,16 +494,16 @@ CHG_PAL = [("declined", "#d7191c", "Declined (beyond own noise)"), ("stable", "#
            ("improved", "#2c7bb6", "Improved (beyond own noise)"), ("na", "#ffffff", NA_REL)]
 
 # throwaway first instance (same gpkg quirk as oblast_context on page 18)
-traj_probe = add_vector(RES, "hromada_trajectories (probe, unused)", layer="hromada_trajectories", group=R)
-traj_bv = add_vector(RES, f"Light deficit {PUB_WIN} × capacity — national terciles", layer="hromada_trajectories",
+traj_probe = add_vector(RES, "hromada_trajectories_r3 (probe, unused)", layer="hromada_trajectories_r3", group=R)
+traj_bv = add_vector(RES, f"Light deficit {PUB_WIN} × capacity — national terciles", layer="hromada_trajectories_r3",
                      group=R, subset="\"occupied\" = 0")
-bv_style(traj_bv, "bv_rec_cap_pub", a="light deficit", na_label=NA_REL)
-traj_s24 = add_vector(RES, "Summer-2024 outage: light Jun–Jul 2024 vs H2 2023, quintiles", layer="hromada_trajectories",
+bv_style(traj_bv, "bv_rec_cap_pub", a="light deficit", na_label=NA_REL, na_outline=True)
+traj_s24 = add_vector(RES, "Summer-2024 outage: light Jun–Jul 2024 vs H2 2023, quintiles", layer="hromada_trajectories_r3",
                       group=R, subset="\"occupied\" = 0")
-cat_style(traj_s24, "s24_q_pub", S24_PAL)
-traj_chg = add_vector(RES, f"Change {PUB_WIN} vs H2 2023 (against own pre-war noise)", layer="hromada_trajectories",
+cat_style(traj_s24, "s24_q_pub", S24_PAL, na_outline=True)
+traj_chg = add_vector(RES, f"Change {PUB_WIN} vs H2 2023 (against own pre-war noise)", layer="hromada_trajectories_r3",
                       group=R, subset="\"occupied\" = 0")
-cat_style(traj_chg, "chg_cls_pub", CHG_PAL)
+cat_style(traj_chg, "chg_cls_pub", CHG_PAL, na_outline=True)
 R.setItemVisibilityChecked(False)
 
 for lyr, vis in [(osm, True), (outline, True), (oblasts, False), (hexes, True), (west, False), (settl, True), (pts, False)]:
@@ -591,7 +605,7 @@ def make_layout(name, title, visible_layers, subtitle="", extent=None, scale_km=
     return layout
 
 def make_layout_multi(name, title, panels, subtitle="", extent=None, scale_km=200, legend=None, legend_cols=3,
-                      legend_split=True):
+                      legend_split=True, sub_y=190.0, sub_size=7.5):
     """panels: list of (layers bottom->top, caption). Maps side by side, one shared legend below."""
     layout = new_layout(name)
     ext = extent or UA_RECT
@@ -610,7 +624,7 @@ def make_layout_multi(name, title, panels, subtitle="", extent=None, scale_km=20
     add_legend(layout, maps[0], legend or all_layers, 60, y0, 229, max(20.0, 187 - y0), legend_cols,
                split=legend_split)
     if subtitle:
-        add_text(layout, subtitle, 8, 190, 280, 16, 7.5)
+        add_text(layout, subtitle, 8, sub_y, 280, 208 - sub_y, sub_size)
     project.layoutManager().addLayout(layout)
     return layout
 
@@ -712,18 +726,22 @@ credit_res = ("Sources: budgets openbudget.gov.ua (MinFin/Treasury, open data CM
               "(EC reuse); night lights NASA Black Marble VNP46A3 C2 (public domain); alerts Klimenko (MIT); strikes VIINA 2.0 "
               "(Zhukov, ODbL); boundaries OCHA COD-AB / SSPE Kartographia (CC BY-IGO); © OpenStreetMap contributors (ODbL). "
               f"Places not under Ukrainian control on {md('control_date')} excluded.")
+R3_TXT = (f"Within 30 km of the front line (VIINA control, {md('control_date')}) or of the border with Russia or Belarus, "
+          "hromadas are shown as raion values (dashed outline; population-weighted, national class limits). ")
 CAP_TXT = ("Capacity = mean percentile rank of own revenue per capita 2025, transfer dependency (inverse), capital-expenditure "
            "share 2023–25 and civilian PIT growth 2021–25 (per capita on pre-war GHS-POP 2020). ")
 FIND = ("Capacity and exposure are nearly independent (ρ ≈ 0.1); within oblasts capacity goes with somewhat better night-light "
         "recovery, but it does not measurably soften the effect of exposure (interaction ≈ 0 after oblast controls; "
         "cross-sectional association). ")
 N14 = (f"Terciles among non-occupied hromadas. Exposure = air-raid alert hours ({W_ALERT}); alerts are issued per raion "
-       "or oblast, hence the blocky pattern. White north of Kyiv: Chornobyl exclusion zone (no budget). " + CAP_TXT + FIND)
+       "or oblast, hence the blocky pattern. White north of Kyiv: Chornobyl exclusion zone (no budget). " + CAP_TXT + FIND
+       + R3_TXT)
 N15 = ("Exposure classes: 1 = no geocoded strike since 2022 (77 % of hromadas), 2/3 = below/above the median of hromadas with "
-       "strikes (log count). Strike counts reflect reporting density and settlement geocoding. " + CAP_TXT)
+       "strikes (log count). Strike counts reflect reporting density and settlement geocoding. " + CAP_TXT + R3_TXT)
 N16 = ("Recovery = mean percentile rank of 2024/2021 annual and winter 2024-25/2020-21 radiance ratios over pixels lit in 2021 "
        "(≥ 1 nW/cm²/sr). Radiance also reflects blackout schedules and street-lighting policy, and follows oblast-wide grid "
-       "conditions (oblast effects explain most of the variance). White = too few lit pixels. ")
+       "conditions (oblast effects explain most of the variance). White = too few lit pixels. "
+       + R3_TXT.replace("population-weighted", "lit-pixel-weighted"))
 N17 = ("Terciles computed within Ivano-Frankivsk, Zakarpattia, Lviv and Chernivtsi oblasts only (regional classes — not "
        f"comparable with map 14). Exposure = alert hours ({W_ALERT}). " + CAP_TXT)
 
@@ -743,9 +761,12 @@ def _sh(grp):
 _O1, _O2 = "log recent level", "log summer-24 dip vs H2-23"
 REL_TXT = (f"Only hromadas with reliable light data are shown ({TC.get('n_light_reliable', '?')}: ≥ 30 lit pixels and "
            "pre-war month-to-month noise ≤ 0.35; white = not shown). ")
+R3_LIGHT = (f"Within 30 km of the front line (VIINA control, {md('control_date')}) or of the border with Russia or Belarus, "
+            "raion values are shown (dashed outline), computed from the raion's reliable hromadas only, weighted by lit "
+            "pixels; white where a raion has none. ")
 N19 = (f"Light deficit = terciles (reversed) of mean lit-pixel radiance {PUB_WIN} relative to the same calendar months in "
        f"2020–21, among the hromadas shown. The map ends in {mon(TC.get('pub_end', '?'))}, at least six months before "
-       "publication. " + REL_TXT + "Capacity terciles as map 14. "
+       "publication. " + REL_TXT + R3_LIGHT + "Capacity terciles as map 14. "
        f"Models on the latest 12 months ({REC_WIN}, all hromadas with ≥ 10 lit pixels): within oblasts, capacity goes with a "
        f"higher light level ({tb(_O1, 'M2 FE')}; with controls {tb(_O1, 'M3 FE+ctrl')}; standardised); with pre-war 2021 "
        f"capacity only ({tb(_O1, 'M5 pre-war cap')}), so part of the association runs from local economic activity to both. "
@@ -755,16 +776,16 @@ N20 = ("Left: mean radiance Jun–Jul 2024 (rolling outages) as a share of the s
        f"among the hromadas shown. Within oblasts, higher capacity goes with a smaller loss ({tb(_O2, 'M3 FE+ctrl')}), also "
        f"with pre-war 2021 capacity ({tb(_O2, 'M5 pre-war cap')}). Right: {PUB_WIN} vs Jul–Dec 2023, change beyond ±2 × the "
        f"hromada's own pre-war month-to-month noise (2021 vs 2020); declined / stable / improved: all {_sh('national')}, "
-       f"Carpathian oblasts {_sh('carpathian')}. " + REL_TXT +
+       f"Carpathian oblasts {_sh('carpathian')}. " + REL_TXT + R3_LIGHT +
        "Baseline = same month 2020–21; June 2025 excluded (retrieval artefact). ")
 
 layouts = [
     make_layout("01_risk_index", "Russian strike risk index — H3 hexagons, recency-weighted",
-                [osm, outline, hexes], credit),
+                [osm, outline, hexes, occ], credit),
     make_layout("02_settlements_12m", "Strike events by settlement — last 12 months",
-                [osm, outline, settl], credit),
+                [osm, occ, outline, settl], credit),
     make_layout("03_points_12m", "Individual strike events by type — last 12 months",
-                [osm, outline, pts], credit),
+                [osm, occ, outline, pts], credit),
     make_layout("04_alert_hours", "Air-raid alert hours by raion — last 12 months",
                 [alert_rai, occ, obl_b, outline], N04 + credit),
     make_layout("05_carpathian_zoom", "Strike risk index — Carpathian region, H3 res 7 (~5 km cells)",
@@ -799,15 +820,15 @@ layouts = [
                 legend=[lisa, fdr_n12, (gi_n12, "Gi* class, 60 km band")]),
     make_bv_layout("14_resilience_alerts_capacity",
                    "Exposure and institutional capacity — alert hours × capacity, hromadas",
-                   bv_alt, [occ, obl_b, outline, cities], N14 + credit_res,
-                   "exposure: alert hours, 12 m", extra_legend=[occ]),
+                   bv_alt, [occ, zone_r3, obl_b, outline, cities], N14 + credit_res,
+                   "exposure: alert hours, 12 m", extra_legend=[occ, ZONE_LEG]),
     make_bv_layout("15_resilience_strikes_capacity",
                    "Exposure and institutional capacity — strikes since 2022 × capacity, hromadas",
-                   bv_str, [occ, obl_b, outline, cities], N15 + credit_res,
-                   "exposure: strike events", extra_legend=[occ]),
+                   bv_str, [occ, zone_r3, obl_b, outline, cities], N15 + credit_res,
+                   "exposure: strike events", extra_legend=[occ, ZONE_LEG]),
     make_layout("16_resilience_recovery", "Night-light recovery 2021 → 2024, lit areas — hromada quintiles",
-                [osm, rec_q, occ, obl_b, outline, cities], N16 + credit_res,
-                legend=[(rec_q, "Recovery quintile"), occ]),
+                [osm, rec_q, occ, zone_r3, obl_b, outline, cities], N16 + credit_res,
+                legend=[(rec_q, "Recovery quintile"), occ, ZONE_LEG]),
     make_bv_layout("17_carpathian_resilience",
                    "Carpathian region — alert hours × institutional capacity (regional terciles)",
                    bv_carp, [hro_b, obl_b, outline, west_lbl], N17 + credit_res,
@@ -821,18 +842,18 @@ layouts = [
                              (idp_ctx, "IDPs present per 1,000 pre-war residents")]),
     make_bv_layout("19_trajectory_level_capacity",
                    f"Night lights {PUB_WIN} vs pre-war — light deficit × institutional capacity, hromadas",
-                   traj_bv, [occ, obl_b, outline, cities], N19 + credit_res,
-                   f"light deficit, {PUB_WIN}", extra_legend=[occ],
+                   traj_bv, [occ, zone_r3, obl_b, outline, cities], N19 + credit_res,
+                   f"light deficit, {PUB_WIN}", extra_legend=[occ, ZONE_LEG],
                    bv_notes="magenta = low light, low capacity\n"
                             "dark blue = low light, high capacity\n"
                             "teal = high light, high capacity"),
     make_layout_multi("20_trajectory_outage",
                       "Summer-2024 power outages and change since 2023 — night lights, hromadas",
-                      [([osm, traj_s24, occ, obl_b, outline], "Light Jun–Jul 2024 vs Jul–Dec 2023"),
-                       ([osm, traj_chg, occ, obl_b, outline], f"{PUB_WIN} vs Jul–Dec 2023")],
+                      [([osm, traj_s24, occ, zone_r3, obl_b, outline], "Light Jun–Jul 2024 vs Jul–Dec 2023"),
+                       ([osm, traj_chg, occ, zone_r3, obl_b, outline], f"{PUB_WIN} vs Jul–Dec 2023")],
                       N20 + credit_res,
-                      legend=[(traj_s24, "Outage loss (quintiles)"), (traj_chg, "Change vs own noise"), occ],
-                      legend_cols=3, legend_split=False),
+                      legend=[(traj_s24, "Outage loss (quintiles)"), (traj_chg, "Change vs own noise"), occ, ZONE_LEG],
+                      legend_cols=3, legend_split=False, sub_y=176.0),
 ]
 
 # ------------------------------------------------------------------ export
