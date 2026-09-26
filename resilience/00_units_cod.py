@@ -2,7 +2,7 @@
 """
 00_units_cod.py — hromada polygons for zonal statistics, keyed to k3
 
-COD-AB ADM3 (OCHA / SSPE Kartographia, Jan 2025, CC BY-IGO) where ADM3_PCODE == "UA"+k3;
+COD-AB ADM3 (OCHA / SSPE Kartographia, v05 of Jan 2026, CC BY 3.0 IGO) where ADM3_PCODE == "UA"+k3;
 admin_units.gpkg geometry for keys without a COD match (Crimean pseudo-units).
 admin_units.gpkg hromada polygons are approximations (cities undersized up to 5x) and
 must not be used for area-based sums.

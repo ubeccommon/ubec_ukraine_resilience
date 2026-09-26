@@ -1,7 +1,7 @@
 """Step 1: oblast / raion / hromada polygons and centre points.
 Codes, hierarchy and names from katotth_UA_tess.geojson + KATOTTG codifier:
 UA + ob(2) + rn(2) + hr(3) + st(3) + ds(2) + tail(5).
-Geometry: hromada polygons from OCHA COD-AB ADM3 (SSPE Kartographia, Jan 2025, CC BY-IGO)
+Geometry: hromada polygons from OCHA COD-AB ADM3 (SSPE Kartographia, v05 of Jan 2026, CC BY 3.0 IGO)
 where ADM3_PCODE == "UA" + k3; Crimea and Sevastopol (k1 01, 85) keep the settlement
 tessellation (COD codes there do not match KATOTTH keys; occupied, outside the analysis).
 Raion and oblast polygons are dissolved from the hromadas.
