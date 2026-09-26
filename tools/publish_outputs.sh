@@ -45,7 +45,6 @@ OUTPUTS=(
 # Claude adds a path here when a new script starts producing a tracked
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
-  "viina/qgis/maps/preview/18_oblast_context.png"   # page 18, reSCORE panels only (26 Sep 2026)
 )
 
 DRY=0; YES=0; SUBJECT=""
@@ -62,6 +61,8 @@ done
 
 cd "$(git rev-parse --show-toplevel)"
 stop() { echo; echo "STOP: $*"; echo "Nothing was committed. Copy this output to Claude."; exit 1; }
+push_fail() { echo; echo "STOP: push failed. The commit IS made locally: $(git log --oneline -1)"; \
+  echo "Retry with: git -c http.postBuffer=157286400 -c http.version=HTTP/1.1 push --progress origin main"; exit 1; }
 in_outputs() {
   local f=$1 o
   for o in "${OUTPUTS[@]}"; do
@@ -157,6 +158,7 @@ $SUBJECT
 Generated outputs, committed by tools/publish_outputs.sh:
 $dirs
 EOF
-git push -q origin main || stop "push failed; the commit is local. Run 'git push origin main' once, or tell Claude."
+# single-request upload with progress: chunked pushes of several MB time out (HTTP 408) on slow links
+git -c http.postBuffer=157286400 -c http.version=HTTP/1.1 push --progress origin main || push_fail
 echo; git log --oneline -1
 echo "Published."
