@@ -24,7 +24,7 @@ OUT = MAPS / "preview"
 WIDTH = 1600
 
 # hromada- or oblast-level choropleths, cleared for publication
-DEFAULT = ["04", "11", "14", "15", "16", "17"]
+DEFAULT = ["04", "11", "13", "14", "15", "16", "17"]
 
 # never previewed until the reason is resolved (mirrors .gitignore section 3 / 4b)
 HELD = {
@@ -34,14 +34,13 @@ HELD = {
     "18": "IOM DTM and reSCORE context (upstream terms)",
     "19": "recent light level, last 12 months (R2)",
     "20": "change class to the most recent 12 months (R2)",
-    "05": "Carpathian zoom, not yet reviewed (R1)",
-    "06": "IDW strike surface, not yet reviewed (R1)",
-    "07": "IDW vs kriging surfaces, not yet reviewed (R1)",
-    "08": "weighted surfaces, not yet reviewed (R1)",
-    "09": "alert kriging surface, not yet reviewed (R1)",
-    "10": "KDE 25 km, not yet reviewed (R1)",
-    "12": "Carpathian surfaces, not yet reviewed (R1)",
-    "13": "Carpathian hotspots, not yet reviewed (R1)",
+    "05": "strike points, last 12 months, on H3 r7 cells (R1/R5)",
+    "06": "interpolated strike surface, 5 km grid, marks reported targets (R1/R3)",
+    "07": "interpolated strike surfaces (R1)",
+    "08": "interpolated strike surfaces (R1/R3)",
+    "09": "interpolated alert surface; hromada choropleth is page 04 (R1)",
+    "10": "kernel density from event locations (R1/R5)",
+    "12": "kernel density on 1 km grid with strike points (R1/R5)",
 }
 
 ATTRIBUTION = ("Data: VIINA 2.0 (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
