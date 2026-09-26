@@ -211,3 +211,19 @@ Also a `missing_reason` column with its codes added to the data dictionary.
 
 - Hromada-level IOM DTM file: requested from IOM, pending.
 - Contact address for the README, brief and essay: to be decided by Michel.
+
+---
+
+## Answers (26 Sep 2026, repository session)
+
+Written into `paper/paper.md` and `numbers.yaml`:
+
+- **16.** VIINA territorial control, latest status per GeoNames settlement, 19 Sep 2026. `occ_share` = population-weighted share of places with status RU or CONTESTED; occupied if ≥ 0.5; Crimea and Sevastopol always occupied (`viina/build_surfaces.py`).
+- **17.** `+proj=laea +lat_0=48.5 +lon_0=31 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs`.
+- **18.** Types airstrike, UAV, artillery, air defence (`t_*_b`); `a_rus_b == 1` and `a_ukr_init_b != 1`; VIINA `event_1pd` (reports merged, `n_reports` kept); events in RU/contested places dropped; hromada level ADM3/STREET only, single-report events in places < 2,000 residents dropped (`viina/prep_qgis_layers.py`). Rates per 1,000 km² and per **100,000** residents (not 10,000). `exp_strikes_log = log1p(n_all)`: all events since 24 Feb 2022 (`resilience/11_composite.py:186`). Note for section 5: strike exposure is cumulative, alert exposure is the last 12 months.
+- **19.** Source https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset, "Copyright (c) 2022 Vadym Klymenko", MIT. Assignment: union of hromada, raion and oblast alerts, overlaps merged. Window fixed at 1 Sep 2025 – 31 Aug 2026 (`viina/alert_window.py`).
+- **20.** Map 01 is strikes only (the draft said strikes and alerts): H3 res 5, Σ 0.5^(age/182.5), scaled 0–100 to the maximum cell (`viina/risk_index.py`).
+- **21.** Mean of percentile ranks, indicators winsorised at 2 %/98 % and oriented; `CAP_MIN = 3` of 4. PCA is a diagnostic only.
+- **22.** Lit: 2021 mean ≥ 1.0 nW/cm²/sr; `MIN_LIT_PIX = 10`. Annual 2024/2021; winter Dec–Feb 2024–25 / 2020–21; snow-free composite, snow-covered fallback. Recovery index = mean of the two ratios' percentile ranks, `REC_MIN = 1`.
+- **24.** OSM: basemap only. ЄДРПОУ: regional supplement (`*_reg`), Carpathian profile only, not in indices or models.
+- **2 (periods).** `period_viina` 24 Feb 2022 – 19 Sep 2026; `period_alerts` 15 Mar 2022 – 31 Aug 2026 (models: 12-month window).

@@ -1,44 +1,32 @@
-# Build report — 2026-09-25 19:45 (draft)
+# Build report — 2026-09-26 07:42 (draft)
 
 | File | PENDING markers | PENDING values | CHECK | Field notes | Other | Unknown keys |
 |---|---|---|---|---|---|---|
-| paper | 61 | 30 | 2 | 0 | 0 | 0 |
+| paper | 49 | 28 | 2 | 0 | 0 | 0 |
 | brief | 4 | 2 | 0 | 0 | 0 | 0 |
 | essay | 6 | 2 | 0 | 3 | 0 | 0 |
-| carpathians | 0 | 0 | 2 | 0 | 0 | 0 |
+| carpathians | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/README.md | 3 | 5 | 0 | 0 | 0 | 0 |
-| data_package/ATTRIBUTION.md | 7 | 7 | 4 | 0 | 0 | 0 |
+| data_package/ATTRIBUTION.md | 7 | 6 | 4 | 0 | 0 | 0 |
 | data_package/LICENSE.md | 0 | 0 | 0 | 0 | 0 | 0 |
 | data_package/CITATION.cff | 0 | 3 | 0 | 0 | 0 | 0 |
 
-**Total blocking items: 141**
+**Total blocking items: 124**
 
 ## paper
 
 **PENDING markers**
 
 - PENDING: Lviv trust difference — request 15
-- PENDING: projection parameters — request 17
-- PENDING: source and reference date of the occupation classification — request 16
 - PENDING: request 1
 - PENDING: request 1
 - PENDING: request 1
 - PENDING: terms — request 23
 - PENDING: terms — request 23
-- PENDING: layers used — request 24
-- PENDING: use — request 24
 - PENDING
 - PENDING
-- PENDING: event categories included, deduplication rule — request 18
-- PENDING: normalisation — count, per km², or per 10,000 residents — request 18
-- PENDING: rule for assigning alerts declared at higher levels to hromadas — request 19
-- PENDING: formula and weights — request 20
 - PENDING: exposure descriptives — median, IQR and maximum of strikes and alert hours, national and by oblast — request 2
-- PENDING: aggregation method — PC1 score or mean of percentile ranks — request 21
 - PENDING: Table 4, loadings and leave-one-out correlations — request 3
-- PENDING: radiance threshold defining a lit pixel — request 22
-- PENDING: months defining winter — request 22
-- PENDING: combination rule — request 22
 - PENDING: definition of "valid" — request 23
 - PENDING: all cells — request 8
 - PENDING: counts per cell for alert hours and strikes, national and Carpathian — request 26
@@ -86,7 +74,7 @@
 
 **Keys still PENDING in numbers.yaml**
 
-access_dream, access_dtm, access_openbudget, access_rescore, ci_cap_alerts_2021, ci_cap_alerts_2025, ci_cap_strikes_2021, ci_cap_strikes_2025, commit_hash, int_fe_range, n_dtm_oblasts, n_engagement, n_model, n_rescore_oblasts, period_alerts, period_dream, period_viina, release_date, rho_cap_alerts_2021, rho_cap_alerts_2025, rho_cap_alerts_within, rho_cap_strikes_2021, rho_cap_strikes_2025, rho_cap_strikes_within, run_time, socarxiv_doi, trust_diff_lv, version_codab, version_osm, zenodo_doi
+access_dream, access_dtm, access_openbudget, access_rescore, ci_cap_alerts_2021, ci_cap_alerts_2025, ci_cap_strikes_2021, ci_cap_strikes_2025, commit_hash, int_fe_range, n_dtm_oblasts, n_engagement, n_model, n_rescore_oblasts, period_dream, release_date, rho_cap_alerts_2021, rho_cap_alerts_2025, rho_cap_alerts_within, rho_cap_strikes_2021, rho_cap_strikes_2025, rho_cap_strikes_within, run_time, socarxiv_doi, trust_diff_lv, version_codab, version_osm, zenodo_doi
 
 ## brief
 
@@ -122,13 +110,6 @@ socarxiv_doi, zenodo_doi
 
 socarxiv_doi, zenodo_doi
 
-## carpathians
-
-**CHECK markers**
-
-- CHECK: the methods note shows single-hromada values only where at least 30 pixels are lit; either drop this sentence or state the exception
-- CHECK: the right panel (change since 2023) uses the last 12 months; publish with a window ending ≥ 6 months before publication, or at raion level — rule R2, request 33
-
 ## data_package/README.md
 
 **PENDING markers**
@@ -162,7 +143,7 @@ n_engagement, release_date, run_time, socarxiv_doi, zenodo_doi
 
 **Keys still PENDING in numbers.yaml**
 
-access_dream, access_dtm, access_openbudget, access_rescore, period_viina, version_codab, version_osm
+access_dream, access_dtm, access_openbudget, access_rescore, version_codab, version_osm
 
 ## data_package/CITATION.cff
 

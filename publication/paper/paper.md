@@ -120,11 +120,11 @@ The unit of analysis is the hromada, identified by the hromada-level (k3) segmen
 - **Mainland Ukraine:** {{n_mainland_codab}} hromada polygons from the OCHA Common Operational Dataset of administrative boundaries (COD-AB, level 3).
 - **Crimea and Sevastopol:** {{n_crimea_units}} units. Hromadas were never formed there, so COD-AB has no level-3 boundaries. We represent these territories with a tessellation built from settlement locations. These units exist so that strike and alert exposure can be mapped consistently. They do not enter any index or model.
 
-All geometry is projected to a Lambert Azimuthal Equal Area projection centred on Ukraine (UA_LAEA; [[PENDING: projection parameters — request 17]]), so that areas and densities are comparable across the country.
+All geometry is projected to a Lambert Azimuthal Equal Area projection centred on Ukraine (UA_LAEA; `+proj=laea +lat_0=48.5 +lon_0=31 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs`), so that areas and densities are comparable across the country.
 
 ### 2.2 Occupation status
 
-Each unit is classified as occupied or non-occupied from [[PENDING: source and reference date of the occupation classification — request 16]]. {{n_hromadas_nonoccupied}} units are non-occupied. Indices and models are restricted to these, because budget execution, night-light comparisons and survey data are either unavailable or not comparable for occupied territory. Exposure maps (section 4) cover the whole frame.
+Each unit is classified as occupied or non-occupied from the VIINA territorial-control data, using the latest control status of each settlement on 19 September 2026. A hromada is classed as occupied when settlements holding at least half of its population are under Russian control or contested; Crimea and Sevastopol are classed as occupied throughout. {{n_hromadas_nonoccupied}} units are non-occupied. Indices and models are restricted to these, because budget execution, night-light comparisons and survey data are either unavailable or not comparable for occupied territory. Exposure maps (section 4) cover the whole frame.
 
 ### 2.3 Coverage by measure
 
@@ -162,8 +162,8 @@ All inputs are open, aggregated data. None contains personal data. Table 2 lists
 | DREAM | Reconstruction projects | Project, geocoded to hromada | {{period_dream}} | [[PENDING: terms — request 23]] |
 | reSCORE Ukraine 2021, 2024 (SeeD–UNDP) | Trust, cohesion, locality satisfaction, belonging | Oblast | 2021, 2024 | [[PENDING: terms — request 23]] |
 | IOM DTM (API v3) | Registered IDPs by host and origin oblast; IDPs present (survey) | Oblast | Feb 2022 – Aug 2026; Aug 2024 – Mar 2026 | IOM terms of use |
-| OpenStreetMap | [[PENDING: layers used — request 24]] | Vector | {{version_osm}} | ODbL 1.0 |
-| Regional statistics offices | ЄДРПОУ enterprise tables: [[PENDING: use — request 24]] | [[PENDING]] | [[PENDING]] | Open data |
+| OpenStreetMap | Basemap tiles only (maps) | Vector | {{version_osm}} | ODbL 1.0 |
+| Regional statistics offices | ЄДРПОУ enterprise tables: legal entities and sole proprietors by hromada; regional supplement for the Carpathian profile only (partial coverage), not used in the indices or models | [[PENDING]] | [[PENDING]] | Open data |
 
 Three properties of the sources shape the analysis:
 
@@ -177,15 +177,15 @@ Attribution for every source is given in `ATTRIBUTION.md` of the data package an
 
 ### 4.1 Strike events
 
-Strike exposure is built from VIINA events of the following types: [[PENDING: event categories included, deduplication rule — request 18]]. Each event is assigned to the hromada containing its point location. Exposure is expressed as [[PENDING: normalisation — count, per km², or per 10,000 residents — request 18]] over {{period_viina}}.
+Strike exposure is built from VIINA events of the following types: airstrikes and missile strikes, drone (UAV) strikes, artillery shelling and air-defence engagements, attributed to Russian forces and not initiated by Ukrainian forces. We use VIINA's `event_1pd` files, in which repeated reports of the same event are already merged (the number of reports is kept). Events in places under Russian control or contested are excluded. Hromada-level counts use only events geocoded to a settlement or street, and drop single-report events in places with fewer than 2,000 residents. Each event is assigned to the hromada containing its point location. Exposure is expressed as a count of events (in the models, the logarithm of one plus the count of all events since the invasion); maps also show events per 1,000 km² and per 100,000 residents (hromadas with at least 1,000 residents) over {{period_viina}}.
 
 ### 4.2 Air-raid alert hours
 
-Alert exposure is the cumulative number of hours a hromada spent under an active air-raid alert over {{period_alerts}}. Alerts have been declared at oblast, raion and, increasingly, hromada level. [[PENDING: rule for assigning alerts declared at higher levels to hromadas — request 19]] Because alerts are recorded administratively, this measure does not depend on media reporting and covers frontline and rear areas on the same basis.
+Alert exposure is the cumulative number of hours a hromada spent under an active air-raid alert over the 12 months from 1 September 2025 to 31 August 2026 (records cover {{period_alerts}}). Alerts have been declared at oblast, raion and, increasingly, hromada level. A hromada is treated as under alert whenever an alert covers the hromada itself, its raion or its oblast; overlapping alerts are merged so that no hour is counted twice. From September 2026 the single alert was replaced by yellow (drone) and red (massive or missile) threat levels under Cabinet Resolution No. 1092, with changed territorial and siren rules. Because the new records are not comparable, the series ends on 31 August 2026 and no later data are spliced in. Because alerts are recorded administratively, this measure does not depend on media reporting and covers frontline and rear areas on the same basis.
 
 ### 4.3 Composite risk index
 
-Map 01 combines strikes and alerts into a single risk index: [[PENDING: formula and weights — request 20]]. The index is used for mapping only. The models in section 7 enter strikes and alert hours separately.
+Map 01 shows a recency-weighted strike index on H3 resolution-5 cells: each settlement-precision strike event is weighted by 0.5^(a/182.5), where a is its age in days (a six-month half-life); the weights are summed per cell and scaled to 0–100 relative to the most affected cell. Alert hours are not part of this index. It is used for mapping only. The models in section 7 enter strikes and alert hours separately.
 
 ### 4.4 Spatial pattern
 
@@ -210,7 +210,7 @@ The capacity index combines four budget indicators:
 | Capital spending share | Capital expenditure as share of total expenditure, 2023–2025 | + |
 | Civilian income-tax growth | Growth of civilian personal income tax 2021–2025, relative to the national median | + |
 
-Components are [[PENDING: aggregation method — PC1 score or mean of percentile ranks — request 21]]. The first principal component explains {{cap_pc1_share}} of the variance of the four components. Dropping any one component leaves the index almost unchanged (leave-one-out ρ ≥ {{cap_loo_rho_min}}). [[PENDING: Table 4, loadings and leave-one-out correlations — request 3]]
+Components are combined as the mean of their percentile ranks, after winsorising each at the 2nd and 98th percentiles and orienting it so that higher values mean more capacity; a hromada needs at least three of the four components. The first principal component explains {{cap_pc1_share}} of the variance of the four components. Dropping any one component leaves the index almost unchanged (leave-one-out ρ ≥ {{cap_loo_rho_min}}). [[PENDING: Table 4, loadings and leave-one-out correlations — request 3]]
 
 Two points of interpretation:
 
@@ -219,12 +219,12 @@ Two points of interpretation:
 
 ### 5.2 Night-light recovery ratio
 
-The recovery ratio compares night-time light before and during the war, over the pixels of each hromada that were lit in 2021. [[PENDING: radiance threshold defining a lit pixel — request 22]] For each hromada we compute two ratios:
+The recovery ratio compares night-time light before and during the war, over the pixels of each hromada that were lit in 2021. A pixel counts as lit if its mean 2021 radiance is at least 1.0 nW/cm²/sr (VNP46A3 monthly composites, snow-free, with the snow-covered composite where no snow-free value exists). For each hromada we compute two ratios:
 
 - **Annual:** light in 2024 relative to 2021.
-- **Winter:** light in winter 2024–25 relative to winter 2020–21 ([[PENDING: months defining winter — request 22]]).
+- **Winter:** light in winter 2024–25 relative to winter 2020–21 (December to February).
 
-The two ratios are closely correlated (ρ = {{rho_recovery_windows}}) and are combined as [[PENDING: combination rule — request 22]]. Hromadas with fewer than {{min_lit_pixels}} lit pixels are excluded, because ratios on very small counts are unstable. This rule accounts for most of the drop to {{n_recovery}} hromadas.
+The two ratios are closely correlated (ρ = {{rho_recovery_windows}}) and are combined as the mean of their percentile ranks; a hromada with only one valid ratio takes that ratio's rank. Hromadas with fewer than {{min_lit_pixels}} lit pixels are excluded, because ratios on very small counts are unstable. This rule accounts for most of the drop to {{n_recovery}} hromadas.
 
 **Baseline.** 2021 was about {{nl_2021_vs_2020}} brighter than 2020 at the median, probably from LED retrofits and possibly from COVID-dimmed activity in 2020. The annual ratio uses a 2021-only baseline and therefore understates recovery by roughly {{nl_baseline_shift}}; the ranking of hromadas is unaffected. The monthly index in section 8 uses the more conservative mean of 2020 and 2021.
 
