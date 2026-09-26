@@ -13,7 +13,7 @@ authors:
 abstract: >-
   Hromada-level dataset for Ukraine joining strike and air-raid-alert
   exposure, local budget indicators and night-light recovery measures,
-  with oblast-level survey and displacement context. Aggregated open data;
+  at hromada level (raion level near the front line and border). Aggregated open data;
   sensitive detail withheld under published security rules.
 keywords:
   - Ukraine

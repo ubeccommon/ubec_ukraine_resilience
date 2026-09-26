@@ -16,7 +16,15 @@ R5  Strike counts per unit only; no event points, no dates of last strike.
 R6  No personal names or free text (official hromada and raion names only).
 Occupied units and Crimea appear in the exposure table only (missing_reason "occupied" elsewhere).
 Oblast context (IOM DTM, reSCORE) is not included (upstream terms); see the fetch scripts in the repository.
+Documentation: docs/data_dictionary.csv generated from DD below (a column without a definition stops the run);
+README.md, ATTRIBUTION.md, CITATION.cff from publication/data_package/ with {{placeholders}} filled from
+publication/numbers.yaml and the counts of this run; LICENSE.md, licenses/, docs/source_catalogue.md copied;
+SHA256SUMS over all files. Placeholders still PENDING are listed at the end.
 """
+import hashlib
+import json
+import re
+import shutil
 from pathlib import Path
 
 import geopandas as gpd
@@ -26,13 +34,108 @@ import pandas as pd
 BASE = Path(__file__).resolve().parent
 ROOT = BASE.parent
 TIDY, PUB = BASE / "tidy", BASE / "public"
-OUT = ROOT / "publication/data_package/out"
-TAB, GEO = OUT / "data/tables", OUT / "data/geo"
+PKG = ROOT / "publication/data_package"
+OUT = PKG / "out"
+TAB, GEO, DOCS = OUT / "data/tables", OUT / "data/geo", OUT / "docs"
 PUB_END = "2026-03"
 EXCL = {"2025-06"}
 REL_NLIT, REL_NOISE, MIN_LIT = 30, 0.35, 10
 ID = ["unit_type", "k1", "k2", "k3", "name"]
 R4_BAD = ("garrison", "pdfo_mil", "_mil", "military")
+
+# column: (definition, unit, source, period, aggregation in raion_r3 rows)
+V, A, B, N, G, D = ("VIINA 2.0 (Zhukov & Ayers)", "air-raid alert records (V. Klymenko archive)", "openbudget.gov.ua",
+                    "NASA Black Marble VNP46A3", "JRC GHS-POP R2023A", "DREAM")
+DD = {
+    "unit_type": ("hromada, or raion_r3 = whole raion aggregated under rule R3", "code", "derived", "", ""),
+    "k1": ("oblast code (KATOTTH, 2 digits, text)", "code", "KATOTTH / OCHA COD-AB", "", "raion's oblast"),
+    "k2": ("raion code (4 digits, text)", "code", "KATOTTH / OCHA COD-AB", "", "raion"),
+    "k3": ("hromada code (KATOTTH hromada segment, 7 digits, text); empty for raion_r3 rows", "code",
+           "KATOTTH / OCHA COD-AB", "", "empty"),
+    "name": ("official hromada or raion name (Ukrainian)", "text", "OCHA COD-AB", "", "raion name"),
+    "n_hromadas": ("hromadas aggregated in the row (1 for hromadas); in the monthly and trajectory tables: reliable "
+                   "hromadas; in the oblast table: non-occupied hromadas with >= 10 lit pixels", "count", "derived",
+                   "", "count"),
+    "occupied": ("1 = not under Ukrainian control (VIINA territorial control: population-weighted share of places held "
+                 "by Russia or contested >= 0.5; Crimea and Sevastopol always), 0 = otherwise", "flag", V,
+                 "{control_date}", "0"),
+    "pop_ghs_2020": ("resident population 2020 (pre-war)", "persons", G, "2020", "sum"),
+    "area_km2": ("area", "km²", "OCHA COD-AB", "", "sum"),
+    "n_all": ("strike events attributed to Russian forces, settlement precision", "events", V, "{period_viina}", "sum"),
+    "rep_all": ("news reports behind these events", "reports", V, "{period_viina}", "sum"),
+    "civcas_all": ("events coded as involving civilian casualties", "events", V, "{period_viina}", "sum"),
+    "n_12m": ("strike events attributed to Russian forces, settlement precision, last 12 months", "events", V,
+              "12 months to the VIINA end date", "sum"),
+    "rep_12m": ("news reports behind the last-12-month events", "reports", V, "12 months to the VIINA end date", "sum"),
+    "civcas_12m": ("last-12-month events coded as involving civilian casualties", "events", V,
+                   "12 months to the VIINA end date", "sum"),
+    "alert_h_12m": ("hours under air-raid alert: union of hromada, raion and oblast alerts, overlaps merged", "hours", A,
+                    "1 Sep 2025 – 31 Aug 2026", "population-weighted mean"),
+    "alert_n_12m": ("number of air-raid alerts covering the unit", "alerts", A, "1 Sep 2025 – 31 Aug 2026",
+                    "population-weighted mean"),
+    "alert_h_all": ("hours under air-raid alert, as alert_h_12m", "hours", A, "15 Mar 2022 – 31 Aug 2026",
+                    "population-weighted mean"),
+    "alert_n_all": ("number of air-raid alerts", "alerts", A, "15 Mar 2022 – 31 Aug 2026", "population-weighted mean"),
+    "capacity_index": ("fiscal capacity 2025: mean percentile rank of own revenue per capita 2025, transfer dependency "
+                       "(inverse), capital-expenditure share 2023–25 and civilian income-tax growth 2021–25; >= 3 of 4 "
+                       "indicators", "rank 0–1", B, "2021–2025", "population-weighted mean"),
+    "capacity_prewar": ("pre-war capacity: mean percentile rank of own revenue per capita 2021 and transfer dependency "
+                        "2021 (inverse)", "rank 0–1", B, "2021", "population-weighted mean"),
+    "recovery_index": ("night-light recovery: mean percentile rank of the annual (2024/2021) and winter (2024–25/2020–21) "
+                       "radiance ratios over pixels lit in 2021; >= 10 lit pixels", "rank 0–1", N, "2020–2025",
+                       "lit-pixel-weighted mean"),
+    "engagement_index": ("percentile rank of DREAM projects per 10,000 residents", "rank 0–1", D, "", "not given"),
+    "dream_per10k": ("valid DREAM reconstruction projects per 10,000 residents (GHS-POP 2020)", "per 10,000", D, "",
+                     "recomputed from sums"),
+    "missing_reason": ("why values are empty (codes below; several separated by ';')", "code", "derived", "", "r3_raion"),
+    "year": ("budget year", "year", B, "", "same"),
+    "q": ("quarter", "1–4", B, "", "same"),
+    "last_month": ("last month with data in the quarter", "month", B, "", "minimum"),
+    "rev_total_civ": ("total revenue excluding military personal income tax", "UAH, nominal", B, "", "sum"),
+    "transfers": ("transfers from other budgets (codes 4xxxxxxx)", "UAH, nominal", B, "", "sum"),
+    "own_gf_civ": ("own general-fund revenue (codes below 4xxxxxxx) excluding military personal income tax",
+                   "UAH, nominal", B, "", "sum"),
+    "pdfo_civ": ("civilian personal income tax (income-tax lines not naming military personnel)", "UAH, nominal", B, "",
+                 "sum"),
+    "exp_total": ("total expenditure", "UAH, nominal", B, "", "sum"),
+    "capex": ("capital expenditure (economic codes 3000–3999)", "UAH, nominal", B, "", "sum"),
+    "inc_last_month": ("last month of the year with revenue data", "month", B, "", "minimum"),
+    "exp_last_month": ("last month of the year with expenditure data", "month", B, "", "minimum"),
+    "date": ("month", "YYYY-MM", N, "", "same"),
+    "ntl_idx": ("mean radiance of pixels lit in 2021, relative to the mean of the same calendar month in 2020–21 "
+                "(1 = pre-war level); June 2025 excluded (retrieval artefact)", "ratio", N, "", "lit-pixel-weighted mean "
+                "over reliable hromadas"),
+    "valid_frac_lit": ("share of lit pixels with a valid retrieval in the month", "share", N, "", "not given"),
+    "tr_w2223": ("mean ntl_idx, winter 2022–23 (>= half of the months valid)", "ratio", N, "Nov 2022 – Feb 2023",
+                 "from the raion series"),
+    "tr_h2_23": ("mean ntl_idx, second half of 2023", "ratio", N, "Jul – Dec 2023", "from the raion series"),
+    "tr_s24": ("mean ntl_idx, summer-2024 outages", "ratio", N, "Jun – Jul 2024", "from the raion series"),
+    "tr_w2425": ("mean ntl_idx, winter 2024–25", "ratio", N, "Dec 2024 – Feb 2025", "from the raion series"),
+    "tr_pub": ("mean ntl_idx, last 12 months to {pub_end} (publication window, rule R2)", "ratio", N,
+               "{pub_window}", "from the raion series"),
+    "tr_trough": ("lowest quarterly mean ntl_idx (quarters with >= 2 valid months)", "ratio", N, "2022 Q2 – 2026 Q1",
+                  "from the raion series"),
+    "tr_trough_q": ("quarter of tr_trough", "YYYYQn", N, "2022 Q2 – 2026 Q1", "from the raion series"),
+    "tr_below50_share": ("share of quarters with mean ntl_idx below 0.5", "share", N, "2022 Q2 – 2026 Q1",
+                         "from the raion series"),
+    "tr_slope_2024_2026q1": ("OLS slope of the quarterly index (>= 8 quarters)", "index per year", N,
+                             "2024 Q1 – 2026 Q1", "from the raion series"),
+    "tr_s24_rel": ("tr_s24 / tr_h2_23 (light kept in the summer-2024 outages)", "ratio", N, "", "from the raion series"),
+    "tr_change_class_pub": ("tr_pub vs tr_h2_23: improved / declined if the log change exceeds 2 × the unit's own pre-war "
+                            "month-to-month noise (z test), else stable", "class", N, "", "raion z-score with "
+                            "lit-pixel-weighted noise"),
+}
+CODES = [
+    ("unit_type", "hromada", "one hromada"),
+    ("unit_type", "raion_r3", "whole raion aggregated under rule R3 (a hromada within 30 km of the front line or border)"),
+    ("missing_reason", "occupied", "not under Ukrainian control; indices not computed"),
+    ("missing_reason", "cap_lt3", "fewer than 3 of the 4 capacity indicators available"),
+    ("missing_reason", "rec_lit_lt10", "fewer than 10 pixels lit in 2021; no recovery index"),
+    ("missing_reason", "rec_no_ratio", "no valid annual or winter light ratio"),
+    ("missing_reason", "eng_pop_lt100", "population denominator missing or below 100"),
+    ("missing_reason", "r3_raion", "raion row under rule R3; engagement_index not given"),
+    ("tr_change_class_pub", "improved / stable / declined", "see tr_change_class_pub; empty if not computable"),
+]
 
 
 def zf(df):
@@ -71,9 +174,24 @@ def aggregate(df, keys, sums=(), wmeans=None, mins=()):
     return pd.DataFrame(rows)
 
 
+def month_name(ym):
+    y, m = ym.split("-")
+    return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+            "November", "December"][int(m) - 1] + " " + y
+
+
+def load_numbers():
+    vals = {}
+    for line in (ROOT / "publication/numbers.yaml").read_text(encoding="utf-8").splitlines():
+        m = re.match(r'^([A-Za-z0-9_]+):\s*"(.*?)"', line)
+        if m:
+            vals[m.group(1)] = m.group(2)
+    return vals
+
+
 def main():
-    TAB.mkdir(parents=True, exist_ok=True)
-    GEO.mkdir(parents=True, exist_ok=True)
+    for d in (TAB, GEO, DOCS):
+        d.mkdir(parents=True, exist_ok=True)
 
     # ---------------- frame, R3 raions
     u = zf(pd.read_csv(TIDY / "resilience_v1_k3.csv", dtype={"k1": str, "k2": str, "k3": str}))[
@@ -269,6 +387,74 @@ def main():
     print(f"  R3/R4: {'; '.join(bad) if bad else 'no R4 columns, no hromada of a touched raion in any table'}")
     assert not bad and late == 0 and unrel == 0, "security checks failed"
     print(f"\nwrote {OUT.relative_to(ROOT)}/data/")
+    docs(n_units=len(t_ex), n_r3_raions=len(touched), n_r3_hromadas=len(r3k3), n_rel=len(rel),
+         window=f"{month_name(W['pub'][0])} – {month_name(W['pub'][1])}")
+
+
+def docs(n_units, n_r3_raions, n_r3_hromadas, n_rel, window):
+    vals = load_numbers()
+    meta = ROOT / "viina/qgis/meta.json"
+    ctrl = json.loads(meta.read_text(encoding="utf-8")).get("control_date", "PENDING") if meta.exists() else "PENDING"
+    rd = vals.get("release_date", "PENDING")
+    vals.update({"n_package_units": f"{n_units:,}", "n_r3_raions": str(n_r3_raions), "n_r3_hromadas": str(n_r3_hromadas),
+                 "n_light_reliable": f"{n_rel:,}", "pub_end": month_name(PUB_END), "pub_window": window,
+                 "control_date": ctrl, "release_year": rd[:4] if rd[:4].isdigit() else "PENDING"})
+
+    # data dictionary
+    rows, missing = [], []
+    files = sorted(TAB.glob("*.csv"))
+    for f in files:
+        for c in pd.read_csv(f, nrows=0).columns:
+            if c not in DD:
+                missing.append(f"{f.name}:{c}")
+                continue
+            d, unit, src, per, agg = DD[c]
+            rows.append({"file": f"data/tables/{f.name}", "column": c, "definition": d.format(**vals), "unit": unit,
+                         "source": src, "period": per.format(**vals), "raion_r3_rows": agg})
+    for c in gpd.read_file(GEO / "hromadas.gpkg", layer="units", rows=1).columns:
+        if c == "geometry":
+            continue
+        if c not in DD:
+            missing.append(f"hromadas.gpkg:{c}")
+            continue
+        d, unit, src, per, agg = DD[c]
+        rows.append({"file": "data/geo/hromadas.gpkg (units)", "column": c, "definition": d.format(**vals),
+                     "unit": unit, "source": src, "period": per.format(**vals), "raion_r3_rows": agg})
+    assert not missing, f"columns without a definition in DD: {missing}"
+    rows += [{"file": "codes", "column": col, "definition": f"{val}: {txt}", "unit": "code", "source": "",
+              "period": "", "raion_r3_rows": ""} for col, val, txt in CODES]
+    pd.DataFrame(rows).to_csv(DOCS / "data_dictionary.csv", index=False)
+    print(f"\ndocs: data_dictionary.csv {len(rows)} rows")
+
+    # documents with placeholders, copies
+    pend = set()
+
+    def fill(text):
+        def rep(m):
+            v = vals.get(m.group(1))
+            if v is None or "PENDING" in v:
+                pend.add(m.group(1))
+                return m.group(0) if v is None else v
+            return v
+        return re.sub(r"\{\{([a-z0-9_]+)\}\}", rep, text)
+
+    for name in ("README.md", "ATTRIBUTION.md", "CITATION.cff"):
+        (OUT / name).write_text(fill((PKG / name).read_text(encoding="utf-8")), encoding="utf-8")
+    shutil.copy2(PKG / "LICENSE.md", OUT / "LICENSE.md")
+    shutil.copytree(PKG / "licenses", OUT / "licenses", dirs_exist_ok=True)
+    shutil.copy2(TIDY / "source_catalogue.md", DOCS / "source_catalogue.md")
+    for name in ("README.md", "ATTRIBUTION.md", "CITATION.cff"):
+        for m in re.findall(r"\[\[PENDING[^\]]*\]\]", (OUT / name).read_text(encoding="utf-8")):
+            pend.add(f"{name}: {m}")
+
+    # checksums
+    lines = []
+    for f in sorted(x for x in OUT.rglob("*") if x.is_file() and x.name != "SHA256SUMS"):
+        lines.append(f"{hashlib.sha256(f.read_bytes()).hexdigest()}  {f.relative_to(OUT)}")
+    (OUT / "SHA256SUMS").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1048576
+    print(f"package: {len(lines) + 1} files, {size:.1f} MB")
+    print("still PENDING before release: " + (", ".join(sorted(pend)) if pend else "none"))
 
 
 if __name__ == "__main__":
