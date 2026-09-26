@@ -227,3 +227,5 @@ Written into `paper/paper.md` and `numbers.yaml`:
 - **22.** Lit: 2021 mean ≥ 1.0 nW/cm²/sr; `MIN_LIT_PIX = 10`. Annual 2024/2021; winter Dec–Feb 2024–25 / 2020–21; snow-free composite, snow-covered fallback. Recovery index = mean of the two ratios' percentile ranks, `REC_MIN = 1`.
 - **24.** OSM: basemap only. ЄДРПОУ: regional supplement (`*_reg`), Carpathian profile only, not in indices or models.
 - **2 (periods).** `period_viina` 24 Feb 2022 – 19 Sep 2026; `period_alerts` 15 Mar 2022 – 31 Aug 2026 (models: 12-month window).
+
+- **1 (coverage).** Universe is **1,289** non-occupied hromadas (not 1,290; resilience_v1, index file and hromada_control.gpkg agree). Capacity 1,288: one Kyiv-oblast hromada with none of the four budget indicators. Recovery 1,021: all 268 exclusions have < 10 pixels lit in 2021 (Rivne 34, Chernihiv 32, Volyn 31, Sumy 27, …); none for missing ratios. Engagement 1,289 (no exclusions). Model sample `n_model` = 1,020 (recovery sample minus the capacity gap; no exposure or geometry drops). Tables: `publication/figures/table01_coverage.{csv,md}`, `table01_exclusions.{csv,md}` from `resilience/26_publication_tables.py`.

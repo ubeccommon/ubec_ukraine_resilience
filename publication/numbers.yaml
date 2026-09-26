@@ -10,10 +10,10 @@ n_mainland_codab: "1,471"
 n_crimea_units: "292"             # CHECK: 1,763 − 1,471
 n_capacity: "1,288"
 n_recovery: "1,021"
-n_engagement: "PENDING"           # request 1
+n_engagement: "1,289"           # request 1
 n_rescore_oblasts: "PENDING"      # request 9
 n_dtm_oblasts: "PENDING"
-n_model: "PENDING"                # hromadas with both recovery and capacity
+n_model: "1,020"                # hromadas with both recovery and capacity
 n_garrison: "36"
 carpathian_oblasts: "Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi"   # confirmed by Carpathian dispatch
 n_carp_hromadas: "251"

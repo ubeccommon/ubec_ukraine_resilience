@@ -1,0 +1,47 @@
+stage,code,detail,oblast,hromadas,label
+capacity,cap_lt3,"missing: own revenue per capita, transfer dependency, capital spending share, civilian PIT growth",Kyiv,1,Capacity: fewer than 3 of 4 indicators
+model,mod_no_capacity,,Kyiv,1,Model: no capacity index
+model,mod_no_recovery,,Cherkasy,12,Model: no recovery index
+model,mod_no_recovery,,Chernihiv,32,Model: no recovery index
+model,mod_no_recovery,,Chernivtsi,13,Model: no recovery index
+model,mod_no_recovery,,Dnipropetrovsk,6,Model: no recovery index
+model,mod_no_recovery,,Ivano-Frankivsk,14,Model: no recovery index
+model,mod_no_recovery,,Kharkiv,1,Model: no recovery index
+model,mod_no_recovery,,Kherson,4,Model: no recovery index
+model,mod_no_recovery,,Khmelnytskyi,16,Model: no recovery index
+model,mod_no_recovery,,Kirovohrad,4,Model: no recovery index
+model,mod_no_recovery,,Kyiv,6,Model: no recovery index
+model,mod_no_recovery,,Lviv,8,Model: no recovery index
+model,mod_no_recovery,,Mykolaiv,1,Model: no recovery index
+model,mod_no_recovery,,Odesa,5,Model: no recovery index
+model,mod_no_recovery,,Poltava,4,Model: no recovery index
+model,mod_no_recovery,,Rivne,34,Model: no recovery index
+model,mod_no_recovery,,Sumy,27,Model: no recovery index
+model,mod_no_recovery,,Ternopil,14,Model: no recovery index
+model,mod_no_recovery,,Vinnytsia,7,Model: no recovery index
+model,mod_no_recovery,,Volyn,31,Model: no recovery index
+model,mod_no_recovery,,Zakarpattia,7,Model: no recovery index
+model,mod_no_recovery,,Zaporizhzhia,2,Model: no recovery index
+model,mod_no_recovery,,Zhytomyr,20,Model: no recovery index
+recovery,rec_lit_lt10,,Cherkasy,12,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Chernihiv,32,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Chernivtsi,13,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Dnipropetrovsk,6,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Ivano-Frankivsk,14,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Kharkiv,1,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Kherson,4,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Khmelnytskyi,16,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Kirovohrad,4,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Kyiv,6,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Lviv,8,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Mykolaiv,1,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Odesa,5,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Poltava,4,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Rivne,34,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Sumy,27,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Ternopil,14,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Vinnytsia,7,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Volyn,31,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Zakarpattia,7,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Zaporizhzhia,2,Recovery: fewer than 10 pixels lit in 2021
+recovery,rec_lit_lt10,,Zhytomyr,20,Recovery: fewer than 10 pixels lit in 2021
