@@ -141,7 +141,7 @@ Not feasible: cooperatives and associations (ЄДР has no address field).
 | Capital-expenditure share | + | ✓ | ✓ (2023–25) | E / N | 2021: `03_openbudget.py pull --items EXPENSES_ECONOMIC --years 2021` |
 | Social protection spending share (functional 10) | + | ✓ | ✓ | N | `31_functional_spending.py` |
 | DREAM projects per 10,000 | + | — | ✓ | E | also reflects damage and donor attention |
-| Local-election turnout 2020 | + | ✓ | — | N (step 4a) | CEC; not held in some eastern hromadas |
+| Contestation of the 2020 council election: candidates per seat, relative to its electoral system | + | ✓ | — | done (step 4a) | `33_elections_2020.py`, CEC open data; 1,276 of 1,289 non-occupied hromadas |
 | Women's share of council seats 2020 | + | ✓ | — | V, S | aggregated from candidate lists; names never stored |
 | Administrative service centres (ЦНАП) per 10,000 | + | ? | ✓ | V (step 4c) | count only |
 
@@ -165,7 +165,12 @@ damaged education facilities (S; impact, not capacity).
 
 ### Order of new sources (step 4)
 
-1. Local-election turnout 2020 (rights).
+1. Local elections 2020 (rights) — **done 27 Sep 2026.** Turnout is not feasible: the CEC publishes no
+   structured turnout for local elections, and the territorial commissions' protocol PDFs cannot be
+   linked to the open-data council ids and are partly handwritten scans. Used instead: deputy
+   candidates per council seat (`cand_per_seat_rel`, ratio to the median of the same electoral system:
+   8.5 with party lists, 2.9 in multi-member districts). Candidates for head are listed for city
+   councils only (context).
 2. General secondary schools and pupils (cultural).
 3. Administrative service centres, ЦНАП (rights).
 4. Military administrations (stratifier).
