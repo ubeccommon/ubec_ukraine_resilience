@@ -43,6 +43,9 @@ ZNZ_URL = ("https://data.gov.ua/dataset/7091f713-b44e-4362-a48a-3a528cb64446/res
            "eb236da2-eca9-4dc2-8773-a726d50dd3b2/download/sc_info_znz1_out.xlsx")
 META = ["SNAME", "SOBL", "SRJN", "SPNT", "SADDR", "SPINX", "SOWN", "SLCT", "SPHN", "SEML", "SOP"]
 PRIVATE = {"SNAME", "SADDR", "SPINX", "SPHN", "SEML"}     # never printed, never stored downstream
+# register fields whose category counts may be printed (no names, addresses, contacts, director)
+REG_CATEGORIES = ["Статус", "Тип закладу", "Форма власності", "Регіон", "Опорний / Філія", "Сільський",
+                  "Гірський", "Інтернат", "ОУО підтвердив дані"]
 REG_VARIANTS = [
     "https://registry.edbo.gov.ua/api/opendata/institutions/?ut=3&rg={rg}&exp=json",
     "https://registry.edbo.gov.ua/api/opendata/institutions/?ut=3&lc={rg}&exp=json",
@@ -103,13 +106,21 @@ def probe_register(rg):
             continue
         recs = data if isinstance(data, list) else next((v for v in data.values() if isinstance(v, list)), [])
         df = pd.json_normalize(recs)
-        log(f"    records={len(df)} fields={len(df.columns)}")
-        for c in df.columns:
-            shown = "(not shown)"
-            if SAFE_FIELD.search(c) and not UNSAFE_FIELD.search(c):
-                v = df[c].dropna().astype(str)
-                shown = ", ".join(v.head(3)) if len(v) else "(empty)"
-            log(f"      {c:40s} non-null={int(df[c].notna().sum()):5d}  e.g. {shown}")
+        log(f"    records={len(df)} fields={len(df.columns)} (lc filter ignored if records cover all oblasts)")
+        log("    fields: " + " | ".join(df.columns))
+        for c in REG_CATEGORIES:
+            if c in df.columns:
+                log(f"    {c}: {df[c].astype(str).value_counts(dropna=False).head(10).to_dict()}")
+        kc = next((c for c in df.columns if "КАТОТТГ" in c and "Населений" not in c), None)
+        if kc:
+            sys.path.insert(0, str(BASE))
+            ob = importlib.import_module("03_openbudget")
+            k3, _ = ob.katottg_parts(df[kc].astype("string"))
+            keys = pd.read_csv(TIDY / "keys_hromada.csv", dtype=str)
+            ok = k3.isin(set(keys["k3"]))
+            log(f"    {kc}: valid KATOTTG -> k3 in keys: {ok.mean():.2%}; hromadas with >= 1 school: {k3[ok].nunique()}")
+            n = k3[ok].value_counts()
+            log(f"    schools per hromada: median {n.median():.0f}, p05 {n.quantile(.05):.0f}, p95 {n.quantile(.95):.0f}")
         return df
     log("  no endpoint variant answered with data")
     return None
@@ -156,7 +167,7 @@ def settlements():
     cod = cod[cod["code"].str.match(r"^UA\d{17}$", na=False)].copy()
     cod["k3"], _ = ob.katottg_parts(cod["code"].astype("string"))
     cod["oo"] = cod["code"].str[2:4]
-    obl = cod[cod["level"] == "1"].set_index("oo")["name"].map(obl_norm)
+    obl = cod[cod["level"] == "1"].drop_duplicates("oo").set_index("oo")["name"].map(obl_norm)
     s = cod[cod["level"] == "4"].copy()
     s["obl"] = s["oo"].map(obl)
     s["nn"] = s["name"].map(norm)
@@ -173,6 +184,14 @@ def probe_znz():
     log("  indicator columns per form section: " + ", ".join(f"{k}:{v}" for k, v in sec.items()))
     rows = pd.Series([".".join(re.sub(r"^ЗНЗ1\s+", "", c).split(".")[:2]) for c in ind]).value_counts()
     log("  largest section.row blocks: " + ", ".join(f"{k}:{v}" for k, v in rows.head(12).items()))
+    sec1 = [c for c in ind if re.match(r"^ЗНЗ1\s+1\.(1|2|3|10|11|12|13|14|15)\.\d+$", c)]
+    if sec1:
+        log("  national column sums, section 1 (rows 1-3, 10-15; aggregates only):")
+        big = pd.read_excel(ZNZ_XLSX, usecols=sec1)
+        tot = big.apply(pd.to_numeric, errors="coerce").sum()
+        for r in sorted({c.split(".")[1] for c in sec1}, key=int):
+            vals = [f"{tot[c]:,.0f}" for c in sec1 if c.split(".")[1] == r]
+            log(f"    row 1.{r}: " + " | ".join(vals))
     for c in ("SOWN", "SLCT", "SOP"):
         log(f"  {c}: {m[c].value_counts(dropna=False).head(8).to_dict()}")
     log(f"  SRJN (raion) given: {m['SRJN'].notna().mean():.2%}")
