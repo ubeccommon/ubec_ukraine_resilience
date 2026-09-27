@@ -1,31 +1,33 @@
 #!/usr/bin/env python3
 """
 33_elections_2020.py — local elections of 25 October 2020 per hromada (k3): electoral competition.
-Rights-sphere inputs (resilience/docs/threefolding_framework.md, section 6, step 4a).
+Rights-sphere input (resilience/docs/threefolding_framework.md, section 6, step 4a).
 
-  python 33_elections_2020.py probe      # download, structure report, counts, match to k3
-  python 33_elections_2020.py build      # -> tidy/elections_2020_k3.csv (from the saved counts)
+  python 33_elections_2020.py probe [--refresh]   # counts from both CEC files, structure, match
+  python 33_elections_2020.py build               # -> tidy/elections_2020_k3.csv
 
-Source: Central Election Commission, IAS "Місцеві вибори 2020", election id 695, open data
-  opendata_kandpt001f01=695.xml (windows-1251, ~150 MB): region > rada > candidate lists.
-  Reuse with attribution ("посилання на джерело обов'язкове"); the data.gov.ua copy is CC BY.
-  The file names every candidate with a biography. It is downloaded to a temporary file (resumable),
-  parsed, and deleted in all cases. Only counts per council are kept (rule R6): nothing that
-  identifies a person is printed or written.
+Sources: Central Election Commission, IAS "Місцеві вибори 2020" (election id 695), open data,
+reuse with attribution ("посилання на джерело обов'язкове"); the data.gov.ua copy is CC BY.
+  candidates  opendata_kandpt001f01=695.xml (~150 MB): rada > candidates_for_deputies
+              (> part > candidates > candidate where the council is elected by party list;
+              > candidates > candidate where it is elected in multi-member districts) and, for city
+              councils only, candidates_for_mayor.
+  elected     opendata_obr.xml: rada > head, deputies (elected persons).
+Both files name persons. Each is downloaded to a temporary file (resumable), parsed, and deleted in
+all cases; only counts per council are kept (rule R6). Nothing that identifies a person is printed
+or written.
 
-Turnout is not available: the CEC publishes no structured turnout for local elections (territorial
-commissions hold it); the protocol PDFs cannot be linked to the open-data council ids (probe of
-27 Sep 2026: 29 of 29 returned 404) and are partly handwritten scans. Decided: not feasible.
-
-probe   writes raw/cvk/councils_695.csv (council id, name, oblast, candidate counts per list type,
-        number of party lists) and reports the XML structure: all element names with counts, and
-        the element tree of one council of each type (tags and child counts only, no text).
-build   n_head_candidates  candidates for hromada head (HEAD_TAGS)
-        n_council_lists    party lists (and self-nomination groups) standing for the council
-        -> tidy/elections_2020_k3.csv. Hromadas without elections in 2020 stay empty.
+Indicator: cand_per_seat = deputy candidates / deputies elected, per hromada council — contestation
+of the council election, comparable across the two electoral systems (proportional lists in
+hromadas with more than 10,000 voters, multi-member districts below). electoral_system records which.
+Context only: n_head_candidates (listed for city councils only, 370 of 1,419 hromada councils).
+Not feasible (probe of 27 Sep 2026): turnout — no structured source; protocol PDFs cannot be
+linked to the open-data council ids (29 of 29 returned 404) and are partly handwritten scans.
 """
 import argparse
+import importlib
 import re
+import sys
 import time
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -36,14 +38,18 @@ import pandas as pd
 BASE = Path(__file__).resolve().parent
 TIDY, LOGS = BASE / "tidy", BASE / "logs"
 RAW = BASE / "raw" / "cvk"
-COUNCILS = RAW / "councils_695.csv"       # counts only, no personal data
+CAND_CSV = RAW / "councils_695.csv"       # counts only, no personal data
+ELECT_CSV = RAW / "elected_695.csv"       # counts only, no personal data
 OUT = TIDY / "elections_2020_k3.csv"
-CAND_XML = "https://cvk.gov.ua/pls/vm2020/opendata_kandpt001f01=695.xml"
+CVK = "https://cvk.gov.ua/pls/vm2020/"
+CAND_XML = CVK + "opendata_kandpt001f01=695.xml"
+ELECT_XML = CVK + "opendata_obr.xml"
 HDR = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"}
 TEST_K3 = "2602003"
-HEAD_TAGS = {"candidates_for_mayor"}      # wrapper(s) of head candidates; confirm with probe
-LIST_TAG = "part"                         # a party list inside the deputies wrapper
-# renamed since 2020 (council name 2020 stem -> name stem in keys_hromada)
+DEP_CAND = "n_cand__candidates_for_deputies"
+HEAD_CAND = "n_cand__candidates_for_mayor"
+LIST_TAG = "part"
+# renamed since 2020 (council-name stem 2020 -> name stem in keys_hromada)
 RENAMED = {"берестинська": "красноградська", "багачевська": "ватутінська",
            "хутірмихайлівська": "дружбівська", "шахтарська": "першотравенська"}  # Шахтарське (Дніпропетровська), 2024
 _logf = None
@@ -100,7 +106,7 @@ def download_resumable(url, dest, tries=10):
     raise SystemExit(f"download incomplete after {tries} attempts: {url}")
 
 
-# ------------------------------------------------------------ structure
+# ------------------------------------------------------------ parsing
 def tree(el, depth=0, maxdepth=4, out=None):
     """Element tree as tag names with repeat counts; no text, attribute names only."""
     out = [] if out is None else out
@@ -125,14 +131,33 @@ def council_type(name):
     return "other"
 
 
-def parse_councils():
+def count_candidates(el):
+    rec = {}
+    for child in el:
+        ct = tag(child)
+        rec[f"n_cand__{ct}"] = sum(1 for d in child.iter() if tag(d) == "candidate")
+        rec[f"n_{LIST_TAG}__{ct}"] = sum(1 for d in child.iter() if tag(d) == LIST_TAG)
+    return rec
+
+
+def count_persons(el):
+    """Elected file: persons = elements with a PIB child; counted per direct child of the council."""
+    rec = {}
+    for child in el:
+        n = sum(1 for d in child.iter() if any(tag(g) == "PIB" for g in d))
+        if n or tag(child) not in rec:
+            rec[f"n_pers__{tag(child)}"] = rec.get(f"n_pers__{tag(child)}", 0) + n
+    return rec
+
+
+def parse_xml(url, label, counter, dest_csv):
     RAW.mkdir(parents=True, exist_ok=True)
-    tmp = RAW / "_cand_695.xml.part"
-    log(f"downloading {CAND_XML} (temporary; contains personal data; deleted after parsing)")
+    tmp = RAW / f"_{label}.xml.part"
+    log(f"downloading {url} (temporary; contains personal data; deleted after parsing)")
     rows, region, tags, shown = [], None, {}, set()
     try:
         tmp.unlink(missing_ok=True)
-        log(f"  {download_resumable(CAND_XML, tmp) / 1e6:.1f} MB received")
+        log(f"  {download_resumable(url, tmp) / 1e6:.1f} MB received")
         for ev, el in ET.iterparse(str(tmp), events=("start", "end")):
             t = tag(el)
             if ev == "start":
@@ -144,25 +169,25 @@ def parse_councils():
                 continue
             rec = {"rada_id": el.get("id"), "rada_name": el.get("name"), "oblast": region,
                    "council_type": council_type(el.get("name"))}
-            for child in el:                   # candidates under each list type of this council
-                ct = tag(child)
-                rec[f"n_cand__{ct}"] = sum(1 for d in child.iter() if tag(d) == "candidate")
-                rec[f"n_{LIST_TAG}__{ct}"] = sum(1 for d in child.iter() if tag(d) == LIST_TAG)
-            ctype = rec["council_type"]
-            if ctype not in shown:
-                shown.add(ctype)
-                log(f"\n  structure, first {ctype} council (tags only):")
+            rec.update(counter(el))
+            if rec["council_type"] not in shown:
+                shown.add(rec["council_type"])
+                log(f"\n  {label}: structure, first {rec['council_type']} council (tags only):")
                 log("\n".join(tree(el)))
             rows.append(rec)
             el.clear()
     finally:
         tmp.unlink(missing_ok=True)
-        log("\n  temporary XML deleted")
+        log(f"\n  temporary {label} XML deleted")
     log("  element counts: " + ", ".join(f"{k}={v}" for k, v in sorted(tags.items(), key=lambda x: -x[1])))
     df = pd.DataFrame(rows)
-    df.to_csv(COUNCILS, index=False)
-    log(f"  councils={len(df)} -> {COUNCILS}")
+    df.to_csv(dest_csv, index=False)
+    log(f"  councils={len(df)} -> {dest_csv}")
     return df
+
+
+def read_counts(p):
+    return pd.read_csv(p, dtype={"rada_id": str}) if p.exists() else None
 
 
 # ------------------------------------------------------------ matching
@@ -196,11 +221,8 @@ def match_k3(c):
     c["stem"], c["typ"] = st.str[0], st.str[1]
     c["k3"] = (c["ob"] + "#" + c["stem"] + "|" + c["typ"]).map(kk)
     c["match"] = c["k3"].notna().map({True: "name", False: None})
-
-    # special-status city: one council, one key
     kyiv = c["ob"].eq("київ") & c["k3"].isna()
     c.loc[kyiv, ["k3", "match"]] = ["8000000", "city"]
-    # keys named after the centre settlement (Обухів, Комарно, Тернівка, …): prefix match, unique
     cen = keys[keys["name_src"] == "centre settlement"]
     for i in c.index[c["k3"].isna()]:
         ob, stem = c.at[i, "ob"], c.at[i, "stem"]
@@ -212,68 +234,98 @@ def match_k3(c):
     c.loc[dup, ["k3", "match"]] = [None, None]
     log(f"  hromada councils: {len(c)}  matched to k3: {c['k3'].notna().sum()} "
         f"({c['match'].value_counts().to_dict()}); ambiguous dropped: {int(dup.sum())}")
-    miss = c[c["k3"].isna()]
-    if len(miss):
-        log("  unmatched (first 25): " + "; ".join(f"{r.oblast[:12]}|{r.rada_name}" for r in miss.head(25).itertuples()))
     return c
 
 
-def load_councils():
-    if not COUNCILS.exists():
-        raise SystemExit("run 'probe' first")
-    return pd.read_csv(COUNCILS, dtype={"rada_id": str})
+def combined():
+    cand, elec = read_counts(CAND_CSV), read_counts(ELECT_CSV)
+    if cand is None or elec is None:
+        raise SystemExit("run 'probe' first (both count files are needed)")
+    pers = [x for x in elec.columns if x.startswith("n_pers__")]
+    dep = [x for x in pers if "deput" in x.lower()]
+    if not dep:
+        raise SystemExit(f"no deputies wrapper among {pers}; check the probe structure")
+    e = elec[["rada_id"]].copy()
+    e["n_seats"] = elec[dep].sum(axis=1)
+    both = cand.merge(e, on="rada_id", how="left")
+    return both, dep
 
 
 # ---------------------------------------------------------------- modes
 def cmd_probe(a):
     open_log("33_probe.log")
-    c = parse_councils()
-    cand = [x for x in c.columns if x.startswith("n_cand__")]
-    lists = [x for x in c.columns if x.startswith(f"n_{LIST_TAG}__")]
-    log("\n  candidates per council by list type and council type (median / councils with >0):")
-    for t, g in c.groupby("council_type"):
-        parts = [f"{x[8:]}: {g[x].median():.0f}/{int((g[x] > 0).sum())}" for x in cand if g[x].notna().any()]
-        log(f"    {t:8s} n={len(g):4d}  " + "  ".join(parts))
-    log("  party lists per council by wrapper and council type (median / councils with >0):")
-    for t, g in c.groupby("council_type"):
-        parts = [f"{x[len(LIST_TAG) + 4:]}: {g[x].median():.0f}/{int((g[x] > 0).sum())}"
-                 for x in lists if g[x].notna().any() and g[x].sum() > 0]
-        log(f"    {t:8s} " + "  ".join(parts))
-    m = match_k3(c)
+    cand = read_counts(CAND_CSV)
+    if cand is None or a.refresh or DEP_CAND not in cand.columns:
+        cand = parse_xml(CAND_XML, "candidates", count_candidates, CAND_CSV)
+    else:
+        log(f"candidate counts: reusing {CAND_CSV} ({len(cand)} councils); --refresh to download again")
+    elec = parse_xml(ELECT_XML, "elected", count_persons, ELECT_CSV)
+    pers = [x for x in elec.columns if x.startswith("n_pers__")]
+    log("\n  elected persons per council by wrapper and council type (median / councils with >0):")
+    for t, g in elec.groupby("council_type"):
+        log(f"    {t:8s} n={len(g):4d}  " + "  ".join(
+            f"{x[8:]}: {g[x].median():.0f}/{int((g[x] > 0).sum())}" for x in pers if g[x].notna().any()))
+    ids = set(cand["rada_id"]) & set(elec["rada_id"])
+    log(f"  council ids in both files: {len(ids)} (candidates {len(cand)}, elected {len(elec)})")
+    both, dep = combined()
+    m = match_k3(both)
+    m["cand_per_seat"] = m[DEP_CAND] / m["n_seats"].where(m["n_seats"] > 0)
+    m["system"] = (m.get(f"n_{LIST_TAG}__candidates_for_deputies", 0) > 0).map(
+        {True: "proportional", False: "districts"})
+    log("\n  candidates per seat by electoral system (hromada councils):")
+    for s, g in m.groupby("system"):
+        v = g["cand_per_seat"].dropna()
+        log(f"    {s:12s} n={len(g):4d} with seats={len(v):4d}  median={v.median():.2f}  "
+            f"p05={v.quantile(.05):.2f}  p95={v.quantile(.95):.2f}")
     vk = m[m["k3"] == TEST_K3]
     if len(vk):
-        log("\n  Verkhovyna 2602003:\n" + vk[["rada_id", "rada_name"] + cand + lists].T.to_string(header=False))
+        log("\n  Verkhovyna 2602003:\n" + vk[["rada_id", "rada_name", DEP_CAND, "n_seats", "cand_per_seat",
+                                             "system"]].T.to_string(header=False))
 
 
 def cmd_build(a):
     open_log("33_build.log")
-    c = match_k3(load_councils())
-    c = c[c["k3"].notna()].copy()
-    head = [f"n_cand__{t}" for t in HEAD_TAGS if f"n_cand__{t}" in c.columns]
-    if not head:
-        raise SystemExit(f"none of HEAD_TAGS {HEAD_TAGS} in the counts; check the probe")
-    c["n_head_candidates"] = c[head].sum(axis=1, min_count=1)
-    lists = [x for x in c.columns if x.startswith(f"n_{LIST_TAG}__") and x[len(LIST_TAG) + 4:] not in HEAD_TAGS]
-    c["n_council_lists"] = c[lists].sum(axis=1, min_count=1)
+    both, _ = combined()
+    m = match_k3(both)
+    m = m[m["k3"].notna()].copy()
+    m["n_deputy_candidates"] = m[DEP_CAND]
+    m["cand_per_seat"] = (m[DEP_CAND] / m["n_seats"].where(m["n_seats"] > 0)).round(3)
+    lists = f"n_{LIST_TAG}__candidates_for_deputies"
+    m["electoral_system"] = (m[lists].fillna(0) > 0).map({True: "proportional", False: "districts"})
+    m["n_head_candidates"] = m[HEAD_CAND] if HEAD_CAND in m.columns else None
+    cols = ["k3", "rada_id", "electoral_system", "n_deputy_candidates", "n_seats", "cand_per_seat",
+            "n_head_candidates"]
     keys = pd.read_csv(TIDY / "keys_hromada.csv", dtype=str)[["k1", "k2", "k3", "name"]]
-    out = keys.merge(c[["k3", "rada_id", "n_head_candidates", "n_council_lists"]], on="k3", how="inner")
-    out = out.sort_values("k3")
+    out = keys.merge(m[cols], on="k3", how="inner").sort_values("k3")
     out.to_csv(OUT, index=False)
     log(f"wrote {OUT.name} rows={len(out)}")
-    for x in ("n_head_candidates", "n_council_lists"):
-        log(f"  {x}: " + str(out[x].describe().round(1).to_dict()))
+    log("  " + str(out["cand_per_seat"].describe().round(2).to_dict()))
 
-    src = "Central Election Commission (cvk.gov.ua), IAS Місцеві вибори 2020, election 695, opendata_kand XML"
+    try:                                   # non-occupied hromadas without a value
+        sys.path.insert(0, str(BASE))
+        ob = importlib.import_module("03_openbudget")
+        k = ob.load_keys()
+        k["k3"] = k["k3"].astype(str).str.zfill(7)
+        free = k[k["occupied"] == False]  # noqa: E712
+        miss = free[~free["k3"].isin(out.loc[out["cand_per_seat"].notna(), "k3"])]
+        log(f"  non-occupied hromadas: {len(free)}, without cand_per_seat: {len(miss)}"
+            + (": " + "; ".join(f"{r.k3} {r.name}" for r in miss.head(40).itertuples()) if len(miss) else ""))
+    except Exception as e:
+        log(f"  occupation check skipped ({e})")
+
+    src = "Central Election Commission (cvk.gov.ua), IAS Місцеві вибори 2020, election 695, open data XML"
     lic = "open data, attribution required (data.gov.ua copy CC BY)"
     dd_new = pd.DataFrame([
+        ["cand_per_seat", src, lic, "ratio", "2020", "hromada",
+         "deputy candidates registered / deputies elected, hromada council, 25 Oct 2020; counts only"],
+        ["electoral_system", src, lic, "category", "2020", "hromada",
+         "proportional (party lists, >10,000 voters) or districts (multi-member districts)"],
         ["n_head_candidates", src, lic, "count", "2020", "hromada",
-         "registered candidates for hromada head, 25 Oct 2020; counts only, names not stored"],
-        ["n_council_lists", src, lic, "count", "2020", "hromada",
-         "candidate lists (parties, local organisations) standing for the hromada council, 25 Oct 2020"],
+         "candidates for head; listed for city councils only — context, not an index input"],
     ], columns=["indicator", "source", "licence", "unit", "year", "level", "method"])
     ddp = TIDY / "data_dictionary.csv"
     dd = pd.read_csv(ddp, dtype=str) if ddp.exists() else pd.DataFrame(columns=dd_new.columns)
-    drop = set(dd_new["indicator"]) | {"turnout", "protocol_status"}
+    drop = set(dd_new["indicator"]) | {"turnout", "protocol_status", "n_council_lists"}
     dd = pd.concat([dd[~dd["indicator"].isin(drop)], dd_new], ignore_index=True)
     dd.to_csv(ddp, index=False)
     log(f"data dictionary updated: {len(dd)} indicators")
@@ -282,6 +334,7 @@ def cmd_build(a):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("mode", choices=["probe", "build"])
+    ap.add_argument("--refresh", action="store_true", help="download the candidate XML again")
     a = ap.parse_args()
     {"probe": cmd_probe, "build": cmd_build}[a.mode](a)
 
