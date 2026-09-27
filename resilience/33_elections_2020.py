@@ -32,6 +32,7 @@ import sys
 import time
 import urllib.request
 import xml.etree.ElementTree as ET
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import pandas as pd
@@ -53,6 +54,12 @@ LIST_TAG = "part"
 # renamed since 2020 (council-name stem 2020 -> name stem in keys_hromada)
 RENAMED = {"берестинська": "красноградська", "багачевська": "ватутінська",
            "хутірмихайлівська": "дружбівська", "шахтарська": "першотравенська"}  # Шахтарське (Дніпропетровська), 2024
+# councils whose key is named after a settlement in a form no rule links (checked by hand)
+MANUAL = {"дніпропетровська область#зайцівська сільська рада": "1214009",
+          "дніпропетровська область#вишнівська селищна рада": "1204007",
+          "дніпропетровська область#юріївська селищна рада": "1212013",
+          "івано-франківська область#дубовецька сільська рада": "2604013",
+          "закарпатська область#дубриницька сільська рада": "2110007"}
 _logf = None
 
 
@@ -222,6 +229,9 @@ def match_k3(c):
     c["stem"], c["typ"] = st.str[0], st.str[1]
     c["k3"] = (c["ob"] + "#" + c["stem"] + "|" + c["typ"]).map(kk)
     c["match"] = c["k3"].notna().map({True: "name", False: None})
+    man = (c["ob"] + "#" + c["rada_name"].str.lower().str.strip()).map(MANUAL)
+    c.loc[c["k3"].isna() & man.notna(), "match"] = "manual"
+    c["k3"] = c["k3"].fillna(man)
     kyiv = c["ob"].eq("київ") & c["k3"].isna()
     c.loc[kyiv, ["k3", "match"]] = ["8000000", "city"]
     cen = keys[keys["name_src"] == "centre settlement"]
@@ -231,10 +241,39 @@ def match_k3(c):
             lambda n: len(stem_type(n)[0]) >= 4 and stem.startswith(stem_type(n)[0][:-2]))]
         if len(cand) == 1:
             c.at[i, "k3"], c.at[i, "match"] = cand["k3"].iloc[0], "centre"
+    # same stem, type ignored (keys named "територіальна громада", or type changed since 2020)
+    used = set(c["k3"].dropna())
+    free = keys[~keys["k3"].isin(used)]
+    for i in c.index[c["k3"].isna()]:
+        cand = free[(free["ob"] == c.at[i, "ob"]) & (free["stem"] == c.at[i, "stem"])]
+        if len(cand) == 1:
+            c.at[i, "k3"], c.at[i, "match"] = cand["k3"].iloc[0], "stem"
+    # close spelling (renamings of single letters, settlement-name keys): unique best match >= 0.8,
+    # at least 0.1 ahead of the second; every pair is logged for review
+    used = set(c["k3"].dropna())
+    free = keys[~keys["k3"].isin(used)]
+    pairs = []
+    for i in c.index[c["k3"].isna()]:
+        pool = free[free["ob"] == c.at[i, "ob"]]
+        if pool.empty:
+            continue
+        sc = pool["stem"].map(lambda s: SequenceMatcher(None, c.at[i, "stem"], s).ratio())
+        order = sc.sort_values(ascending=False)
+        best = order.iloc[0]
+        second = order.iloc[1] if len(order) > 1 else 0
+        if best >= 0.8 and best - second >= 0.1:
+            j = order.index[0]
+            c.at[i, "k3"], c.at[i, "match"] = pool.at[j, "k3"], "fuzzy"
+            pairs.append(f"{c.at[i, 'rada_name']} -> {pool.at[j, 'name']} ({pool.at[j, 'k3']}, {best:.2f})")
+    if pairs:
+        log("  fuzzy matches (check): " + "; ".join(pairs))
     dup = c["k3"].duplicated(keep=False) & c["k3"].notna()
     c.loc[dup, ["k3", "match"]] = [None, None]
     log(f"  hromada councils: {len(c)}  matched to k3: {c['k3'].notna().sum()} "
         f"({c['match'].value_counts().to_dict()}); ambiguous dropped: {int(dup.sum())}")
+    miss = c[c["k3"].isna()]
+    if len(miss):
+        log("  unmatched councils: " + "; ".join(f"{r.oblast[:12]}|{r.rada_name}" for r in miss.itertuples()))
     return c
 
 
