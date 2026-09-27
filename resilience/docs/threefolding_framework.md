@@ -156,7 +156,7 @@ administration, civic engagement, locality satisfaction (oblast).
 | Culture and arts spending share (functional 0820) | + | ✓ | ✓ | N | if sub-codes are served; otherwise 08 as a whole |
 | Education spending share (functional 09) | + | ✓ | ✓ | N | largely the education subvention: partly measures pupil numbers |
 | Extracurricular education spending share (functional 0960) | + | ✓ | ✓ | N | art and music schools, clubs; if sub-codes are served |
-| General secondary schools and pupils per 1,000 children | + | ? | ✓ | V, S (step 4b) | ЄДЕБО / ІСУО; counts only, never points |
+| General secondary schools in operation per 10,000 residents | + | — | ✓ | done (step 4b) | `34_schools.py`, ЄДЕБО register (KATOTTG), 1,438 hromadas; higher where settlement is dispersed |
 
 Context, not in the index: sport (0810) and media (0830) spending shares; reSCORE belonging and mental
 wellbeing (oblast). Lower priority, only if a step-4 source fails: libraries and cultural institutions,
@@ -171,7 +171,11 @@ damaged education facilities (S; impact, not capacity).
    candidates per council seat (`cand_per_seat_rel`, ratio to the median of the same electoral system:
    8.5 with party lists, 2.9 in multi-member districts). Candidates for head are listed for city
    councils only (context).
-2. General secondary schools and pupils (cultural).
+2. General secondary schools (cultural) — **done 27 Sep 2026.** Index input: working schools per 10,000
+   residents (ЄДЕБО register, current). Pupils 2021 (form ЗНЗ-1, pre-war, CC BY 4.0) are context only:
+   schools carry no code and are placed by settlement name; pupil counts within a 5 % bound are
+   available for 756 hromadas, unevenly by oblast. Class size (ambiguous direction) and suspended
+   schools (a war outcome) are context. Register licence statement to confirm before release.
 3. Administrative service centres, ЦНАП (rights).
 4. Military administrations (stratifier).
 
