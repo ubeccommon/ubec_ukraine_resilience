@@ -18,8 +18,9 @@ all cases; only counts per council are kept (rule R6). Nothing that identifies a
 or written.
 
 Indicator: cand_per_seat = deputy candidates / deputies elected, per hromada council — contestation
-of the council election, comparable across the two electoral systems (proportional lists in
-hromadas with more than 10,000 voters, multi-member districts below). electoral_system records which.
+of the council election. The level depends on the electoral system (probe 27 Sep 2026: median 8.5
+with proportional lists, >10,000 voters; 2.9 in multi-member districts), so the index input is
+cand_per_seat_rel = cand_per_seat / median of the same system. electoral_system records which.
 Context only: n_head_candidates (listed for city councils only, 370 of 1,419 hromada councils).
 Not feasible (probe of 27 Sep 2026): turnout — no structured source; protocol PDFs cannot be
 linked to the open-data council ids (29 of 29 returned 404) and are partly handwritten scans.
@@ -292,14 +293,18 @@ def cmd_build(a):
     m["cand_per_seat"] = (m[DEP_CAND] / m["n_seats"].where(m["n_seats"] > 0)).round(3)
     lists = f"n_{LIST_TAG}__candidates_for_deputies"
     m["electoral_system"] = (m[lists].fillna(0) > 0).map({True: "proportional", False: "districts"})
+    med = m.groupby("electoral_system")["cand_per_seat"].transform("median")
+    m["cand_per_seat_rel"] = (m["cand_per_seat"] / med).round(3)
     m["n_head_candidates"] = m[HEAD_CAND] if HEAD_CAND in m.columns else None
     cols = ["k3", "rada_id", "electoral_system", "n_deputy_candidates", "n_seats", "cand_per_seat",
-            "n_head_candidates"]
+            "cand_per_seat_rel", "n_head_candidates"]
     keys = pd.read_csv(TIDY / "keys_hromada.csv", dtype=str)[["k1", "k2", "k3", "name"]]
     out = keys.merge(m[cols], on="k3", how="inner").sort_values("k3")
     out.to_csv(OUT, index=False)
     log(f"wrote {OUT.name} rows={len(out)}")
-    log("  " + str(out["cand_per_seat"].describe().round(2).to_dict()))
+    for s_, g in out.groupby("electoral_system"):
+        log(f"  {s_:12s} n={len(g)}  cand_per_seat median={g['cand_per_seat'].median():.2f}  "
+            f"rel p05={g['cand_per_seat_rel'].quantile(.05):.2f} p95={g['cand_per_seat_rel'].quantile(.95):.2f}")
 
     try:                                   # non-occupied hromadas without a value
         sys.path.insert(0, str(BASE))
@@ -318,6 +323,9 @@ def cmd_build(a):
     dd_new = pd.DataFrame([
         ["cand_per_seat", src, lic, "ratio", "2020", "hromada",
          "deputy candidates registered / deputies elected, hromada council, 25 Oct 2020; counts only"],
+        ["cand_per_seat_rel", src, lic, "ratio to system median", "2020", "hromada",
+         "cand_per_seat / national median of the same electoral system (index input: proportional "
+         "lists carry about three times more candidates per seat than district elections)"],
         ["electoral_system", src, lic, "category", "2020", "hromada",
          "proportional (party lists, >10,000 voters) or districts (multi-member districts)"],
         ["n_head_candidates", src, lic, "count", "2020", "hromada",
