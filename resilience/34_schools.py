@@ -24,8 +24,11 @@ build   register (current network): schools_2026 working, suspended_2026, school
         ZNZ-1 (pre-war): pupils_2021 (row 1.12 col 1), classes_2021 (row 1.1 col 1), class_size_2021,
         pupils_per1000_2021. A school is placed by oblast + settlement name; where the name repeats
         in the oblast, only settlements with a school in the register are kept; Kyiv city directly.
-        A hromada gets pupil values only if no unresolved school could belong to it
-        (znz_complete); otherwise they stay empty — never an undercount.
+        Unresolved schools (repeated names) are not assigned. For each hromada, pupils_unres_max
+        sums the pupils of every unresolved school that could belong to it (upper bound of what may
+        be missing); pupil counts are kept where that bound is at most MAX_MISSING (5 %) of placed +
+        bound (znz_complete), otherwise left empty. Class size is a ratio over placed schools and is
+        computed wherever schools are placed.
 
 Rules. R6/R7: this script never prints or stores a school's name, address, postal code, phone or
 e-mail; only column names, category counts and match rates. Results are counts per hromada. Language
@@ -52,6 +55,7 @@ ZNZ_VALS = RAW / "znz1_values.pkl"    # oblast, settlement, pupils, classes (loc
 REG_MIN = RAW / "register_min.pkl"    # settlement code, k3, status, type, flags — no names (local)
 OUT = TIDY / "schools_k3.csv"
 PUPILS, CLASSES = "ЗНЗ1 1.12.1", "ЗНЗ1 1.1.1"
+MAX_MISSING = 0.05
 ZNZ_URL = ("https://data.gov.ua/dataset/7091f713-b44e-4362-a48a-3a528cb64446/resource/"
            "eb236da2-eca9-4dc2-8773-a726d50dd3b2/download/sc_info_znz1_out.xlsx")
 META = ["SNAME", "SOBL", "SRJN", "SPNT", "SADDR", "SPINX", "SOWN", "SLCT", "SPHN", "SEML", "SOP"]
@@ -337,25 +341,32 @@ def cmd_build(a):
     z = v[v["k3"].notna()].groupby("k3").agg(znz_schools_2021=("pupils", "size"),
                                              pupils_2021=("pupils", "sum"),
                                              classes_2021=("classes", "sum")).reset_index()
-    t = v["touch"].dropna().explode().value_counts().rename("znz_unresolved").rename_axis("k3").reset_index()
+    amb = v[v["touch"].notna()][["touch", "pupils"]].explode("touch").rename(columns={"touch": "k3"})
+    t = amb.groupby("k3").agg(znz_unresolved=("pupils", "size"), pupils_unres_max=("pupils", "sum")).reset_index()
 
     out = keys.merge(agg, on="k3", how="left").merge(z, on="k3", how="left").merge(t, on="k3", how="left") \
               .merge(pop, on="k3", how="left")
     out = out[out[["schools_2026", "schools_suspended_2026", "znz_schools_2021"]].notna().any(axis=1)].copy()
     out["znz_unresolved"] = out["znz_unresolved"].fillna(0).astype(int)
-    out["znz_complete"] = out["znz_unresolved"].eq(0) & out["znz_schools_2021"].notna()
+    out["pupils_unres_max"] = out["pupils_unres_max"].fillna(0)
+    out["class_size_2021"] = (out["pupils_2021"] / out["classes_2021"].where(out["classes_2021"] > 0)).round(2)
+    out["pupils_missing_max_share"] = (out["pupils_unres_max"] /
+                                       (out["pupils_2021"].fillna(0) + out["pupils_unres_max"]).where(lambda x: x > 0)).round(3)
+    out["znz_complete"] = out["znz_schools_2021"].notna() & (out["pupils_missing_max_share"].fillna(0) <= MAX_MISSING)
     for c in ("pupils_2021", "classes_2021"):
         out.loc[~out["znz_complete"], c] = float("nan")
     out["schools_per10k_2026"] = (out["schools_2026"] / out["pop_ghs_2020"] * 1e4).round(3)
     out["pupils_per1000_2021"] = (out["pupils_2021"] / out["pop_ghs_2020"] * 1e3).round(2)
-    out["class_size_2021"] = (out["pupils_2021"] / out["classes_2021"].where(out["classes_2021"] > 0)).round(2)
     cols = ["k1", "k2", "k3", "name", "schools_2026", "schools_suspended_2026", "schools_per10k_2026",
             "schools_rural_2026", "schools_mountain_2026", "schools_hub_2026", "schools_branch_2026",
-            "znz_schools_2021", "znz_complete", "pupils_2021", "classes_2021", "pupils_per1000_2021",
+            "znz_schools_2021", "znz_unresolved", "pupils_missing_max_share", "znz_complete", "pupils_2021", "classes_2021", "pupils_per1000_2021",
             "class_size_2021"]
     out = out[cols].sort_values("k3")
     out.to_csv(OUT, index=False)
-    log(f"wrote {OUT.name} rows={len(out)}; pupil values complete for {int(out['znz_complete'].sum())} hromadas")
+    log(f"wrote {OUT.name} rows={len(out)}; pupil values kept for {int(out['znz_complete'].sum())} hromadas "
+        f"(missing pupils at most {MAX_MISSING:.0%}); strictly complete: {int(out['znz_unresolved'].eq(0).sum())}")
+    kk = out.assign(ok=out["znz_complete"]).groupby("k1")["ok"].mean().round(2)
+    log("  share of hromadas with pupil values by oblast: " + ", ".join(f"{k}={x}" for k, x in kk.items()))
     for c in ("schools_per10k_2026", "pupils_per1000_2021", "class_size_2021"):
         x = out[c].dropna()
         log(f"  {c}: n={len(x)} median={x.median():.2f} p05={x.quantile(.05):.2f} p95={x.quantile(.95):.2f}")
@@ -373,8 +384,9 @@ def cmd_build(a):
         ["schools_per10k_2026", reg_src + " + GHS-POP", lic_reg, "per 10,000 persons", "2026", "hromada", "schools_2026 / pop_ghs_2020"],
         ["pupils_2021", znz_src, lic_znz, "persons", "2021", "hromada", "ЗНЗ-1 row 1.12 col 1 summed over schools placed in the hromada; empty unless znz_complete"],
         ["pupils_per1000_2021", znz_src + " + GHS-POP", lic_znz, "per 1,000 persons", "2021", "hromada", "pupils_2021 / pop_ghs_2020"],
-        ["class_size_2021", znz_src, lic_znz, "pupils per class", "2021", "hromada", "pupils_2021 / classes_2021 (row 1.1 col 1)"],
-        ["znz_complete", znz_src, lic_znz, "flag", "2021", "hromada", "true if no unresolved ZNZ-1 school (repeated settlement name) could belong to the hromada"],
+        ["class_size_2021", znz_src, lic_znz, "pupils per class", "2021", "hromada", "pupils / classes (row 1.1 col 1) over all placed schools"],
+        ["znz_complete", znz_src, lic_znz, "flag", "2021", "hromada", "true if pupils of unresolved ZNZ-1 schools (repeated settlement names) that could belong to the hromada are at most 5 % of placed + unresolved"],
+        ["pupils_missing_max_share", znz_src, lic_znz, "ratio", "2021", "hromada", "upper bound of the share of pupils possibly missing (unresolved schools that could belong to the hromada)"],
     ], columns=["indicator", "source", "licence", "unit", "year", "level", "method"])
     ddp = TIDY / "data_dictionary.csv"
     dd = pd.read_csv(ddp, dtype=str) if ddp.exists() else pd.DataFrame(columns=dd_new.columns)
