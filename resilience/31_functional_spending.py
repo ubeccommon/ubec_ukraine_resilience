@@ -76,6 +76,10 @@ SHARES = {                                # column: code prefix (leaf codes star
     "sh_10_social": "10",
 }
 SUBCODES = ["0810", "0820", "0830", "0960"]
+# Amount column for actual spending. The FUNCTIONAL response has no FAKT_AMT (the ECONOMIC one has);
+# its header repeats PLANS_AMT. Set from the probe: the column whose annual total matches the
+# economic-classification FAKT_AMT total. None = FAKT_AMT only.
+AMT_COL = None
 _logf = None
 
 
@@ -144,11 +148,24 @@ def code_column(df):
 
 
 def name_column(df):
-    names = [c for c in df.columns if c.upper().startswith("NAME")]
+    names = [c for c in df.columns if "NAME" in c.upper()]
     return names[0] if names else None
 
 
-def annual_leaves(df):
+def amount_column(df):
+    if "FAKT_AMT" in df.columns:
+        return "FAKT_AMT"
+    if AMT_COL and AMT_COL in df.columns:
+        return AMT_COL
+    raise SystemExit(f"no actual-spending column: FAKT_AMT absent and AMT_COL={AMT_COL!r}; "
+                     f"run 'probe' and set AMT_COL. Columns: {list(df.columns)}")
+
+
+def num(sr):
+    return pd.to_numeric(sr.astype("string").str.replace(",", ".", regex=False), errors="coerce").fillna(0)
+
+
+def annual_leaves(df, amt=None):
     """December (or latest) cumulative amounts, FUND_TYP T, leaf codes -> (Series code->UAH, month)."""
     if df is None or df.empty or "REP_PERIOD" not in df.columns:
         return None, None
@@ -160,8 +177,7 @@ def annual_leaves(df):
     last = int(d["m"].max())
     d = d[(d["m"] == last) & (d["FUND_TYP"] == "T")].copy()
     d["code"] = d[cc].astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.zfill(4)
-    d["amt"] = pd.to_numeric(d["FAKT_AMT"].astype("string").str.replace(",", ".", regex=False),
-                             errors="coerce").fillna(0)
+    d["amt"] = num(d[amt or amount_column(df)])
     s = d.groupby("code")["amt"].sum()
     codes = list(s.index)
 
@@ -201,23 +217,48 @@ def cmd_probe(a):
             log(f"REP_PERIOD: {per[0]} … {per[-1]} ({len(per)} periods)")
         cc, nc = code_column(df), name_column(df)
         log(f"code column: {cc}   name column: {nc}")
+        raw = ob.decode(gzip.open(ob.cache_path(item, a.year, code)).read()[:400]).splitlines()
+        log("raw header: " + (raw[0] if raw else ""))
+        log("raw row 1:  " + (raw[1] if len(raw) > 1 else ""))
         if cc is None:
             log("first rows:\n" + df.head(8).to_string())
+            continue
+        econ = ob.read_cached("EXPENSES_ECONOMIC", a.year, code)
+        em = ob.expense_metrics(econ) if econ is not None and "FAKT_AMT" in econ.columns else None
+        ref = em["exp_total"] if em and em.get("exp_total") else None
+        if econ is not None:
+            log(f"economic cache columns: {list(econ.columns)}")
+        amt_cols = [c for c in df.columns if "AMT" in c.upper()]
+        mon = int(df["REP_PERIOD"].str.extract(r"^(\d{1,2})\.")[0].astype(int).max())
+        refs = "n/a" if ref is None else f"{ref:,.0f}"
+        log(f"\namount columns, annual total over leaf codes (month {mon}, FUND_TYP T) "
+            f"vs economic FAKT_AMT total {refs}:")
+        best, best_err = None, None
+        for c in amt_cols:
+            lv, _ = annual_leaves(df, amt=c)
+            tot = lv.sum()
+            r = tot / ref if ref else float("nan")
+            log(f"  {c:20s} {tot:>18,.0f}   ratio {r:8.4f}")
+            if ref and tot > 0 and (best_err is None or abs(r - 1) < best_err):
+                best, best_err = c, abs(r - 1)
+        use = "FAKT_AMT" if "FAKT_AMT" in df.columns else (AMT_COL if AMT_COL in df.columns else best)
+        log(f"best match: {best} (|ratio-1|={best_err if best_err is None else round(best_err, 4)});  "
+            f"used below: {use}")
+        if use is None:
             continue
         d = df.copy()
         d["m"] = d["REP_PERIOD"].str.extract(r"^(\d{1,2})\.")[0].astype(int)
         d = d[(d["m"] == d["m"].max()) & (d["FUND_TYP"] == "T")].copy()
         d["code"] = d[cc].astype(str).str.strip().str.zfill(4)
-        d["amt"] = pd.to_numeric(d["FAKT_AMT"].astype("string").str.replace(",", ".", regex=False),
-                                 errors="coerce").fillna(0)
+        d["amt"] = num(d[use])
         g = d.groupby("code").agg(amt=("amt", "sum"),
                                   name=(nc, "first") if nc else ("amt", "size")).reset_index()
         pd.set_option("display.max_colwidth", 70)
         pd.set_option("display.width", 160)
-        log(f"\ncodes, month {int(d['m'].max())}, FUND_TYP T ({len(g)}):\n"
+        log(f"\ncodes, month {int(d['m'].max())}, FUND_TYP T, {use} ({len(g)}):\n"
             + g.to_string(index=False, formatters={"amt": "{:,.0f}".format}))
         if item == ITEM:
-            leaves, last = annual_leaves(df)
+            leaves, last = annual_leaves(df, amt=use)
             civ = leaves[leaves.index.str[:2].isin(CIVIL_DIV)].sum()
             log(f"\nleaf codes: {len(leaves)}   civilian total (excl. 02): {civ:,.0f}   "
                 f"division 02 present: {bool((leaves.index.str[:2] == '02').any())}   "
@@ -227,12 +268,6 @@ def cmd_probe(a):
             for col, pre in SHARES.items():
                 v = leaves[leaves.index.str.startswith(pre)].sum()
                 log(f"  {col:26s} {v / civ if civ else float('nan'):7.3f}")
-            econ = ob.read_cached("EXPENSES_ECONOMIC", a.year, code)
-            em = ob.expense_metrics(econ) if econ is not None else None
-            if em and em.get("exp_total"):
-                tot = leaves.sum()
-                log(f"check: functional total {tot:,.0f} vs economic total {em['exp_total']:,.0f} "
-                    f"(ratio {tot / em['exp_total']:.4f})")
 
 
 # ------------------------------------------------------------------ pull
