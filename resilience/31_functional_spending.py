@@ -24,9 +24,9 @@ shares  annual (December, or latest month for 2026), FUND_TYP T ->
         tidy/functional_spending_k3_year.csv       tracked: shares only
         tidy/functional_spending_full_k3_year.csv  ignored: UAH amounts by functional code
 
-De-duplication: within each programme × functional code, an economic code is dropped when a more
-detailed code under it is present (2000 > 2100 > 2110 > 2111); rows without an economic code are
-dropped when coded rows exist. Functional codes are then summed; parent functional codes (0800 when
+De-duplication: within each programme × functional code, the total row (economic code 0000, or no
+code) is dropped when detailed rows exist, and an economic code is dropped when a more detailed code
+under it is present (2000 > 2100 > 2110 > 2111). Functional codes are then summed; parent functional codes (0800 when
 0820 exists) are dropped the same way.
 
 Budget codes: 03's jobs table (year-specific code, else the latest); 2026 uses the 2025 code, as
@@ -185,10 +185,11 @@ def last_month_rows(df):
 
 
 def dedupe_ek(d):
-    """Keep leaf economic codes within each programme × functional code."""
+    """Keep leaf economic codes within each programme × functional code. EK 0000 is the programme
+    total (probe 27 Sep 2026: it doubles the sum) and is dropped when detailed rows exist."""
     keep = []
     for _, g in d.groupby([PK, FK], sort=False):
-        coded = g[g[EK] != ""]
+        coded = g[~g[EK].isin(["", "0000"])]
         if len(coded):
             par = drop_parents(list(coded[EK].unique()))
             keep.append(coded[~coded[EK].isin(par)])
