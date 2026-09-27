@@ -46,6 +46,9 @@ OUTPUTS=(
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
   "resilience/tidy/functional_spending_k3_year.csv"
+  "resilience/tidy/sphere_indices_k3.csv"
+  "resilience/tidy/sphere_inputs_k3.csv"
+  "resilience/tidy/sphere_indices_r3_raion.csv"
 )
 
 DRY=0; YES=0; SUBJECT=""
