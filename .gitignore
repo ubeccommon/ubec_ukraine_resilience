@@ -69,6 +69,7 @@
 /resilience/tidy/resilience_index_v11_k3.csv
 /resilience/tidy/budget_indicators_k3.csv
 /resilience/tidy/budget_long_k3_year.csv
+/resilience/tidy/functional_spending_full_k3_year.csv
 !/resilience/public/
 
 # ---- 4b. upstream terms: no redistribution (IOM DTM) or unclear (reSCORE)
