@@ -11,9 +11,9 @@ of the hromada head and the number of candidates for head. Rights-sphere inputs
 Sources (Central Election Commission, cvk.gov.ua, IAS "Місцеві вибори 2020", election id 695;
 reuse with attribution — "посилання на джерело обов'язкове"; the data.gov.ua copy is CC BY):
   candidates   opendata_kandpt001f01=695.xml (windows-1251): region > rada > candidates_for_mayor.
-               Structured, all councils. Contains names and biographies: the file is parsed as a
-               stream and NEVER written to disk; only council id, council name, oblast and the count
-               of head candidates are kept (rule R6).
+               Structured, all councils, ~150 MB. Contains names and biographies: downloaded to a
+               temporary file (resumable), parsed, and deleted in all cases; only council id,
+               council name, oblast and the count of head candidates are kept (rule R6).
   protocols    TVK protocol on the results of the head election, one PDF per council:
                showpprotpt001f01=695pid102=<rada id>pt004f01=0pid494=3pasatt=1.pdf
                The CEC does not publish turnout as structured data for local elections. Protocols
@@ -32,7 +32,6 @@ build   -> tidy/elections_2020_k3.csv: k3, rada_id, n_head_candidates, voters_li
 Turnout = voters who took part in the vote / voters on the lists, first round, whole hromada.
 """
 import argparse
-import io
 import re
 import subprocess
 import sys
@@ -94,29 +93,63 @@ def get(url, timeout=180):
 
 
 # ------------------------------------------------------------- councils
-def stream_councils():
-    """Parse the candidate XML from the network without saving it; keep counts only."""
-    log(f"streaming {CAND_XML} (not saved; contains personal data)")
-    req = urllib.request.Request(CAND_XML, headers=HDR)
-    rows, region = [], None
-    with urllib.request.urlopen(req, timeout=600) as r:
-        body = r.read()                     # held in memory only
-    log(f"  {len(body) / 1e6:.1f} MB received")
-    tags = {}
-    for ev, el in ET.iterparse(io.BytesIO(body), events=("start", "end")):
-        tag = el.tag.split("}")[-1]
-        if ev == "start":
-            tags[tag] = tags.get(tag, 0) + 1
-            if tag == "region":
-                region = el.get("name")
+def download_resumable(url, dest, tries=10):
+    """HTTP download with Range resume; returns bytes written. Raises on failure."""
+    total = None
+    for att in range(1, tries + 1):
+        have = dest.stat().st_size if dest.exists() else 0
+        h = dict(HDR, **({"Range": f"bytes={have}-"} if have else {}))
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=600) as r:
+                if have and r.status != 206:          # server ignored Range: start again
+                    have = 0
+                    dest.unlink(missing_ok=True)
+                cl = r.headers.get("Content-Length")
+                if cl is not None:
+                    total = have + int(cl)
+                with open(dest, "ab") as f:
+                    while True:
+                        chunk = r.read(1 << 20)
+                        if not chunk:
+                            break
+                        f.write(chunk)
+        except Exception as e:
+            log(f"  attempt {att}: {type(e).__name__} at {dest.stat().st_size / 1e6 if dest.exists() else 0:.1f} MB — resuming")
+            time.sleep(5 * att)
             continue
-        if tag == "rada":
-            mayor = [c for c in el.iter() if c.tag.split("}")[-1] == "candidates_for_mayor"]
-            n = sum(1 for m in mayor for c in m if len(c) or (c.text or "").strip())
-            rows.append({"rada_id": el.get("id"), "rada_name": el.get("name"), "oblast": region,
-                         "has_head_election": bool(mayor), "n_head_candidates": n if mayor else None})
-            el.clear()
-    del body
+        size = dest.stat().st_size
+        if total is None or size >= total:
+            return size
+        log(f"  attempt {att}: {size / 1e6:.1f} of {total / 1e6:.1f} MB — resuming")
+    raise SystemExit(f"download incomplete after {tries} attempts: {url}")
+
+
+def stream_councils():
+    """Download the candidate XML to a temporary file, parse it, delete it; keep counts only."""
+    RAW.mkdir(parents=True, exist_ok=True)
+    tmp = RAW / "_cand_695.xml.part"
+    log(f"downloading {CAND_XML} (temporary; contains personal data; deleted after parsing)")
+    rows, region, tags = [], None, {}
+    try:
+        tmp.unlink(missing_ok=True)
+        size = download_resumable(CAND_XML, tmp)
+        log(f"  {size / 1e6:.1f} MB received")
+        for ev, el in ET.iterparse(str(tmp), events=("start", "end")):
+            tag = el.tag.split("}")[-1]
+            if ev == "start":
+                tags[tag] = tags.get(tag, 0) + 1
+                if tag == "region":
+                    region = el.get("name")
+                continue
+            if tag == "rada":
+                mayor = [c for c in el.iter() if c.tag.split("}")[-1] == "candidates_for_mayor"]
+                n = sum(1 for m in mayor for c in m if len(c) or (c.text or "").strip())
+                rows.append({"rada_id": el.get("id"), "rada_name": el.get("name"), "oblast": region,
+                             "has_head_election": bool(mayor), "n_head_candidates": n if mayor else None})
+                el.clear()
+    finally:
+        tmp.unlink(missing_ok=True)
+        log("  temporary XML deleted")
     log("  element counts: " + ", ".join(f"{k}={v}" for k, v in sorted(tags.items(), key=lambda x: -x[1])[:12]))
     df = pd.DataFrame(rows)
     RAW.mkdir(parents=True, exist_ok=True)
