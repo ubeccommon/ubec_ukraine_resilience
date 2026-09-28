@@ -129,7 +129,9 @@ report. The script also does the plain comparison of 5.3, method 1.
 3. **Qualitative comparative analysis** (Ragin, fuzzy sets). Profile variables calibrated to set membership
    (absolute thresholds where natural, e.g. own revenue at half of total; within-oblast terciles otherwise).
    Necessary conditions and sufficient configurations with consistency and coverage: consistency ≥ 0.8 and
-   coverage ≥ 0.1 make a candidate.
+   coverage ≥ 0.1 make a candidate, provided it beats the noise ceiling — the best consistency a conjunction of
+   the same length reaches when the outcome is shuffled within oblasts (`40_configurations.py`; on pure noise
+   400 conjunctions pass the thresholds and none the ceiling).
 4. **Kinds of held-up hromada.** Archetype analysis or clustering within the held-up group alone: several ways of
    holding up, not one recipe.
 
