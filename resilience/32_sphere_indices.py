@@ -213,6 +213,64 @@ def wmean(v, w):
     return float((v[ok] * w[ok]).sum() / w[ok].sum()) if ok.any() else np.nan
 
 
+# ---------------------------------------------------------------- variant: per resident
+FULL = TIDY / "functional_spending_full_k3_year.csv"   # internal (31_), UAH by functional code
+PC_GROUPS = {"culture_arts": "082", "extracurricular": "096", "education": "09", "social": "10"}
+
+
+def percap_variant(df, free, res):
+    """Diagnostic: cultural and rights spheres with spending per resident instead of shares of
+    civilian spending. Shares of one budget sum to 1, so a high education share lowers every
+    other share and builds a negative correlation between spheres into the index; amounts per
+    resident carry no such constraint (but rise with fiscal size). Printed only."""
+    if not FULL.exists():
+        log("\nper-resident variant skipped: functional_spending_full_k3_year.csv not found")
+        return
+    f = zk(pd.read_csv(FULL, dtype={"k3": str}))
+    f = f[f["last_month"] == 12]
+    fk = [c for c in f.columns if c.startswith("fk_")]
+    P = df.set_index("k3")["pop_ghs_2020"]
+    v = df[["k3"]].copy()
+    for y in (2021, 2025):
+        fy = f[f["year"] == y].set_index("k3")
+        for g, pre in PC_GROUPS.items():
+            cols = [c for c in fk if c[3:].startswith(pre)]
+            amt = fy[cols].fillna(0).sum(axis=1) if cols else pd.Series(dtype=float)
+            v[f"{g}_pc_{y}"] = v["k3"].map(amt) / v["k3"].map(P)
+    X = df.copy()
+    for c in v.columns[1:]:
+        X[c] = v[c].values
+    spec = {
+        ("cult", 2021): {"culture_arts_pc_2021": (+1, "log"), "education_pc_2021": (+1, "log"),
+                         "extracurricular_pc_2021": (+1, "log")},
+        ("cult", 2025): {"culture_arts_pc_2025": (+1, "log"), "education_pc_2025": (+1, "log"),
+                         "extracurricular_pc_2025": (+1, "log"), "schools_per10k_2026": (+1, "log")},
+        ("rights", 2021): {"transfer_dep_civ_2021": (-1, None), "capex_share_2021": (+1, None),
+                           "social_pc_2021": (+1, "log"), "cand_per_seat_rel_2020": (+1, "log")},
+        ("rights", 2025): {"transfer_dep_civ_2025": (-1, None), "capex_share_2325": (+1, None),
+                           "social_pc_2025": (+1, "log"), "dream_per10k": (+1, "log1p")},
+    }
+    log("\n=== variant: spending per resident (diagnostic, not written)")
+    alt = pd.DataFrame(index=df.index)
+    for (sph, y), sp in spec.items():
+        R = ranks(X, sp, free)
+        alt[f"{sph}_{y}"] = index(R, MIN_IND)
+        log(f"  {sph}_{y}: n={alt.loc[free, f'{sph}_{y}'].notna().sum()}  within-sphere rank correlations:")
+        log("\n".join("      " + l for l in R[free].corr(method="spearman").round(2).to_string().splitlines()))
+    for y in (2021, 2025):
+        C = pd.DataFrame({"econ": res[f"econ_{y}"], "rights_pc": alt[f"rights_{y}"], "cult_pc": alt[f"cult_{y}"]})[free]
+        log(f"  between-sphere rank correlations {y} (econ unchanged):")
+        log("\n".join("      " + l for l in C.corr(method="spearman").round(3).to_string().splitlines()))
+        for s in ("rights", "cult"):
+            ok = free & res[f"{s}_{y}"].notna() & alt[f"{s}_{y}"].notna()
+            log(f"    {s}_{y}: shares vs per-resident version rho="
+                f"{res.loc[ok, f'{s}_{y}'].corr(alt.loc[ok, f'{s}_{y}'], method='spearman'):.3f}")
+    carp = free & df["k1"].isin(CARP)
+    g = alt[carp].assign(k1=df.loc[carp, "k1"]).groupby("k1").median().round(3)
+    g.index = [CARP[k] for k in g.index]
+    log("  Carpathian medians (variant):\n" + "\n".join("      " + l for l in g.to_string().splitlines()))
+
+
 # ---------------------------------------------------------------- main
 def main():
     global _logf
@@ -291,6 +349,8 @@ def main():
         g.index = [CARP[k] for k in g.index]
         nat = res.loc[free, cols].median().round(3).rename("Україна (медіана)")
         log("\nCarpathian oblasts, median index:\n" + pd.concat([g, nat.to_frame().T]).to_string())
+
+    percap_variant(df, free, res)
 
     res["occupied"] = df["occupied"]
     res.loc[~free, [c for c in res.columns if c not in ("k1", "k2", "k3", "name", "occupied")]] = np.nan

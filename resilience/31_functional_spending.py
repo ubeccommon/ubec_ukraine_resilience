@@ -7,6 +7,7 @@
   python 31_functional_spending.py probe [--k3 2602003] [--year 2025]
   python 31_functional_spending.py pull  [--years 2021-2026] [--workers 4] [--test N]
   python 31_functional_spending.py shares
+  python 31_functional_spending.py diagnose [--years 2021,2025]
 
 Source: localBudgetData EXPENSES with classificationType=PROGRAM. Each row carries the programme code
 (COD_CONS_MB_PK, ТПКВКМБ), the functional code (COD_CONS_MB_FK) and the economic code (COD_CONS_EK),
@@ -398,9 +399,60 @@ def cmd_shares(a):
     log(f"data dictionary updated: {len(dd)} indicators")
 
 
+def cmd_diagnose(a):
+    """Why a cached budget yields no shares: reason counts by oblast and one structural example
+    per reason (column names, row counts, code fill rates — no amounts, no names)."""
+    open_log("31_diagnose.log")
+    jobs = load_jobs()
+    _, free = non_occupied()
+    jobs = jobs[jobs["k3"].isin(free) & jobs["year"].isin(a.years)]
+    rows, shown = [], set()
+    for r in jobs.itertuples():
+        p = Path(ob.cache_path(ITEM, r.year, r.budgetCode))
+        df = ob.read_cached(ITEM, r.year, r.budgetCode)
+        reason, info = "ok", ""
+        if not p.exists():
+            reason = "no file"
+        elif df is None or df.empty:
+            reason = "empty response"
+        else:
+            miss = [c for c in (PK, FK, EK, AMT, "REP_PERIOD", "FUND_TYP") if c not in df.columns]
+            if miss:
+                reason, info = "columns missing", f"missing={miss} columns={list(df.columns)}"
+            else:
+                d = df.copy()
+                d["m"] = d["REP_PERIOD"].astype(str).str.extract(r"^(\d{1,2})\.")[0].astype(float)
+                last = d["m"].max()
+                t = d[(d["m"] == last) & (d["FUND_TYP"] == "T")]
+                fk = norm_code(t[FK]) if len(t) else pd.Series(dtype=str)
+                if t.empty:
+                    reason = "no FUND_TYP T rows in last month"
+                    info = f"FUND_TYP={df['FUND_TYP'].value_counts().to_dict()} last_month={last}"
+                elif (fk == "").all():
+                    reason = "functional code empty"
+                    info = (f"rows T={len(t)} PK filled={(norm_code(t[PK]) != '').mean():.2f} "
+                            f"EK filled={(norm_code(t[EK]) != '').mean():.2f}")
+                else:
+                    lv, _ = functional_leaves(df)
+                    if lv is None or lv.empty or civilian(lv).sum() <= 0:
+                        reason = "no civilian leaf amounts"
+                        info = f"rows T={len(t)} FK codes={sorted(set(fk))[:12]}"
+        rows.append({"k3": r.k3, "k1": r.k3[:2], "year": r.year, "reason": reason, "budgetCode": r.budgetCode})
+        if reason != "ok" and reason not in shown:
+            shown.add(reason)
+            log(f"example — {reason}: k3={r.k3} year={r.year} budgetCode={r.budgetCode} size="
+                f"{p.stat().st_size if p.exists() else 0} B  {info}")
+    d = pd.DataFrame(rows)
+    log("\nreasons by year: " + str(d.groupby(["year", "reason"]).size().to_dict()))
+    bad = d[d["reason"] != "ok"]
+    if len(bad):
+        log("not ok by oblast (k1): " + str(bad.groupby("k1").size().sort_values(ascending=False).to_dict()))
+        log("budget code length / prefix of the not-ok: " + str(bad["budgetCode"].str[:4].value_counts().head(10).to_dict()))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
-    ap.add_argument("mode", choices=["probe", "pull", "shares"])
+    ap.add_argument("mode", choices=["probe", "pull", "shares", "diagnose"])
     ap.add_argument("--k3", default=TEST_K3)
     ap.add_argument("--year", type=int, default=2025)
     ap.add_argument("--years", default="2021-2026")
@@ -408,7 +460,7 @@ def main():
     ap.add_argument("--test", type=int, default=0)
     a = ap.parse_args()
     a.years = parse_years(a.years)
-    {"probe": cmd_probe, "pull": cmd_pull, "shares": cmd_shares}[a.mode](a)
+    {"probe": cmd_probe, "pull": cmd_pull, "shares": cmd_shares, "diagnose": cmd_diagnose}[a.mode](a)
 
 
 if __name__ == "__main__":
