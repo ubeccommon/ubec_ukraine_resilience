@@ -60,6 +60,8 @@
 /resilience/tidy/ntl_quarterly_k3.csv
 /resilience/tidy/trajectories_k3.csv
 /resilience/tidy/carpathian_profiles_k3.csv
+# hromada LISA classes incl. zone hromadas (rule R3) -> local, used in step 8
+/resilience/tidy/sphere_lisa_k3.csv
 # superseded
 /resilience/tidy/keys_hromada_before_katottg_names.csv
 
