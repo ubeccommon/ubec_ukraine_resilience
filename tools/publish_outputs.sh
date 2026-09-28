@@ -46,6 +46,10 @@ OUTPUTS=(
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
   "resilience/tidy/sphere_classes.json"
+  "viina/qgis/maps/preview/21_sphere_economic.png"
+  "viina/qgis/maps/preview/22_sphere_rights.png"
+  "viina/qgis/maps/preview/23_sphere_cultural.png"
+  "viina/qgis/maps/preview/24_threefold_balance.png"
 )
 
 DRY=0; YES=0; SUBJECT=""

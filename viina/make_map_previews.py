@@ -25,8 +25,9 @@ WIDTH = 1600
 
 # hromada- or oblast-level choropleths, cleared for publication (14–16, 19–20: rule R3 raion values in the
 # front-line and border zone; 19–20: rule R2 publication window and reliable light data; 18: reSCORE panels only,
-# the IOM DTM panel is an empty placeholder because DTM terms forbid redistribution)
-DEFAULT = ["04", "13", "14", "15", "16", "17", "18", "19", "20"]
+# the IOM DTM panel is an empty placeholder because DTM terms forbid redistribution; 21–24: three spheres and
+# threefold balance, rule R3 raion values, cleared 28 Sep 2026)
+DEFAULT = ["04", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"]
 
 # never previewed until the reason is resolved (mirrors .gitignore section 3 / 4b)
 HELD = {
@@ -45,7 +46,8 @@ HELD = {
 
 ATTRIBUTION = ("Data: VIINA 2.0, Zhukov & Ayers (ODbL); air-raid alert records, V. Klymenko (MIT); OCHA COD-AB / "
                "SSPE Kartographia (CC BY 3.0 IGO); openbudget.gov.ua; NASA Black Marble; JRC GHS-POP; "
-               "DREAM. Analysis and maps: M. Garand, Ubuntu Bioregional Economic Commons, CC BY 4.0.")
+               "DREAM; Central Election Commission (local elections 2020); Ministry of Education (ЄДЕБО register). "
+               "Analysis and maps: M. Garand, Ubuntu Bioregional Economic Commons, CC BY 4.0.")
 
 
 def find_source(page):

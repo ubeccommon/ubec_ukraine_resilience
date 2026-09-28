@@ -980,7 +980,7 @@ layouts = [
                        ([osm, SPHL[(sph, 2025)], occ, zone_sph, obl_b, outline], "2025")],
                       cap + credit_sph,
                       legend=[(SPHL[(sph, 2025)], f"{SPH_NAME[sph]} sphere 2025, quintiles"),
-                              (SPHL[(sph, 2021)], "2021, quintiles"), occ, ZONE_LEG_S],
+                              (SPHL[(sph, 2021)], "2021, quintiles"), occ, ZONE_LEG_S],   # "no value" = Chornobyl zone
                       legend_cols=4, legend_split=False, sub_y=176.0)
     for i, (sph, nm, cap) in enumerate([("econ", "economic", N21), ("rights", "rights", N22), ("cult", "cultural", N23)])
 ] + [
