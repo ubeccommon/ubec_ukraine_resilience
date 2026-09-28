@@ -7,6 +7,8 @@ configurations that held-up hromadas share and faltered ones lack.
   python 40_configurations.py --pop zone      the 30 km zone population (small: read with care)
   python 40_configurations.py --max-k 2       conjunctions of at most two conditions (default 3)
   python 40_configurations.py --with-region   add is_village, is_city and carp as conditions (default: covariates only)
+  python 40_configurations.py --outcome s24   one family's residual as the outcome (s24, recent, econ, cult, own):
+                                              extremes = its top and bottom quarter; outputs configurations_<f>.*
 
 Input: tidy/quality_k3.csv from 39_quality.py (local), sphere_inputs_k3.csv (32), schools_k3.csv (34),
 population_k3.csv (05). Alexander's question is which COMBINATION recurs in the places that work, so the
@@ -24,8 +26,10 @@ methods are configurational, not regression:
   3. Fuzzy-set consistency and coverage (Ragin 2008) of every conjunction of 1..max_k conditions, each present or
      absent, against the fuzzy outcome Y = within-population percentile rank of the composite residual (held up)
      and 1 − Y (faltered):  consistency = sum(min(X, Y)) / sum(X)   coverage = sum(min(X, Y)) / sum(Y).
-     Baseline for two independent uniform sets is 2/3; a configuration counts when consistency >= 0.80 and
-     coverage >= 0.10 (fuzzy), AND in crisp terms (all conditions above / below the oblast median) it covers
+     Baseline for two independent uniform sets is 2/3, and with percentile-rank memberships a single condition
+     correlated 0.5 with the outcome reaches only about 0.75, so no absolute consistency threshold is used: a
+     configuration counts when its consistency exceeds the permutation ceiling for its k (step 5) by >= 0.03
+     ('excess'), with coverage >= 0.10 (fuzzy), AND in crisp terms (all conditions above / below the oblast median) it covers
      >= 20 hromadas of the extremes with precision >= 0.60 among held_up + faltered (baseline 0.50). Minimal
      sufficient configurations are retained (as QCA minimisation): a superset of a passing configuration is
      dropped unless it raises consistency by >= 0.05, in which case it is kept and marked 'sharpens'.
@@ -34,9 +38,10 @@ methods are configurational, not regression:
   4. Kinds of held-up hromada: k-means (k = 2..4, best silhouette) on the condition memberships of the held-up
      group alone; mean membership profile per kind, with region and hromada type shares.
   5. Noise ceiling: the outcome is shuffled within oblasts (--perms, default 20) and every conjunction rescored;
-     the 95th percentile of the best chance consistency is the ceiling, and 'above_ceiling' marks the
-     configurations that beat it; only those are retained. With 5,000+ conjunctions scored, this is the
-     multiple-comparison check (pure-noise test, 28 Sep 2026: 400 pass the thresholds, none the ceiling).
+     the 95th percentile of the best chance consistency, per k, is the ceiling; only configurations that beat it
+     by the margin are retained. With 5,000+ conjunctions scored, this is the multiple-comparison check
+     (synthetic tests, 28 Sep 2026: pure noise retains nothing; a planted single condition correlated 0.5 with
+     one family, and a planted pair, both come out first). Without --perms the absolute 0.80 rule applies.
   6. Regional check for every retained configuration: crisp coverage of the held-up group by macro-region
      (west, centre, south, east) and in the Carpathian oblasts; a configuration that holds in >= 3 of 4
      macro-regions is marked 'regional_ok'.
@@ -63,12 +68,12 @@ from sphere_common import BASE, CARP, SPH, TIDY, centre_of, closure, ilr, log, o
 
 warnings.filterwarnings("ignore")
 OUT = TIDY / "configurations.csv"
-OUT_S = TIDY / "configurations_summary.json"
+OUT_S = TIDY / "configurations_summary.json"    # single-family runs write configurations_<outcome>.csv / .json
 REGION = {"west": {"07", "21", "26", "46", "56", "61", "68", "73"},
           "centre": {"05", "18", "32", "35", "53", "71", "74", "80"},
           "south": {"23", "48", "51", "65"},
           "east": {"12", "14", "44", "59", "63"}}
-CONS_MIN, COV_MIN, CRISP_N, CRISP_PREC, NEC_MIN, GAIN_MIN = 0.80, 0.10, 20, 0.60, 0.90, 0.05
+CONS_MIN, COV_MIN, CRISP_N, CRISP_PREC, NEC_MIN, GAIN_MIN, MARGIN = 0.80, 0.10, 20, 0.60, 0.90, 0.05, 0.03
 # name: (source column, direction, label)
 CONDITIONS = {
     "local_tax_base": ("local_tax_share_2021", +1, "local taxes (property, land, single) as share of the tax base 2021"),
@@ -109,11 +114,19 @@ def main():
     ap.add_argument("--pop", default="outside", choices=("outside", "zone"))
     ap.add_argument("--max-k", type=int, default=3, choices=(1, 2, 3))
     ap.add_argument("--with-region", action="store_true", help="is_village, is_city, carp as conditions")
+    ap.add_argument("--outcome", default="composite", choices=("composite", "s24", "recent", "econ", "cult", "own"),
+                    help="fuzzy outcome: rank of the composite (default) or of one family's residual")
+    ap.add_argument("--variant", default="raw", choices=("raw", "spheres"),
+                    help="which residual set a single-family outcome reads (res0_* raw, res_* spheres)")
     ap.add_argument("--perms", type=int, default=20, help="permutations of the outcome within oblasts for the noise ceiling (0 = skip)")
     a = ap.parse_args()
-    open_log("40_configurations")
+    global OUT, OUT_S
+    if a.outcome != "composite":
+        OUT = TIDY / f"configurations_{a.outcome}.csv"
+        OUT_S = TIDY / f"configurations_{a.outcome}.json"
+    open_log("40_configurations" + ("" if a.outcome == "composite" else f"_{a.outcome}"))
     t0 = time.time()
-    log(f"40_configurations.py  {time.strftime('%Y-%m-%d %H:%M')}  pop={a.pop}  max_k={a.max_k}  "
+    log(f"40_configurations.py  {time.strftime('%Y-%m-%d %H:%M')}  pop={a.pop}  outcome={a.outcome}  max_k={a.max_k}  "
         f"with_region={'yes' if a.with_region else 'no'}")
 
     # ---- data ------------------------------------------------------------------------------------------
@@ -159,12 +172,23 @@ def main():
             F[nm] = d[nm]
         conds += list(STRUCT)
     C = (F > 0.5).astype(float).where(F.notna())          # crisp: above the oblast median
-    comp = pd.to_numeric(d["composite"], errors="coerce")
-    Y = comp.rank(pct=True)                                # fuzzy held-up
-    ok = F[conds].notna().all(axis=1) & Y.notna()
+    if a.outcome == "composite":
+        comp = pd.to_numeric(d["composite"], errors="coerce")
+        Y = comp.rank(pct=True)                            # fuzzy held-up
+        ok = F[conds].notna().all(axis=1) & Y.notna()
+        do = d[ok]
+        held, falt = (do["quality"] == "held_up").values, (do["quality"] == "faltered").values
+    else:
+        col = ("res0_" if a.variant == "raw" else "res_") + a.outcome
+        comp = pd.to_numeric(d[col], errors="coerce")
+        Y = comp.rank(pct=True)
+        ok = F[conds].notna().all(axis=1) & Y.notna()
+        do = d[ok]
+        yq = Y[ok]
+        held, falt = (yq > 0.75).values, (yq <= 0.25).values   # top and bottom quarter of that family
+        log(f"outcome = {col}: {int(ok.sum())} hromadas; extremes = top and bottom quarter of the residual")
     log(f"complete cases: {int(ok.sum())} of {n_all}  (conditions: {', '.join(conds)})")
-    Fo, Co, Yo, do = F[ok], C[ok], Y[ok], d[ok]
-    held, falt = (do["quality"] == "held_up").values, (do["quality"] == "faltered").values
+    Fo, Co, Yo = F[ok], C[ok], Y[ok]
 
     # ---- 2. tree ----------------------------------------------------------------------------------------
     tree_info = {}
@@ -271,14 +295,15 @@ def main():
             f"of conditions: " + "  ".join(f"k={k}: {ceiling['median_by_k'][k]} (median) {ceiling['p95_by_k'][k]} (95th pct)"
                                            for k in ceiling["p95_by_k"]) + ". Only configurations above the 95th "
             f"percentile for their k are retained.")
-    R["above_ceiling"] = R.apply(lambda r: r["consistency"] > ceiling["p95_by_k"].get(int(r["k"]), 0)
-                                 if ceiling else True, axis=1)
-    R["passes"] = (R["consistency"] >= CONS_MIN) & (R["coverage"] >= COV_MIN) & (R["crisp_n"] >= CRISP_N) & \
+    R["excess"] = R.apply(lambda r: round(r["consistency"] - ceiling["p95_by_k"].get(int(r["k"]), 0), 3)
+                          if ceiling else np.nan, axis=1)
+    R["above_ceiling"] = (R["excess"] >= MARGIN) if ceiling else (R["consistency"] >= CONS_MIN)
+    R["passes"] = R["above_ceiling"] & (R["coverage"] >= COV_MIN) & (R["crisp_n"] >= CRISP_N) & \
                   (R["crisp_precision"] >= CRISP_PREC)
     # minimal sufficient configurations (as QCA minimisation): a passing configuration is retained only if none
     # of the shorter configurations it contains passes on its own; a superset that beats its subset by >= GAIN_MIN
     # consistency is kept beside it and marked 'sharpens'
-    R["retained"] = R["passes"] & (R["above_ceiling"] if a.perms > 0 else True)
+    R["retained"] = R["passes"].copy()
     R["sharpens"] = ""
     passing = {}
     for _, r in R[R["retained"]].iterrows():
@@ -297,14 +322,14 @@ def main():
     R = R.sort_values(["outcome", "retained", "k", "consistency", "coverage"], ascending=[True, False, True, False, False])
     R.to_csv(OUT, index=False)
     log(f"\n== conjunctions scored: {len(R)}  passing {int(R['passes'].sum())}  retained {int(R['retained'].sum())}")
-    show = ["configuration", "consistency", "coverage", "crisp_n", "crisp_precision", "crisp_recall",
-            "cov_west", "cov_centre", "cov_south", "cov_east", "cov_carpathian", "regional_ok", "above_ceiling", "sharpens"]
+    show = ["configuration", "consistency", "excess", "coverage", "crisp_n", "crisp_precision", "crisp_recall",
+            "cov_west", "cov_centre", "cov_south", "cov_east", "cov_carpathian", "regional_ok", "sharpens"]
     for oc in outcomes:
         sub = R[(R["outcome"] == oc) & R["retained"]].head(25)
         log(f"\n-- {oc}: retained minimal configurations (shortest first, then consistency; top 25)\n"
             + (sub[show].to_string(index=False) if len(sub) else "  none"))
         top1 = R[(R["outcome"] == oc) & (R["k"] == 1)].sort_values("consistency", ascending=False).head(8)
-        log(f"\n-- {oc}: single conditions, for reference\n" + top1[show[:6]].to_string(index=False))
+        log(f"\n-- {oc}: single conditions, for reference\n" + top1[show[:7]].to_string(index=False))
     log(f"wrote {OUT.relative_to(BASE)}")
 
     # ---- 4. kinds of held-up hromada -------------------------------------------------------------------------
@@ -337,7 +362,8 @@ def main():
     except Exception as ex:
         log(f"note: kinds skipped ({ex})")
 
-    summ = {"date": time.strftime("%Y-%m-%d"), "population": a.pop, "n": int(n_all), "complete_cases": int(ok.sum()),
+    summ = {"date": time.strftime("%Y-%m-%d"), "population": a.pop, "outcome": a.outcome, "variant": a.variant,
+            "n": int(n_all), "complete_cases": int(ok.sum()),
             "conditions": {nm: CONDITIONS[nm][2] for nm in CONDITIONS} | ({nm: STRUCT[nm] for nm in STRUCT} if a.with_region else {}),
             "thresholds": {"consistency": CONS_MIN, "coverage": COV_MIN, "crisp_n": CRISP_N, "crisp_precision": CRISP_PREC,
                            "necessity": NEC_MIN, "superset_gain": GAIN_MIN},

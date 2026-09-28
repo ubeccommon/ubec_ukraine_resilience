@@ -266,6 +266,25 @@ def main():
          (d["n_top"] >= 2) & (d["n_bottom"] == 0),
          (d["n_bottom"] >= 2) & (d["n_top"] == 0)],
         ["na", "held_up", "faltered"], default="middle")
+    log("\n== are the families one quality? rank correlations of the residuals (outside the zone)")
+    R5 = d.loc[d["pop"] == "outside", [f"{pre}_{f}" for f in FAM]].apply(pd.to_numeric, errors="coerce")
+    R5.columns = list(FAM)
+    corr = R5.corr(method="spearman")
+    log(corr.round(2).to_string())
+    off = corr.values[np.triu_indices(len(FAM), 1)]
+    log(f"mean off-diagonal correlation {np.nanmean(off):.2f}  (near 0: the families are separate qualities; "
+        f"the composite then averages unrelated residuals)")
+    Qo = d.loc[d["pop"] == "outside", [f"q_{f}" for f in FAM]]
+    hu = d.loc[d["pop"] == "outside", "quality"] == "held_up"
+    top = (Qo[hu] == n)
+    log("families on which the held-up hromadas are in the top quarter (share of the held-up):")
+    log("  " + "  ".join(f"{f}: {top[f'q_{f}'].mean():.2f}" for f in FAM))
+    pairs = top.apply(lambda r: "+".join(f for f in FAM if r[f"q_{f}"]), axis=1).value_counts().head(12)
+    log("most frequent combinations:\n" + pairs.to_string())
+    fam_diag = {"residual_corr": corr.round(3).to_dict(), "mean_offdiag": round(float(np.nanmean(off)), 3),
+                "held_up_top_share": {f: round(float(top[f"q_{f}"].mean()), 3) for f in FAM},
+                "held_up_combinations": pairs.to_dict()}
+
     log("\n== classes (rows = population)")
     tab = pd.crosstab(d["pop"], d["quality"])
     log(tab.to_string())
@@ -357,7 +376,7 @@ def main():
         "carpathian_outside": d.loc[(d["pop"] == "outside") & (d["carp"] == 1), "quality"].value_counts().to_dict(),
         "by_type_outside": {t: d.loc[(d["pop"] == "outside") & (d["htype"] == t), "quality"].value_counts().to_dict()
                             for t in ("city", "settlement", "village")},
-        "lisa_composite": moran,
+        "lisa_composite": moran, "families_diagnostic": fam_diag,
     }
     OUT_S.write_text(json.dumps(summ, ensure_ascii=False, indent=1, default=int), encoding="utf-8")
     log(f"wrote {OUT_S.relative_to(BASE)}")
