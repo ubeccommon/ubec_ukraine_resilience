@@ -46,6 +46,8 @@ OUTPUTS=(
 # Claude adds a path here when a new script starts producing a tracked
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
+  "resilience/tidy/quality_summary.json"
+  "resilience/tidy/quality_profile.csv"
 )
 
 DRY=0; YES=0; SUBJECT=""
