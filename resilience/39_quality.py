@@ -2,10 +2,11 @@
 """
 39_quality.py — step 1 of the pattern-language round (docs/pattern_language.md, section 7): the observation set.
 
-  python 39_quality.py                 default: quartile cut, residuals given the 2021 sphere indices
-  python 39_quality.py --cut 3         tercile cut instead of quartiles
-  python 39_quality.py --variant raw   flags from residuals that do NOT hold the 2021 sphere indices constant
-  python 39_quality.py --no-lisa       skip the LISA step (esda/libpysal not installed)
+  python 39_quality.py                    default: quartile cut, variant raw (see below)
+  python 39_quality.py --cut 3            tercile cut instead of quartiles
+  python 39_quality.py --variant spheres  flags from residuals that hold the 2021 sphere indices constant
+  python 39_quality.py --reliable-light   light families only where tr_light_reliable (>= 30 pixels, noise <= 0.35)
+  python 39_quality.py --no-lisa          skip the LISA step (esda/libpysal not installed)
 
 "The spatial data without a name": a hromada has the quality when it held up under the same oblast conditions as
 its neighbours and the models cannot say why from what they already contain. Operationally, its within-oblast
@@ -20,10 +21,14 @@ residual is high on more than one outcome family. Five families, each a residual
   own     log(mean own_gf_rel 2024 Q1 – 2025 Q4 / mean 2022 Q4 – 2023 Q3)   controls: exp, c_logpop
           (own revenue relative to 2021 and to the national median, before and after military PIT left local
           budgets in Q4 2023; needs tidy/budget_quarterly_k3.csv from 20, local)
-  variant 'spheres' (default) adds econ_2021, rights_2021, cult_2021 to every family's controls: the residual is
-  what exposure, population, light conditions AND the pre-war standing of the three spheres do not explain.
-  variant 'raw' leaves the spheres out. Both residual sets are written (res_<f>, res0_<f>); the flags follow
-  the chosen variant.
+  variant 'raw' (default) controls for exposure, population and light conditions only: the residual keeps the
+  pre-war standing of the spheres, so the configurations behind holding up can still be seen in the profile.
+  variant 'spheres' adds econ_2021, rights_2021, cult_2021 to every family's controls: what the pre-war indices do
+  not explain either — but it also removes the linear part of every pre-war condition before the profile is
+  compared (first run, 28 Sep 2026: near-zero gaps on all 2021 variables by construction). Both residual sets are
+  written (res_<f> with the spheres, res0_<f> without); the flags follow the chosen variant.
+  --reliable-light: the two light families are set to NaN where tr_light_reliable is 0 (first run: 62 % of the
+  held-up had reliable light against 46 % of the faltered — noisy light pushes small hromadas to the bottom).
 
 Two populations, fitted separately (context pattern: the zone is a boundary): non-occupied hromadas outside the
 30 km zone (28), and the 196 zone hromadas. Light families use the >= 10 lit-pixel sample of 22 (tr_* present);
@@ -34,9 +39,12 @@ bottom quarter on none; faltered = the reverse; middle = everything else with >=
 composite = mean of the available standardised residuals (z within population).
 
 Also here, because it is cheap (7.3, method 1): the plain comparison. For every profile variable, the share of
-held-up and of faltered hromadas above the median of their own oblast, and the group medians. Profile = sphere
-inputs (32), schools (34), population change (05), hromada type, balance (35), zone and Carpathian flags. Nothing
-that defines the quality is in the profile.
+held-up and of faltered hromadas above the median of their own oblast, and the group medians. The profile has two
+parts: CONDITIONS — pre-war (2021) sphere inputs (32), 2020 election contestation, schools 2021 (34), population
+2020, hromada type, balance 2021, Carpathian flag — and CONSEQUENCES — the 2025 inputs, DREAM, schools 2026,
+balance 2025, modelled population change. The econ and cult families are built from the 2025 inputs, so the
+consequences describe what holding up looks like, not what precedes it; only the conditions are candidates for a
+pattern. Exposure is a control, listed with the consequences for reference.
 
 LISA (KNN 6, as 36) on the composite, non-zone population: where the quality clusters, the configuration behind it
 is probably regional (oblast row); where it is scattered, hromada-level.
@@ -163,13 +171,16 @@ def quantile_class(x, n):
 def main():
     ap = argparse.ArgumentParser(description="pattern-language step 1: the observation set")
     ap.add_argument("--cut", type=int, default=4, choices=(3, 4), help="quantile cut: 4 quartiles (default) or 3 terciles")
-    ap.add_argument("--variant", default="spheres", choices=("spheres", "raw"),
-                    help="residuals given the 2021 sphere indices (default) or without them")
+    ap.add_argument("--variant", default="raw", choices=("raw", "spheres"),
+                    help="residuals without the 2021 sphere indices (default) or given them")
+    ap.add_argument("--reliable-light", action="store_true",
+                    help="light families only where tr_light_reliable (>= 30 lit pixels, noise <= 0.35)")
     ap.add_argument("--no-lisa", action="store_true", help="skip LISA")
     a = ap.parse_args()
     open_log("39_quality")
     t0 = time.time()
-    log(f"39_quality.py  {time.strftime('%Y-%m-%d %H:%M')}  cut={a.cut}  variant={a.variant}")
+    log(f"39_quality.py  {time.strftime('%Y-%m-%d %H:%M')}  cut={a.cut}  variant={a.variant}  "
+        f"reliable_light={'yes' if a.reliable_light else 'no'}")
 
     # ---- data ------------------------------------------------------------------------------------------
     d = load_base()
@@ -180,7 +191,7 @@ def main():
     d["y_own"] = d["k3"].map(own) if own is not None else np.nan
     sc = rd("schools_k3.csv", required=False)
     if sc is not None:
-        keep = [c for c in ("schools_per10k_2026", "schools_suspended_2026", "schools_mountain_2026",
+        keep = [c for c in ("schools_suspended_2026", "schools_mountain_2026",
                             "class_size_2021", "pupils_per1000_2021") if c in sc]
         sc["rural_school_share"] = pd.to_numeric(sc.get("schools_rural_2026"), errors="coerce") / \
             pd.to_numeric(sc.get("schools_2026"), errors="coerce").where(lambda v: v > 0)
@@ -200,6 +211,10 @@ def main():
     has_light = "y_s24" in d
     if not has_light:
         log("no light trajectories (22): families s24 and recent skipped")
+    elif a.reliable_light:
+        unrel = d["light_reliable"] == 0
+        d.loc[unrel, ["y_s24", "y_recent"]] = np.nan
+        log(f"reliable light only: {int(unrel.sum())} hromadas without reliable light drop out of the light families")
 
     # ---- residuals, per population and variant ----------------------------------------------------------
     ctrl_light = ["exp", "c_logpop", "c_loglit", "c_rad21"]
@@ -278,45 +293,50 @@ def main():
 
     # ---- plain comparison (7.3, method 1) -----------------------------------------------------------------
     log("\n== plain comparison: share above own-oblast median, held up vs faltered (outside the zone)")
-    prof_vars = [c for c in inp.columns if c not in PROFILE_SKIP]
-    prof_vars += [c for c in ("schools_per10k_2026", "schools_suspended_2026", "rural_school_share",
-                              "class_size_2021", "pupils_per1000_2021", "pop_change", "pop_ghs_2020",
-                              "imbalance_2021", "imbalance_2025", "lean_cult_2021", "lean_cult_2025",
-                              "lean_econ_rights_2021", "lean_econ_rights_2025", "exp", "exp_alert")
-                  if c in d]
+    inputs = [c for c in inp.columns if c not in PROFILE_SKIP]
+    cond = [c for c in inputs if c.endswith("_2021") or c.endswith("_2020")]
+    cond += [c for c in ("class_size_2021", "pupils_per1000_2021", "pop_ghs_2020", "imbalance_2021",
+                         "lean_cult_2021", "lean_econ_rights_2021") if c in d and c not in cond]
+    cons = [c for c in inputs if c not in cond]
+    cons += [c for c in ("schools_suspended_2026", "rural_school_share", "pop_change", "imbalance_2025",
+                         "lean_cult_2025", "lean_econ_rights_2025", "exp", "exp_alert") if c in d and c not in cons]
     binary = [c for c in ("is_city", "is_settlement", "is_village", "carp", "light_reliable") if c in d]
     rows = []
     out = d[d["pop"] == "outside"].copy()
-    for v in prof_vars:
-        x = pd.to_numeric(out[v], errors="coerce")
-        med = x.groupby(out["k1"]).transform("median")
-        above = (x > med).where(x.notna())
-        for grp in ("held_up", "faltered", "middle"):
-            m = out["quality"] == grp
-            nv = int(x[m].notna().sum())
-            rows.append({"variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
-                         "share_above_oblast_median": float(above[m].mean()) if nv >= MIN_N else np.nan,
-                         "median": float(x[m].median()) if nv >= MIN_N else np.nan})
+    for part, vs in (("condition", cond), ("consequence", cons)):
+        for v in vs:
+            x = pd.to_numeric(out[v], errors="coerce")
+            med = x.groupby(out["k1"]).transform("median")
+            above = (x > med).where(x.notna())
+            for grp in ("held_up", "faltered", "middle"):
+                m = out["quality"] == grp
+                nv = int(x[m].notna().sum())
+                rows.append({"part": part, "variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
+                             "share_above_oblast_median": float(above[m].mean()) if nv >= MIN_N else np.nan,
+                             "median": float(x[m].median()) if nv >= MIN_N else np.nan})
     for v in binary:
         x = pd.to_numeric(out[v], errors="coerce")
         for grp in ("held_up", "faltered", "middle"):
             m = out["quality"] == grp
             nv = int(x[m].notna().sum())
-            rows.append({"variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
+            rows.append({"part": "structure", "variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
                          "share_above_oblast_median": np.nan,
                          "median": float(x[m].mean()) if nv >= MIN_N else np.nan})
     P = pd.DataFrame(rows)
     P.to_csv(OUT_P, index=False)
-    wide = P[P["variable"].isin(prof_vars)].pivot_table(index="variable", columns="group",
-                                                        values="share_above_oblast_median", sort=False)
-    wide = wide.reindex(prof_vars)
-    if {"held_up", "faltered"} <= set(wide.columns):
-        wide["gap"] = wide["held_up"] - wide["faltered"]
-        wide = wide.sort_values("gap", ascending=False)
-    log(wide.round(3).to_string())
+    for part, vs in (("condition", cond), ("consequence", cons)):
+        wide = P[P["part"] == part].pivot_table(index="variable", columns="group",
+                                                values="share_above_oblast_median", sort=False)
+        wide = wide.reindex(vs)
+        if {"held_up", "faltered"} <= set(wide.columns):
+            wide["gap"] = wide["held_up"] - wide["faltered"]
+            wide = wide.sort_values("gap", ascending=False)
+        title = ("CONDITIONS (pre-war and structural: candidates for a pattern)" if part == "condition"
+                 else "CONSEQUENCES (2025 values, part of what defines the quality: not conditions)")
+        log(f"\n-- {title}\n" + wide.round(3).to_string())
     log("\nshares of hromada type, Carpathian and reliable light by group:")
-    log(P[P["variable"].isin(binary)].pivot_table(index="variable", columns="group", values="median",
-                                                  sort=False).round(3).to_string())
+    log(P[P["part"] == "structure"].pivot_table(index="variable", columns="group", values="median",
+                                                sort=False).round(3).to_string())
     log(f"wrote {OUT_P.relative_to(BASE)}")
 
     # ---- outputs ---------------------------------------------------------------------------------------
@@ -327,7 +347,7 @@ def main():
     log(f"wrote {OUT.relative_to(BASE)}  (local: hromada-level light residuals, rule R2)")
 
     summ = {
-        "date": time.strftime("%Y-%m-%d"), "cut": n, "variant": a.variant,
+        "date": time.strftime("%Y-%m-%d"), "cut": n, "variant": a.variant, "reliable_light": bool(a.reliable_light),
         "rule": f"held_up: top 1/{n} on >= 2 families and bottom 1/{n} on none; faltered: the reverse",
         "families": {f: {"y": fams[f][0], "controls": fams[f][1] + (sph21 if a.variant == "spheres" else [])}
                      for f in FAM},
