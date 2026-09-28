@@ -95,15 +95,14 @@ def read_any(content, name, partial=False):
         return pd.read_excel(io.BytesIO(content), dtype=str)
     for enc in ("utf-8-sig", "utf-8", "cp1251"):
         try:
-            text = content.decode(enc)
+            text = content.decode(enc, errors="ignore" if partial else "strict")   # a chunk may cut a character
         except UnicodeDecodeError:
             continue
         if partial:
             text = text[:text.rfind("\n")]           # a streamed chunk ends mid-line: drop the partial line
         for sep in (",", ";", "\t", "|"):
             try:
-                df = pd.read_csv(io.StringIO(text), dtype=str, sep=sep, low_memory=False, on_bad_lines="skip",
-                                 engine="python" if partial else "c")
+                df = pd.read_csv(io.StringIO(text), dtype=str, sep=sep, on_bad_lines="skip")
                 if df.shape[1] > 1:
                     return df
             except Exception:
