@@ -199,8 +199,41 @@ quality has no pre-war budget signal at all (tree 0.50; no condition above the l
 +0.10, autonomy +0.09; ceiling 0.085) and no configuration. The functional "kinds" split sharply: a well-off,
 village, western kind and a poorer, urban, central kind. Neither quality clusters much (I 0.10–0.11).
 
-New sources: `41_nhsu_declarations.py` is ready (hromada placed by name through 33's matcher; age bands from single
-years; counts only). `42_cec_2019.py` is parked: the open CEC results are by electoral district, not polling station.
+New sources: `41_nhsu_declarations.py` built (1,377 of 1,387 hromadas: 1,351 by name, 26 by a vote of their
+settlements; 0.3 % of rows unplaced; median 796 declarations per 1,000 residents of 2020, p10 385, p90 1,316).
+`42_cec_2019.py` is parked: the open CEC results are by electoral district, not polling station.
+
+**Present population and age (NHSU, 2026) carry nothing either.** Share above the oblast median, held up vs
+faltered: declarations per 1,000 +0.04 (composite), −0.02 (functional), +0.10 (fiscal); for the functional
+quality, held-up hromadas are older (share 65+ +0.11, share under 18 −0.16). With the NHSU measures as conditions,
+no configuration passes for either quality (8,180 conjunctions), and neither measure clears the linear ceiling
+(functional: young −0.07, people present −0.04, ceiling 0.126; fiscal: people present +0.04, ceiling 0.089). The
+round-1 lead (modelled population growth) does not survive a measured present population.
+
+### 5.7 What two rounds show, and the turn to the field
+
+Two rounds, three qualities, 15 conditions, some 8,000 conjunctions: no configuration of the open hromada data
+precedes or accompanies holding up. What exists are weak linear associations — a local tax base (single tax,
+property tax) with fiscal retention at r ≈ 0.15, fiscal autonomy with keeping light in summer 2024 at about
+0.2 SD. The quality without a name is not in what budgets, registers and satellites record at hromada level.
+
+That is a finding about the data, not about the method, and it brings the method back to where Alexander started:
+observation of places first, abstraction second. The data work has done its part of step 1 — it names the places
+to observe. Round 3 is therefore field-first:
+
+1. **Pairs.** From `tidy/quality_k3.csv` (local), pairs of hromadas in the Carpathian oblasts, one held up and one
+   faltered, in the same oblast, of the same type (city, settlement, village) and similar size and exposure — so
+   that what differs between them is not what the models already control. Separately for the functional and the
+   fiscal quality. The pair list stays local (R2: it is derived from recent light residuals).
+2. **Observation.** Visits and conversations through the Soil and Peace dispatch series, with an open question —
+   what here kept going, and how — and without Annex A in hand.
+3. **Candidates.** What recurs across the held-up member of several pairs and is absent in their partners is
+   written as a candidate pattern, in the words used there.
+4. **Return to the data.** Each candidate is given the nearest open measure (section 6 lists the candidates:
+   reserve, civic institutions, reception, self-formation) and tested on all hromadas as in 5.3–5.4.
+
+The benchmark set of 7–12 patterns comes out of step 3 and is validated in step 4; the open data then serve as the
+test, not as the source.
 
 ## 6. Data not yet used
 
