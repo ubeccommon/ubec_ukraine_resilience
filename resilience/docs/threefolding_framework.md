@@ -2,8 +2,9 @@
 
 Status: 26 Sep 2026. Decided: threefolding enters the paper now as its frame (Option A, paper v0.4, section 1.4);
 the three-sphere analysis with new data follows as the next version (Option B, paper v0.5). The municipal budget
-is split between spheres (section 2). The indicator list per sphere is agreed (section 6). Nothing in sections
-3–6 is computed yet.
+is split between spheres (section 2). The indicator list per sphere is agreed (section 6). Sphere indices
+are computed (step 5, 28 Sep 2026: `32_sphere_indices.py`, `tidy/sphere_indices_k3.csv`); maps, associations
+and the explanatory inquiry follow.
 
 ## 1. The frame
 
@@ -185,3 +186,20 @@ negative cultural–rights correlation into the indices (−0.38) and did not co
 (−0.16 to 0.10). Per-resident amounts rise with fiscal size (cultural–economic 0.61–0.66) — the
 economic sphere supplies the means of the cultural one; step 7 examines this. Shares remain a
 sensitivity check and context.
+
+## 7. Sphere indices — first results (step 5, 28 Sep 2026)
+
+Coverage: 1,288 non-occupied hromadas for every sphere and year (candidates per seat 1,276).
+
+| | within-sphere rank correlations | leave-one-out ρ | 2021 vs 2025 |
+|---|---|---|---|
+| Economic | 0.61–0.73 between the three tax bases; PIT growth 0.10–0.22 | ≥ 0.95 | 0.77 |
+| Rights | 0.06–0.44 | ≥ 0.92 | 0.70 |
+| Cultural | culture–education 0.48–0.55, education–schools 0.64; extracurricular −0.07–0.01, against schools −0.26 (art schools in towns, dense school networks in villages) | ≥ 0.85 | 0.81 |
+
+Between spheres (2021 / 2025): economic–cultural 0.58 / 0.63, economic–rights 0.55 / 0.58, rights–cultural
+0.22 / 0.27. Budget sub-indices 2025 (economic vs rights part of fiscal capacity): 0.45.
+
+Carpathian medians (national median ≈ 0.50): economic 2021 0.13–0.16 in Zakarpattia, Ivano-Frankivsk,
+Chernivtsi (Lviv 0.40), 2025 0.30–0.32 (Lviv 0.53) — a relative rise to test in step 8 (relocation of firms
+and people); cultural 0.38–0.45 (Lviv ≈ 0.5); rights 0.26–0.34 (Lviv ≈ 0.5).
