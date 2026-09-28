@@ -54,6 +54,7 @@ if [[ "${SKIP_RES:-0}" != "1" ]]; then
     python 32_sphere_indices.py                          # three-sphere indices (maps 21–24)
     python 35_sphere_layers.py                           # sphere map layer, classes, ternary legend
     python 36_sphere_associations.py                     # step 7: sphere associations and LISA (10–20 min)
+    python 37_why_there.py                               # step 8: why there? profiles and models (about 10 min)
     python 26_publication_tables.py                      # paper tables (publication/figures/table*.csv/md)
     python 27_sensitivity.py                            # Table 8 sensitivity (runs 12 variants)
   ) 2>&1 | tee qgis/step_res.log
