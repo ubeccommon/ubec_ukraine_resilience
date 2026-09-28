@@ -759,32 +759,33 @@ def make_bv_layout(name, title, bv_layer, context, subtitle, exp_label, cap_labe
     return layout
 
 def make_ternary_layout(name, title, panels, subtitle, legend_png, extra_legend=None, scale_km=200):
-    """two map panels side by side; legend = picture of the ternary triangle plus a small layer legend."""
+    """two map panels across the page width (as make_layout_multi); below: triangle legend picture, layer legend,
+    scale bar on the left, caption on the right."""
     layout = new_layout(name)
     ext, gap, W = UA_RECT, 4.0, 281.0
     n = len(panels)
-    w = (W - 70 - gap * (n - 1)) / n
-    h = min(w * ext.height() / ext.width(), 150.0)
+    w = (W - gap * (n - 1)) / n
+    h = min(w * ext.height() / ext.width(), 112.0)
     maps = []
     for i, (layers, cap) in enumerate(panels):
         x = 8 + i * (w + gap)
         maps.append(add_map(layout, layers, x, 27, w, h, ext))
         add_text(layout, cap, x, 21, w, 6, 8.5, bold=True)
     add_text(layout, title, 8, 6, 280, 10, 15, bold=True)
-    xl = 8 + n * (w + gap)
-    add_text(layout, "Balance of the three spheres", xl, 21, 66, 6, 8.5, bold=True)
+    y0 = 27 + h + 3
+    add_scalebar(layout, maps[0], 8, y0, scale_km)
+    add_text(layout, "Balance of the three spheres", 8, y0 + 12, 70, 6, 8.5, bold=True)
     if os.path.exists(legend_png):
         pic = QgsLayoutItemPicture(layout)
         pic.setPicturePath(legend_png)
         layout.addLayoutItem(pic)
-        pic.attemptMove(QgsLayoutPoint(xl, 28, MM)); pic.attemptResize(QgsLayoutSize(66, 62, MM))
+        pic.attemptMove(QgsLayoutPoint(8, y0 + 18, MM)); pic.attemptResize(QgsLayoutSize(62, 205 - (y0 + 18), MM))
     else:
-        add_placeholder(layout, "ternary_legend.png missing — run resilience/35_sphere_layers.py", xl, 28, 66, 62)
+        add_placeholder(layout, "ternary_legend.png missing — run resilience/35_sphere_layers.py", 8, y0 + 18, 62, 40)
     if extra_legend:
-        add_legend(layout, maps[0], extra_legend, xl, 94, 66, 26, title="")
-    add_scalebar(layout, maps[0], 8, 27 + h + 3, scale_km)
+        add_legend(layout, maps[0], extra_legend, 76, y0, 213, 10, cols=2, title="")
     if subtitle:
-        add_text(layout, subtitle, 8, 27 + h + 10, 280, 208 - (27 + h + 10), 7)
+        add_text(layout, subtitle, 76, y0 + 12, 213, 205 - (y0 + 12), 7)
     project.layoutManager().addLayout(layout)
     return layout
 
@@ -891,10 +892,12 @@ N22 = ("Rights sphere: transfer dependency (inverse), capital-expenditure share,
 N23 = ("Cultural sphere: spending per resident on culture and arts, on education (largely the state education subvention) "
        "and on extracurricular education (art and music schools); 2025 adds general secondary schools in operation per "
        "10,000 residents (higher where settlement is dispersed). " + SPH_TXT + R3_TXT)
-N24 = ("Colour = relative weight of the three sphere indices in each hromada (each index / sum of the three), centred on "
-       "the national average composition (grey) and mixed from the three vertex colours; saturation shows how far the "
-       "balance departs from the national average. The balance says nothing about the level: a hromada low in all three "
-       "spheres can be balanced (see maps 21–23). Legend drawn with the 2025 centre; the 2021 centre differs by < 0.02. "
+N24 = ("Colour = relative weight of the three sphere indices in each hromada (each index / sum of the three), centred "
+       "on the national average composition of the year (light grey). Hue = which sphere weighs more than on national "
+       "average (orange economic, green cultural, blue rights; olive, magenta and teal in between); strength of colour = "
+       "how far the balance departs from the national average, on one scale for both years (the 5 % largest "
+       "departures reach full colour). The balance says nothing about the level: a hromada low in all three spheres can "
+       "be balanced (see maps 21–23). Legend drawn with the 2025 centre; the 2021 centre differs by < 0.02. "
        + R3_TXT)
 
 layouts = [

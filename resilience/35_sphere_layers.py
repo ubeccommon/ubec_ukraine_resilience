@@ -18,12 +18,14 @@ Output: resilience_maps.gpkg layer hromada_spheres_r3 — non-occupied hromadas 
 Classes: quintiles of each index among non-occupied hromadas (national); raion values are classed with the same
 limits, so colours mean the same inside and outside the zone.
 
-Balance colour (ternary, after Schöley 2021, "The centered ternary balance scheme"): the weights (w_econ, w_rights,
-w_cult) = each index / sum of the three are centred on the national compositional mean (closure of the geometric
-means), so the national average composition is neutral grey and colour shows departures from it; departures are
-amplified by the power CONTRAST (closure of p ** CONTRAST) and the three vertex colours are mixed in CIELAB. Hue =
-which sphere weighs relatively more; saturation = how far the balance departs from the national average. The
-balance says nothing about the level: a hromada low in all three spheres can be balanced.
+Balance colour (centred ternary scheme, after Schöley 2021): the weights (w_econ, w_rights, w_cult) = each index /
+sum of the three are centred on the national compositional mean of the year (closure of the geometric means) and
+expressed in isometric log-ratio coordinates. Hue = direction of the departure (HUE: economic orange, cultural green,
+rights blue; between two vertices the hue runs along the arc that avoids the third); chroma and lightness = size of
+the departure, scaled to R_MAX = the 95th percentile of the departures of both years pooled (the top 5 % reach full
+colour; the same scale in 2021 and 2025). Neutral = light grey. Colours in CIE LCh. The balance says nothing about the
+level: a hromada low in all three spheres can be balanced. (Version of 28 Sep 2026; the first draft mixed three
+vertex colours in CIELAB and gave muddy mid-tones.)
 """
 import json
 from pathlib import Path
@@ -41,8 +43,9 @@ CLASSES = TIDY / "sphere_classes.json"
 LEGEND_PNG = BASE.parent / "viina" / "qgis" / "ternary_legend.png"
 SPH = ("econ", "rights", "cult")
 YEARS = (2021, 2025)
-CONTRAST = 3.0          # median chroma ≈ 22 (clearly coloured), top decile weight ≈ 0.8 (probe 28 Sep 2026)
-VERTEX = {"econ": "#d9731a", "rights": "#2b6cb0", "cult": "#1f9e6e"}   # orange, blue, green; similar lightness
+HUE = {"econ": 55.0, "cult": 150.0, "rights": 255.0}      # CIE LCh hue angles: orange, green, blue
+C_MAX, L_NEUTRAL, L_FULL = 52.0, 80.0, 60.0                 # chroma at full departure; lightness neutral -> full
+R_Q = 0.95                                                  # departure scale: this quantile reaches full colour
 LABEL = {"econ": "economic", "rights": "rights", "cult": "cultural"}
 
 
@@ -84,9 +87,6 @@ def lab_to_hex(lab):
     return np.array(["#%02x%02x%02x" % tuple(v) for v in rgb.reshape(-1, 3)]).reshape(rgb.shape[:-1])
 
 
-VLAB = np.stack([hex_to_lab(VERTEX[s]) for s in SPH])
-
-
 def closure(p):
     return p / p.sum(axis=-1, keepdims=True)
 
@@ -96,18 +96,64 @@ def centre_of(W):
     return g / g.sum()
 
 
-def tern_colour(W, centre):
-    """W: (n, 3) compositions (rows sum to 1, may contain NaN rows) -> hex colours ('' for NaN rows)."""
+def ilr(p):
+    """isometric log-ratio coordinates of 3-part compositions (econ, rights, cult)."""
+    l = np.log(p)
+    return np.stack([np.sqrt(0.5) * (l[..., 0] - l[..., 1]),
+                     np.sqrt(2 / 3) * (0.5 * (l[..., 0] + l[..., 1]) - l[..., 2])], axis=-1)
+
+
+def departure(W, centre):
+    z = ilr(closure(W / centre))
+    return np.hypot(z[:, 0], z[:, 1]), np.arctan2(z[:, 1], z[:, 0])
+
+
+def _vertex_angles():
+    eps = 1e-3
+    V = closure(np.full((3, 3), eps) + np.eye(3))
+    z = ilr(V)
+    return np.arctan2(z[:, 1], z[:, 0])
+
+
+VANG = _vertex_angles()                   # direction of each pure sphere (same for any centre)
+VHUE = np.array([HUE[s] for s in SPH])
+
+
+def hue_of(theta):
+    """piecewise-linear hue between the vertex directions; each arc avoids the third vertex hue."""
+    order = np.argsort(VANG)
+    a = VANG[order]; h = VHUE[order]
+    out = np.empty_like(theta)
+    for k in range(3):
+        a0, a1 = a[k], a[(k + 1) % 3] + (2 * np.pi if k == 2 else 0)
+        h0, h1, hc = h[k], h[(k + 1) % 3], h[(k + 2) % 3]
+        d = (h1 - h0) % 360
+        if 0 < (hc - h0) % 360 < d:        # the upward arc would pass the third vertex: go the other way
+            d -= 360
+        th = np.where(theta < a[0], theta + 2 * np.pi, theta)
+        m = (th >= a0) & (th < a1)
+        out[m] = (h0 + (th[m] - a0) / (a1 - a0) * d) % 360
+    return out
+
+
+def lch_to_hex(L, C, H):
+    lab = np.stack([L, C * np.cos(np.radians(H)), C * np.sin(np.radians(H))], axis=-1)
+    return lab_to_hex(lab)
+
+
+def tern_colour(W, centre, r_max):
+    """W: (n, 3) compositions (may contain NaN rows) -> hex colours ('' for NaN rows)."""
     out = np.full(len(W), "", dtype=object)
     ok = np.isfinite(W).all(axis=1) & (W > 0).all(axis=1)
     if ok.any():
-        p = closure(closure(W[ok] / centre) ** CONTRAST)
-        out[ok] = lab_to_hex(p @ VLAB)
+        r, th = departure(W[ok], centre)
+        f = np.clip(r / r_max, 0, 1)
+        out[ok] = lch_to_hex(L_NEUTRAL - (L_NEUTRAL - L_FULL) * f, C_MAX * f, hue_of(th))
     return out
 
 
 # ------------------------------------------------------------ legend
-def legend_png(centre, path):
+def legend_png(centre, r_max, path):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -127,7 +173,7 @@ def legend_png(centre, path):
                     tri = [(i + 1, j), (i + 1, j + 1), (i, j + 1)]
                 bary = np.array([[1 - (a + b) / n, a / n, b / n] for a, b in tri])
                 c = bary.mean(axis=0)[None, :]
-                col = tern_colour(closure(np.clip(c, 1e-6, None)), centre)[0]
+                col = tern_colour(closure(np.clip(c, 1e-6, None)), centre, r_max)[0]
                 xy = bary @ V
                 ax.add_patch(Polygon(xy, closed=True, facecolor=col, edgecolor=col, linewidth=0.2))
     cx = centre @ V
@@ -163,17 +209,20 @@ def main():
     cols = [f"{s}_{y}" for y in YEARS for s in SPH]
     lims = {c: [float(x) for x in free[c].quantile([0.2, 0.4, 0.6, 0.8])] for c in cols}
 
-    centre = {}
+    centre, deps = {}, []
     for y in YEARS:
         W = free[[f"w_{s}_{y}" for s in SPH]].to_numpy(float)
-        centre[y] = centre_of(W[np.isfinite(W).all(axis=1)])
+        W = W[np.isfinite(W).all(axis=1) & (W > 0).all(axis=1)]
+        centre[y] = centre_of(W)
+        deps.append(departure(W, centre[y])[0])
+    r_max = float(np.quantile(np.concatenate(deps), R_Q))
 
     def attach(df):
         for c in cols:
             df[f"{c}_q"] = classify(df[c], lims[c])
         for y in YEARS:
             W = df[[f"w_{s}_{y}" for s in SPH]].to_numpy(float)
-            df[f"tern_{y}"] = tern_colour(W, centre[y])
+            df[f"tern_{y}"] = tern_colour(W, centre[y], r_max)
             dom = pd.Series(np.nan, index=df.index, dtype=object)
             full = np.isfinite(W).all(axis=1)
             dom[full] = np.array(SPH)[np.argmax(W[full], axis=1)]
@@ -203,8 +252,10 @@ def main():
               f"dominant {lay[f'dom_{y}'].value_counts().to_dict()}")
 
     CLASSES.write_text(json.dumps({"quintile_limits": lims, "balance_centre": {str(k): v.tolist() for k, v in centre.items()},
-                                   "contrast": CONTRAST, "vertex_colours": VERTEX}, indent=1), encoding="utf-8")
-    legend_png(centre[2025], LEGEND_PNG)
+                                   "r_max": r_max, "r_quantile": R_Q, "hue": HUE, "chroma_max": C_MAX,
+                                   "lightness": [L_NEUTRAL, L_FULL]}, indent=1), encoding="utf-8")
+    print(f"  departure scale r_max = {r_max:.3f} (quantile {R_Q} of both years pooled)")
+    legend_png(centre[2025], r_max, LEGEND_PNG)
     print(f"wrote {CLASSES.name} and {LEGEND_PNG} (legend drawn with the 2025 centre)")
 
 
