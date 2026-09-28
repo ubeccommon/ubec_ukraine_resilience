@@ -111,7 +111,9 @@ def sample(url, name):
 
 def cmd_probe():
     log("== CEC datasets on data.gov.ua")
-    res = ckan("package_search", fq=f"organization:{CEC_ORG}", rows=200)
+    res = ckan("package_search", fq=f"owner_org:{CEC_ORG}", rows=200)
+    if res["count"] == 0:
+        res = ckan("package_search", q="Результати виборів Президента України 2019", rows=50)
     log(f"{res['count']} datasets")
     for pk in res["results"]:
         title = pk.get("title", "")
@@ -122,9 +124,22 @@ def cmd_probe():
             log(f"  - {r.get('name')}  format={r.get('format')}  size={r.get('size')}\n    url: {r.get('url')}")
             if re.search(r"2019|Президент", (r.get("name") or "") + title, re.I):
                 sample(r["url"], r.get("name") or "")
-    log("\n== State Voter Register open data (polling stations with addresses)")
+    log("\n== polling-station lists on data.gov.ua (State Voter Register / CEC)")
+    for q in ("виборчі дільниці", "перелік виборчих дільниць", "Державний реєстр виборців"):
+        try:
+            hits = ckan("package_search", q=q, rows=20)
+            for pk in hits["results"]:
+                log(f"  [{pk['name']}] {pk.get('title')}  org={pk.get('organization', {}).get('title')}  "
+                    f"licence={pk.get('license_title')}")
+                for r in pk.get("resources", [])[:8]:
+                    log(f"      - {r.get('name')}  {r.get('format')}  {r.get('url')}")
+        except Exception as ex:
+            log(f"  ({q}: {ex})")
+    log("\n== State Voter Register open data page (polling stations with addresses)")
     try:
-        r = requests.get(DRV_OPEN, headers=HEAD, timeout=60)
+        r = requests.get(DRV_OPEN, headers=HEAD, timeout=60, allow_redirects=False)
+        if r.is_redirect:
+            log(f"  redirected to {r.headers.get('Location')} — open it in a browser; the server refuses the plain-http hop from here")
         r.raise_for_status()
         links = re.findall(r'href="([^"]+\.(?:xlsx|xls|csv|zip|json)[^"]*)"', r.text, re.I)
         for l in links[:60]:
@@ -138,7 +153,9 @@ def cmd_probe():
 
 def cmd_pull():
     RAW.mkdir(parents=True, exist_ok=True)
-    res = ckan("package_search", fq=f"organization:{CEC_ORG}", rows=200)
+    res = ckan("package_search", fq=f"owner_org:{CEC_ORG}", rows=200)
+    if res["count"] == 0:
+        res = ckan("package_search", q="Результати виборів Президента України 2019", rows=50)
     all_res = [(pk.get("title", ""), r) for pk in res["results"] for r in pk.get("resources", [])]
     for el, subs in RESOURCES.items():
         if not subs:

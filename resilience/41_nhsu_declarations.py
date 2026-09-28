@@ -6,6 +6,7 @@
   python 41_nhsu_declarations.py pull             download the resources named in RESOURCES to raw/nhsu/<date>/
   python 41_nhsu_declarations.py build            aggregate to hromada -> tidy/nhsu_declarations_k3.csv
   python 41_nhsu_declarations.py build --raw-dir raw/nhsu/2026-09-28
+  python 41_nhsu_declarations.py build --koatuu-xw raw/nhsu/koatuu_katottg.xlsx   # if the file carries KOATUU codes
 
 Source: "Інформація щодо статистики поданих декларацій про вибір лікаря первинної медичної допомоги", National Health
 Service of Ukraine, data.gov.ua dataset a8228262-5576-4a14-beb8-789573573546 (CC BY 4.0, weekly). The dataset
@@ -52,7 +53,8 @@ POP = TIDY / "population_k3.csv"
 # resource names (or substrings) to download: the file with declarations by community/settlement/age/sex
 RESOURCES = ["active_declarations_by_age_gender"]
 # column map for the build: source column -> role. Roles: katottg (KATOTTG code of the hromada or settlement),
-# hromada (hromada name), oblast (oblast name), settlement (settlement name), age (age band label),
+# koatuu (KOATUU code of the hromada, with --koatuu-xw), hromada (hromada name), oblast (oblast name),
+# settlement (settlement name), age (age band label),
 # sex, count (number of active declarations), date (snapshot date, if a column; else the file date is used)
 COLS = {
     # "katottg": "katottg",     # e.g. "КАТОТТГ" or "katottg_code"
@@ -80,7 +82,7 @@ def package():
     return j["result"]
 
 
-def read_any(content, name):
+def read_any(content, name, partial=False):
     """CSV/XLSX/ZIP bytes -> DataFrame (first sheet / first csv in a zip); tries utf-8, cp1251, windows separators."""
     name = name.lower()
     if name.endswith(".zip"):
@@ -92,14 +94,21 @@ def read_any(content, name):
     if name.endswith((".xlsx", ".xls")):
         return pd.read_excel(io.BytesIO(content), dtype=str)
     for enc in ("utf-8-sig", "utf-8", "cp1251"):
-        for sep in (",", ";", "\t"):
+        try:
+            text = content.decode(enc)
+        except UnicodeDecodeError:
+            continue
+        if partial:
+            text = text[:text.rfind("\n")]           # a streamed chunk ends mid-line: drop the partial line
+        for sep in (",", ";", "\t", "|"):
             try:
-                df = pd.read_csv(io.BytesIO(content), dtype=str, sep=sep, encoding=enc, low_memory=False)
+                df = pd.read_csv(io.StringIO(text), dtype=str, sep=sep, low_memory=False, on_bad_lines="skip",
+                                 engine="python" if partial else "c")
                 if df.shape[1] > 1:
                     return df
             except Exception:
                 continue
-    raise ValueError(f"could not parse {name}")
+    raise ValueError(f"could not parse {name} (first bytes: {content[:120]!r})")
 
 
 def cmd_probe():
@@ -112,9 +121,15 @@ def cmd_probe():
             r = requests.get(res["url"], headers=HEAD, timeout=120, stream=True)
             r.raise_for_status()
             chunk = next(r.iter_content(chunk_size=2_000_000))
-            df = read_any(chunk, res.get("url", "").split("?")[0] or res.get("name", ""))
-            log(f"  columns ({df.shape[1]}): {list(df.columns)}")
-            log("  first rows:\n" + df.head(3).to_string())
+            nm = res.get("url", "").split("?")[0] or res.get("name", "")
+            df = read_any(chunk, nm, partial=not nm.lower().endswith((".xlsx", ".xls", ".zip")))
+            if "атрибут" in (res.get("name") or "").lower():
+                pd.set_option("display.width", 200)
+                log("  attribute description, all rows:\n" + df.to_string())
+            else:
+                log(f"  columns ({df.shape[1]}): {list(df.columns)}")
+                safe = [c for c in df.columns if not re.search(r"name|party|pib|фіо|прізвище", c, re.I)]
+                log("  first rows (name columns hidden, R6):\n" + df[safe].head(3).to_string())
         except Exception as ex:
             log(f"  (could not read a sample: {ex})")
     log("\nNext: set RESOURCES (which file holds declarations by community and age/sex) and COLS, then `pull`.")
@@ -151,7 +166,32 @@ def latest_raw_dir():
     return dirs[-1]
 
 
-def cmd_build(raw_dir):
+def koatuu_crosswalk(path):
+    """KOATUU (10 digits) -> KATOTTG (UA + 17 digits) from the codifier's comparison table (xlsx or csv; columns
+    found by the shape of their values). data.gov.ua: 'Кодифікатор адміністративно-територіальних одиниць та
+    територій територіальних громад', resource 'Порівняльна таблиця КОАТУУ — КАТОТТГ' (Minregion, CC BY)."""
+    if not path or not Path(path).exists():
+        sys.exit("the source carries KOATUU codes: download the KOATUU-KATOTTG comparison table and pass --koatuu-xw <file>")
+    p = Path(path)
+    df = pd.read_excel(p, dtype=str) if p.suffix.lower() in (".xlsx", ".xls") else pd.read_csv(p, dtype=str)
+    ko = ka = None
+    for c in df.columns:
+        v = df[c].astype(str).str.strip()
+        if ka is None and v.str.fullmatch(r"UA\d{17}").mean() > 0.5:
+            ka = c
+        elif ko is None and v.str.replace(r"\D", "", regex=True).str.fullmatch(r"\d{10}").mean() > 0.5:
+            ko = c
+    if ko is None or ka is None:
+        sys.exit(f"could not find KOATUU and KATOTTG columns in {p.name}: {list(df.columns)}")
+    x = df[[ko, ka]].dropna()
+    x[ko] = x[ko].astype(str).str.replace(r"\D", "", regex=True).str.zfill(10)
+    x[ka] = x[ka].astype(str).str.strip().str.upper()
+    x = x.drop_duplicates(ko)
+    log(f"crosswalk {p.name}: {len(x)} KOATUU codes")
+    return dict(zip(x[ko], x[ka]))
+
+
+def cmd_build(raw_dir, koatuu_xw=None):
     if not COLS or "count" not in COLS.values():
         sys.exit("set COLS from the probe output first (at least the count column and katottg or hromada+oblast)")
     raw_dir = Path(raw_dir) if raw_dir else latest_raw_dir()
@@ -167,11 +207,17 @@ def cmd_build(raw_dir):
 
     keys = pd.read_csv(KEYS, dtype=str)
     keys["k3"] = keys["k3"].str.zfill(7)
+    import importlib
+    sys.path.insert(0, str(BASE))
+    ob = importlib.import_module("03_openbudget")
     if "katottg" in df:
-        import importlib
-        sys.path.insert(0, str(BASE))
-        ob = importlib.import_module("03_openbudget")
         df["k3"], _ = ob.katottg_parts(df["katottg"].astype("string"))     # UA + oblast + raion + hromada -> k3
+    elif "koatuu" in df:
+        xw = koatuu_crosswalk(koatuu_xw)
+        code = df["koatuu"].astype(str).str.replace(r"\D", "", regex=True).str.zfill(10)
+        kat = code.map(xw)
+        df["k3"], _ = ob.katottg_parts(kat.astype("string"))
+        log(f"KOATUU -> KATOTTG: {kat.notna().mean():.1%} of rows mapped through the crosswalk")
     elif {"hromada", "oblast"} <= set(df.columns):
         # name match: hromada name + oblast (k1 from keys) — the same route as 34_schools.py; ambiguous names are dropped
         import importlib
@@ -187,7 +233,7 @@ def cmd_build(raw_dir):
         m.loc[dup, "k3"] = np.nan
         df["k3"] = m["k3"].values
     else:
-        sys.exit("COLS must map either a katottg column or hromada + oblast columns")
+        sys.exit("COLS must map a katottg column, a koatuu column (with --koatuu-xw), or hromada + oblast columns")
     unmatched = df["k3"].isna().mean()
     log(f"rows {len(df)}, unmatched to a hromada {unmatched:.1%}")
     df = df[df["k3"].notna()]
@@ -248,13 +294,14 @@ def main():
     ap = argparse.ArgumentParser(description="NHSU declarations per hromada")
     ap.add_argument("cmd", choices=("probe", "pull", "build"))
     ap.add_argument("--raw-dir", default=None)
+    ap.add_argument("--koatuu-xw", default=None, help="KOATUU-KATOTTG comparison table (xlsx/csv) if the source uses KOATUU")
     a = ap.parse_args()
     if a.cmd == "probe":
         cmd_probe()
     elif a.cmd == "pull":
         cmd_pull()
     else:
-        cmd_build(a.raw_dir)
+        cmd_build(a.raw_dir, a.koatuu_xw)
 
 
 if __name__ == "__main__":
