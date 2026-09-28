@@ -215,3 +215,72 @@ zone hromadas shown as population-weighted raion values. Patterns to examine in 
 - cultural: a broad central and south-western band, rising in the west by 2025; pale zone raions in the east;
 - balance: the Carpathian arc cultural and rights-leaning in 2021, cultural and economic-leaning in 2025; the
   Kharkiv and Zaporizhzhia zone raions strongly rights-leaning in 2025 (transfers, reconstruction projects).
+
+## 9. Associations (step 7, 28 Sep 2026)
+
+`36_sphere_associations.py` → `tidy/sphere_associations.csv` (81 rows), `tidy/sphere_lisa_summary.csv`; hromada
+LISA classes stay local (`sphere_lisa_k3.csv`, rule R3). 1,288 non-occupied hromadas (recovery index 1,020, summer-2024
+light 907). Coefficients in standard deviations; p = wild-cluster bootstrap by oblast (24 clusters); every result
+below that is called robust also holds with Conley t at 50 and 100 km. Cross-sectional and associational throughout.
+
+**A. Exposure (strikes since 2022, log).**
+- Strikes fell on hromadas that were stronger before the war, in all three spheres and within oblasts (2021, with
+  oblast FE and log population: economic +0.24, p < 0.001; rights +0.12, p = 0.009; cultural +0.13, p = 0.001). The
+  strikes come after 2021, so this is geography and targeting (larger, better-equipped places), not an effect.
+- 2025 given 2021, within oblasts: exposed hromadas fell back in the economic sphere (−0.16, 95 % [−0.27, −0.03])
+  and the cultural sphere (−0.11, [−0.22, −0.00]); rights unchanged (+0.01). **Both falls disappear without the 196
+  zone hromadas** (economic +0.00, cultural +0.02): the relative loss is a zone phenomenon (within 30 km of the front
+  line or border), not a general cost of being struck. Outside the zone, exposed hromadas gained in the rights
+  sphere (+0.08, p = 0.013), in line with transfers and reconstruction projects going to struck places. Alert hours
+  point the same way but are mostly an oblast-level signal and absorbed by the fixed effects (p 0.08–0.28).
+- Balance: exposure goes with a more one-sided profile in 2025 given 2021 (imbalance +0.30, p < 0.001) and with a
+  shift from the economic to the rights side (−0.20, p = 0.028) — the rights-leaning zone raions on map 24. Whether
+  this also holds without the zone is not yet tested (step 8).
+- Per-resident terms use the 2020 population, so in the zone the 2025 values measure budget amounts per pre-war
+  resident, not per person still living there.
+
+**B. Pre-war spheres (2021) and functional resilience** (all three together, exposure, log population, lit pixels,
+2021 radiance, oblast FE).
+- Summer-2024 outages: hromadas with a stronger rights sphere lost less light (+0.20, [+0.08, +0.32]; reliable
+  light data only: +0.16, p = 0.020). The clearest link between a sphere and functional resilience.
+- Recent light level: a stronger cultural sphere in 2021 goes with a lower recent level (−0.08, [−0.12, −0.05];
+  reliable data −0.08, p = 0.012). Likely composition: high education spending per resident marks small rural
+  hromadas with dense school networks and shrinking populations — to test in step 8 by indicator.
+- Economic sphere: no independent link once rights and culture are in the model (p 0.06–0.70).
+- Recovery index: weak (rights +0.09, p = 0.048; cultural −0.06, p = 0.052).
+- Buffering: no sphere reliably buffers exposure. One of nine interactions is nominally significant (cultural ×
+  exposure on recent light, −0.04, p = 0.032; rights × exposure +0.06, p = 0.054) — not enough to claim buffering.
+
+**C. The spheres against each other** (rank correlation, plain | within oblasts; change = 2021 → 2025).
+
+| | 2021 | 2025 | change |
+|---|---|---|---|
+| economic–cultural | 0.58 \| 0.58 | 0.63 \| 0.61 | 0.38 \| 0.29 |
+| economic–rights | 0.55 \| 0.36 | 0.58 \| 0.53 | 0.09 \| 0.17 |
+| rights–cultural | 0.22 \| 0.13 | 0.27 \| 0.25 | 0.14 \| 0.18 |
+
+- Economic and cultural life go together within every oblast, and their changes go together too (FE, population
+  control: +0.38, [+0.29, +0.47]). Part of this is budget arithmetic — own revenue pays for culture and part of
+  education — which is the "economic sphere supplies the means of the cultural one" of section 6, measured here.
+- Economic–rights: in 2021 largely a between-oblast pattern (0.55 plain, 0.36 within); by 2025 it holds within
+  oblasts as well (0.53): the two parts of fiscal capacity have come closer inside each oblast.
+- Rights and cultural life are nearly independent. The threefold picture is two coupled spheres and one apart.
+- Residual Moran's I stays 0.05–0.25: shared regional factors not captured by oblast FE.
+
+**D. Local clusters (LISA, KNN 6).**
+- Economic (global I 0.48 / 0.42) and rights (0.41 / 0.43) are regional; cultural is local (0.11 / 0.16).
+- The economic change is strongly regional (I 0.45): in the national LISA, 33–44 hromadas in each Carpathian oblast
+  are high–high clusters of economic rise, none low–low. Within the four oblasts the rise is even (Carpathian-scope
+  I 0.01): the whole region moved, not a few pockets.
+- Carpathian arc: low–low economic clusters in 2021 (Zakarpattia 50, Ivano-Frankivsk 43, Chernivtsi 50, Lviv 20),
+  fewer by 2025 (32, 26, 43, 7), with a Lviv high–high cluster forming (3 → 18). Rights low–low in both years except
+  Lviv. In 2021 the arc was strongly unbalanced (imbalance high–high 30, 30, 24; not Lviv) — cultural-leaning and
+  rights- over economic-leaning; by 2025 the imbalance clusters have largely gone (4, 5, 16) and the arc leans
+  cultural and slightly economic. This confirms the map-24 reading.
+- Counts after a false-discovery-rate cut are smaller (e.g. economic 2021 high–high 200 → 106); no FDR-significant
+  imbalance clusters remain in 2025.
+
+**For step 8 ("why there?"):** (1) the zone as the carrier of the economic and cultural fall — which indicators;
+(2) the balance shift without the zone; (3) which rights indicators carry the summer-2024 link (transfer dependency,
+capital share, social spending, candidates per seat); (4) the negative cultural–light link by indicator and settlement
+type; (5) the Carpathian economic rise — relocation of firms and people (IDPs, registrations).
