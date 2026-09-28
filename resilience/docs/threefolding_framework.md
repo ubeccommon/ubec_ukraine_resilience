@@ -203,3 +203,15 @@ Between spheres (2021 / 2025): economic–cultural 0.58 / 0.63, economic–right
 Carpathian medians (national median ≈ 0.50): economic 2021 0.13–0.16 in Zakarpattia, Ivano-Frankivsk,
 Chernivtsi (Lviv 0.40), 2025 0.30–0.32 (Lviv 0.53) — a relative rise to test in step 8 (relocation of firms
 and people); cultural 0.38–0.45 (Lviv ≈ 0.5); rights 0.26–0.34 (Lviv ≈ 0.5).
+
+## 8. Maps (step 6, 28 Sep 2026)
+
+Pages 21–24 (`35_sphere_layers.py`, `viina/build_qgis_project.py`), previews published: 21 economic, 22 rights,
+23 cultural (2021 | 2025, national quintiles), 24 threefold balance (centred ternary colours: hue = which sphere
+weighs more than on national average, strength = size of the departure, one scale for both years). Rule R3:
+zone hromadas shown as population-weighted raion values. Patterns to examine in steps 7–8:
+- economic: the western border oblasts mostly in the lowest classes in 2021, darker classes spreading west by 2025;
+- rights: low in the west in both years (transfer dependency, capital share), high in the centre and east;
+- cultural: a broad central and south-western band, rising in the west by 2025; pale zone raions in the east;
+- balance: the Carpathian arc cultural and rights-leaning in 2021, cultural and economic-leaning in 2025; the
+  Kharkiv and Zaporizhzhia zone raions strongly rights-leaning in 2025 (transfers, reconstruction projects).
