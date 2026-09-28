@@ -1,0 +1,478 @@
+question,table,group,n,variable,stat,value,n_valid
+Q1,Q1 ranks by zone,zone,196,exp_strikes_log,median,0.693147,196
+Q1,Q1 ranks by zone,zone,196,econ_2021,median,0.5274,195
+Q1,Q1 ranks by zone,zone,196,econ_2025,median,0.3166,195
+Q1,Q1 ranks by zone,zone,196,d_econ,median,-0.1633,195
+Q1,Q1 ranks by zone,zone,196,ll_econ_2021,median,0.527433,195
+Q1,Q1 ranks by zone,zone,196,ll_econ_2025,median,0.35537,195
+Q1,Q1 ranks by zone,zone,196,d_ll_econ,median,-0.0777793,195
+Q1,Q1 ranks by zone,zone,196,r_pdfo_civ_pc_2021,median,0.510093,195
+Q1,Q1 ranks by zone,zone,196,r_pdfo_civ_pc_2025,median,0.291925,195
+Q1,Q1 ranks by zone,zone,196,dr_pdfo_civ_pc,median,-0.0978261,195
+Q1,Q1 ranks by zone,zone,196,r_single_tax_pc_2021,median,0.505435,195
+Q1,Q1 ranks by zone,zone,196,r_single_tax_pc_2025,median,0.364907,195
+Q1,Q1 ranks by zone,zone,196,dr_single_tax_pc,median,-0.0419255,195
+Q1,Q1 ranks by zone,zone,196,r_property_tax_pc_2021,median,0.511646,195
+Q1,Q1 ranks by zone,zone,196,r_property_tax_pc_2025,median,0.294553,192
+Q1,Q1 ranks by zone,zone,196,dr_property_tax_pc,median,-0.0860001,192
+Q1,Q1 ranks by zone,zone,196,rights_2021,median,0.5231,195
+Q1,Q1 ranks by zone,zone,196,rights_2025,median,0.5345,195
+Q1,Q1 ranks by zone,zone,196,d_rights,median,0.0161,195
+Q1,Q1 ranks by zone,zone,196,ll_rights_2021,median,0.537526,195
+Q1,Q1 ranks by zone,zone,196,ll_rights_2025,median,0.527174,195
+Q1,Q1 ranks by zone,zone,196,d_ll_rights,median,-0.0349379,195
+Q1,Q1 ranks by zone,zone,196,r_transfer_dep_civ_2021,median,0.542702,195
+Q1,Q1 ranks by zone,zone,196,r_transfer_dep_civ_2025,median,0.287267,195
+Q1,Q1 ranks by zone,zone,196,dr_transfer_dep_civ,median,-0.146739,195
+Q1,Q1 ranks by zone,zone,196,r_capex_share_2021,median,0.523292,195
+Q1,Q1 ranks by zone,zone,196,r_capex_share_2325,median,0.725155,195
+Q1,Q1 ranks by zone,zone,196,dr_capex_share,median,0.102484,195
+Q1,Q1 ranks by zone,zone,196,r_social_pc_2021,median,0.570652,195
+Q1,Q1 ranks by zone,zone,196,r_social_pc_2025,median,0.520186,195
+Q1,Q1 ranks by zone,zone,196,dr_social_pc,median,-0.0450311,195
+Q1,Q1 ranks by zone,zone,196,cult_2021,median,0.5052,195
+Q1,Q1 ranks by zone,zone,196,cult_2025,median,0.4106,195
+Q1,Q1 ranks by zone,zone,196,d_cult,median,-0.0655,195
+Q1,Q1 ranks by zone,zone,196,ll_cult_2021,median,0.505176,195
+Q1,Q1 ranks by zone,zone,196,ll_cult_2025,median,0.38354,195
+Q1,Q1 ranks by zone,zone,196,d_ll_cult,median,-0.0652174,195
+Q1,Q1 ranks by zone,zone,196,r_culture_arts_pc_2021,median,0.582298,195
+Q1,Q1 ranks by zone,zone,196,r_culture_arts_pc_2025,median,0.417702,195
+Q1,Q1 ranks by zone,zone,196,dr_culture_arts_pc,median,-0.0729814,195
+Q1,Q1 ranks by zone,zone,196,r_education_pc_2021,median,0.478261,195
+Q1,Q1 ranks by zone,zone,196,r_education_pc_2025,median,0.287267,195
+Q1,Q1 ranks by zone,zone,196,dr_education_pc,median,-0.0745342,195
+Q1,Q1 ranks by zone,zone,196,r_extracurricular_pc_2021,median,0.459627,195
+Q1,Q1 ranks by zone,zone,196,r_extracurricular_pc_2025,median,0.367236,195
+Q1,Q1 ranks by zone,zone,196,dr_extracurricular_pc,median,-0.00543478,195
+Q1,Q1 ranks by zone,zone,196,r_pdfo_civ_growth_rel_2125,median,0.121894,195
+Q1,Q1 ranks by zone,zone,196,r_dream_per10k,median,0.594647,196
+Q1,Q1 ranks by zone,zone,196,r_schools_per10k_2026,median,0.42236,195
+Q1,Q1 ranks by zone,zone,196,fop_growth,median,0.333185,44
+Q1,Q1 ranks by zone,zone,196,le_growth,median,0.0082305,87
+Q1,Q1 ranks by zone,zone,196,pop_change,median,-0.129827,196
+Q1,Q1 ranks by zone,zone,196,is_city,share,0.25,196
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,exp_strikes_log,median,0,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,econ_2021,median,0.5815,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,econ_2025,median,0.5925,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_econ,median,0.007,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_econ_2021,median,0.581522,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_econ_2025,median,0.605445,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_ll_econ,median,0.0129301,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_pdfo_civ_pc_2021,median,0.608696,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_pdfo_civ_pc_2025,median,0.625776,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_pdfo_civ_pc,median,0.00621118,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_single_tax_pc_2021,median,0.622671,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_single_tax_pc_2025,median,0.647516,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_single_tax_pc,median,0.0147516,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_property_tax_pc_2021,median,0.552019,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_property_tax_pc_2025,median,0.559533,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_property_tax_pc,median,0.00488496,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,rights_2021,median,0.5396,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,rights_2025,median,0.5925,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_rights,median,0.0213,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_rights_2021,median,0.533385,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_rights_2025,median,0.600155,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_ll_rights,median,0.0194099,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_transfer_dep_civ_2021,median,0.562112,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_transfer_dep_civ_2025,median,0.583075,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_transfer_dep_civ,median,0.0131988,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_capex_share_2021,median,0.486801,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_capex_share_2325,median,0.586957,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_capex_share,median,0.0163043,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_social_pc_2021,median,0.564441,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_social_pc_2025,median,0.626553,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_social_pc,median,0,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,cult_2021,median,0.5331,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,cult_2025,median,0.5549,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_cult,median,0.0192,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_cult_2021,median,0.533126,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,ll_cult_2025,median,0.548395,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,d_ll_cult,median,0.0173395,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_culture_arts_pc_2021,median,0.565994,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_culture_arts_pc_2025,median,0.600932,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_culture_arts_pc,median,0.0186335,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_education_pc_2021,median,0.591615,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_education_pc_2025,median,0.63354,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_education_pc,median,0.0163043,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_extracurricular_pc_2021,median,0.492236,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_extracurricular_pc_2025,median,0.496118,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,dr_extracurricular_pc,median,-0.000776398,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_pdfo_civ_growth_rel_2125,median,0.53028,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_dream_per10k,median,0.592708,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,r_schools_per10k_2026,median,0.548913,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,fop_growth,median,0.484658,134
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,le_growth,median,0.0236599,136
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,pop_change,median,-0.125882,397
+Q1,Q1 ranks by zone,"same oblasts, outside zone",397,is_city,share,0.234257,397
+Q1,Q1 ranks by zone,other oblasts,696,exp_strikes_log,median,0,696
+Q1,Q1 ranks by zone,other oblasts,696,econ_2021,median,0.43785,696
+Q1,Q1 ranks by zone,other oblasts,696,econ_2025,median,0.4863,696
+Q1,Q1 ranks by zone,other oblasts,696,d_econ,median,0.0392,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_econ_2021,median,0.437888,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_econ_2025,median,0.464185,696
+Q1,Q1 ranks by zone,other oblasts,696,d_ll_econ,median,0.00953635,696
+Q1,Q1 ranks by zone,other oblasts,696,r_pdfo_civ_pc_2021,median,0.432842,696
+Q1,Q1 ranks by zone,other oblasts,696,r_pdfo_civ_pc_2025,median,0.470497,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_pdfo_civ_pc,median,0.015528,696
+Q1,Q1 ranks by zone,other oblasts,696,r_single_tax_pc_2021,median,0.432453,696
+Q1,Q1 ranks by zone,other oblasts,696,r_single_tax_pc_2025,median,0.435559,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_single_tax_pc,median,-0.0015528,696
+Q1,Q1 ranks by zone,other oblasts,696,r_property_tax_pc_2021,median,0.455357,696
+Q1,Q1 ranks by zone,other oblasts,696,r_property_tax_pc_2025,median,0.502724,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_property_tax_pc,median,0.0177626,696
+Q1,Q1 ranks by zone,other oblasts,696,rights_2021,median,0.4756,696
+Q1,Q1 ranks by zone,other oblasts,696,rights_2025,median,0.4473,696
+Q1,Q1 ranks by zone,other oblasts,696,d_rights,median,-0.02205,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_rights_2021,median,0.480137,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_rights_2025,median,0.45361,696
+Q1,Q1 ranks by zone,other oblasts,696,d_ll_rights,median,-0.0113225,696
+Q1,Q1 ranks by zone,other oblasts,696,r_transfer_dep_civ_2021,median,0.439829,696
+Q1,Q1 ranks by zone,other oblasts,696,r_transfer_dep_civ_2025,median,0.505435,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_transfer_dep_civ,median,0.0335792,696
+Q1,Q1 ranks by zone,other oblasts,696,r_capex_share_2021,median,0.494953,696
+Q1,Q1 ranks by zone,other oblasts,696,r_capex_share_2325,median,0.411102,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_capex_share,median,-0.0258152,696
+Q1,Q1 ranks by zone,other oblasts,696,r_social_pc_2021,median,0.4375,696
+Q1,Q1 ranks by zone,other oblasts,696,r_social_pc_2025,median,0.420419,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_social_pc,median,-0.0353261,696
+Q1,Q1 ranks by zone,other oblasts,696,cult_2021,median,0.47045,696
+Q1,Q1 ranks by zone,other oblasts,696,cult_2025,median,0.47555,696
+Q1,Q1 ranks by zone,other oblasts,696,d_cult,median,0.0127,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_cult_2021,median,0.470432,696
+Q1,Q1 ranks by zone,other oblasts,696,ll_cult_2025,median,0.489972,696
+Q1,Q1 ranks by zone,other oblasts,696,d_ll_cult,median,0.0104814,696
+Q1,Q1 ranks by zone,other oblasts,696,r_culture_arts_pc_2021,median,0.440606,696
+Q1,Q1 ranks by zone,other oblasts,696,r_culture_arts_pc_2025,median,0.462345,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_culture_arts_pc,median,0.0108696,696
+Q1,Q1 ranks by zone,other oblasts,696,r_education_pc_2021,median,0.455745,696
+Q1,Q1 ranks by zone,other oblasts,696,r_education_pc_2025,median,0.467003,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_education_pc,median,0.00621118,696
+Q1,Q1 ranks by zone,other oblasts,696,r_extracurricular_pc_2021,median,0.512422,696
+Q1,Q1 ranks by zone,other oblasts,696,r_extracurricular_pc_2025,median,0.546972,696
+Q1,Q1 ranks by zone,other oblasts,696,dr_extracurricular_pc,median,-0.000776398,696
+Q1,Q1 ranks by zone,other oblasts,696,r_pdfo_civ_growth_rel_2125,median,0.569488,696
+Q1,Q1 ranks by zone,other oblasts,696,r_dream_per10k,median,0.420869,696
+Q1,Q1 ranks by zone,other oblasts,696,r_schools_per10k_2026,median,0.514363,696
+Q1,Q1 ranks by zone,other oblasts,696,fop_growth,median,0.287504,123
+Q1,Q1 ranks by zone,other oblasts,696,le_growth,median,0,123
+Q1,Q1 ranks by zone,other oblasts,696,pop_change,median,-0.119746,696
+Q1,Q1 ranks by zone,other oblasts,696,is_city,share,0.267241,696
+Q2,Q2 balance by zone,zone,196,imbalance_2021,median,0.399757,195
+Q2,Q2 balance by zone,zone,196,imbalance_2025,median,0.589082,195
+Q2,Q2 balance by zone,zone,196,lean_cult_2021,median,-0.0585068,195
+Q2,Q2 balance by zone,zone,196,lean_cult_2025,median,-0.0604766,195
+Q2,Q2 balance by zone,zone,196,lean_econ_rights_2021,median,0.0430048,195
+Q2,Q2 balance by zone,zone,196,lean_econ_rights_2025,median,-0.234521,195
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,imbalance_2021,median,0.388977,397
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,imbalance_2025,median,0.326393,397
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,lean_cult_2021,median,-0.0624345,397
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,lean_cult_2025,median,-0.0773374,397
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,lean_econ_rights_2021,median,0.128917,397
+Q2,Q2 balance by zone,"same oblasts, outside zone",397,lean_econ_rights_2025,median,0.0225863,397
+Q2,Q2 balance by zone,other oblasts,696,imbalance_2021,median,0.425576,696
+Q2,Q2 balance by zone,other oblasts,696,imbalance_2025,median,0.321791,696
+Q2,Q2 balance by zone,other oblasts,696,lean_cult_2021,median,-0.00898337,696
+Q2,Q2 balance by zone,other oblasts,696,lean_cult_2025,median,0.00846714,696
+Q2,Q2 balance by zone,other oblasts,696,lean_econ_rights_2021,median,0.00479999,696
+Q2,Q2 balance by zone,other oblasts,696,lean_econ_rights_2025,median,0.0778725,696
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,culture_arts_pc_2021,median,220.128,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,education_pc_2021,median,4569.35,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,extracurricular_pc_2021,median,80.7252,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,class_size_2021,median,15.74,254
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,pupils_per1000_2021,median,91.405,158
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,rural_school_share,median,0.833333,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,pop_ghs_2020,median,13098.7,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,pop_change,median,-0.119324,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,fop_growth,median,0.35431,55
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,econ_2021,median,0.3015,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,rights_2021,median,0.44845,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,is_city,share,0.22093,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,is_settlement,share,0.25969,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,is_village,share,0.503876,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q1,258,in_zone,share,0.139535,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,culture_arts_pc_2021,median,306.448,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,education_pc_2021,median,5462.13,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,extracurricular_pc_2021,median,206.644,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,class_size_2021,median,14.745,254
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,pupils_per1000_2021,median,107.74,149
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,rural_school_share,median,0.785714,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,pop_ghs_2020,median,15125.7,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,pop_change,median,-0.123797,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,fop_growth,median,0.402444,73
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,econ_2021,median,0.3636,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,rights_2021,median,0.4589,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,is_city,share,0.400778,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,is_settlement,share,0.241245,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,is_village,share,0.354086,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q2,257,in_zone,share,0.151751,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,culture_arts_pc_2021,median,384.439,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,education_pc_2021,median,6426.54,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,extracurricular_pc_2021,median,209.426,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,class_size_2021,median,14.4,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,pupils_per1000_2021,median,117.165,136
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,rural_school_share,median,0.82971,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,pop_ghs_2020,median,12155.8,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,pop_change,median,-0.126224,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,fop_growth,median,0.400847,78
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,econ_2021,median,0.4855,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,rights_2021,median,0.477,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,is_city,share,0.263566,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,is_settlement,share,0.317829,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,is_village,share,0.403101,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q3,258,in_zone,share,0.135659,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,culture_arts_pc_2021,median,509.73,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,education_pc_2021,median,7472.86,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,extracurricular_pc_2021,median,228.663,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,class_size_2021,median,13.575,256
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,pupils_per1000_2021,median,131.745,126
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,rural_school_share,median,0.857143,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,pop_ghs_2020,median,7450.55,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,pop_change,median,-0.12592,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,fop_growth,median,0.432421,57
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,econ_2021,median,0.6146,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,rights_2021,median,0.5327,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,is_city,share,0.22179,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,is_settlement,share,0.276265,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,is_village,share,0.490272,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q4,257,in_zone,share,0.159533,257
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,culture_arts_pc_2021,median,689.886,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,education_pc_2021,median,10433.6,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,extracurricular_pc_2021,median,397.036,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,class_size_2021,median,13.97,253
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,pupils_per1000_2021,median,182.26,123
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,rural_school_share,median,0.8,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,pop_ghs_2020,median,6187.78,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,pop_change,median,-0.124603,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,fop_growth,median,0.459808,38
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,econ_2021,median,0.77345,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,rights_2021,median,0.59335,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,is_city,share,0.166667,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,is_settlement,share,0.368217,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,is_village,share,0.422481,258
+Q4,Q4 profile by cultural-2021 quintile,cultural 2021 Q5,258,in_zone,share,0.170543,258
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,econ_2021,median,0.1482,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,econ_2025,median,0.3205,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,d_econ,median,0.1414,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,d_ll_econ,median,0.0185329,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,dr_pdfo_civ_pc,median,0.0180512,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,dr_single_tax_pc,median,0,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,dr_property_tax_pc,median,0.0365629,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,r_pdfo_civ_growth_rel_2125,median,0.675078,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,pdfo_civ_growth_rel_2125,median,1.07827,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,fop_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,le_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,pop_change,median,-0.103158,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,d_ll_rights,median,0.0207039,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,d_ll_cult,median,0.00666408,64
+Q5,"Q5 economic change, Carpathian oblasts",Zakarpattia,64,is_city,share,0.171875,64
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,econ_2021,median,0.1599,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,econ_2025,median,0.3145,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,d_econ,median,0.14215,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,d_ll_econ,median,0.023486,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,dr_pdfo_civ_pc,median,0.0145575,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,dr_single_tax_pc,median,0.0199922,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,dr_property_tax_pc,median,0.0155343,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,r_pdfo_civ_growth_rel_2125,median,0.676242,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,pdfo_civ_growth_rel_2125,median,1.07906,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,fop_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,le_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,pop_change,median,-0.110406,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,d_ll_rights,median,-0.0014234,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,d_ll_cult,median,0.00207039,62
+Q5,"Q5 economic change, Carpathian oblasts",Ivano-Frankivsk,62,is_city,share,0.241935,62
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,econ_2021,median,0.3993,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,econ_2025,median,0.5263,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,d_econ,median,0.1698,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,d_ll_econ,median,0.0880946,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,dr_pdfo_civ_pc,median,0.0698758,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,dr_single_tax_pc,median,0.0496894,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,dr_property_tax_pc,median,0.113645,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,r_pdfo_civ_growth_rel_2125,median,0.790373,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,pdfo_civ_growth_rel_2125,median,1.15188,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,fop_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,le_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,pop_change,median,-0.116376,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,d_ll_rights,median,0.0397257,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,d_ll_cult,median,0.0564182,73
+Q5,"Q5 economic change, Carpathian oblasts",Lviv,73,is_city,share,0.506849,73
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,econ_2021,median,0.1295,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,econ_2025,median,0.2946,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,d_econ,median,0.1425,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,d_ll_econ,median,0.0253257,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,dr_pdfo_civ_pc,median,0.0145575,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,dr_single_tax_pc,median,0.0291149,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,dr_property_tax_pc,median,0.0274376,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,r_pdfo_civ_growth_rel_2125,median,0.651398,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,pdfo_civ_growth_rel_2125,median,1.06571,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,fop_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,le_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,pop_change,median,-0.108414,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,d_ll_rights,median,-0.0258152,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,d_ll_cult,median,0.0010999,52
+Q5,"Q5 economic change, Carpathian oblasts",Chernivtsi,52,is_city,share,0.211538,52
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,econ_2021,median,0.2024,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,econ_2025,median,0.3654,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,d_econ,median,0.1478,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,d_ll_econ,median,0.0369235,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,dr_pdfo_civ_pc,median,0.0256211,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,dr_single_tax_pc,median,0.0209627,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,dr_property_tax_pc,median,0.0446842,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,r_pdfo_civ_growth_rel_2125,median,0.699534,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,pdfo_civ_growth_rel_2125,median,1.08987,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,fop_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,le_growth,median,,0
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,pop_change,median,-0.110378,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,d_ll_rights,median,0.0152692,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,d_ll_cult,median,0.0175983,251
+Q5,"Q5 economic change, Carpathian oblasts",Carpathian,251,is_city,share,0.294821,251
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,econ_2021,median,0.5748,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,econ_2025,median,0.56985,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,d_econ,median,-0.00575,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,d_ll_econ,median,0.00482031,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,dr_pdfo_civ_pc,median,0.00854037,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,dr_single_tax_pc,median,-0.000776398,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,dr_property_tax_pc,median,0.00451036,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,r_pdfo_civ_growth_rel_2125,median,0.517469,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,pdfo_civ_growth_rel_2125,median,1.0084,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,fop_growth,median,0.413484,257
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,le_growth,median,0.00633917,259
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,pop_change,median,-0.128197,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,d_ll_rights,median,-0.00278209,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,d_ll_cult,median,0.0119048,842
+Q5,"Q5 economic change, Carpathian oblasts","rest, outside zone",842,is_city,share,0.243468,842
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,econ_2021,median,0.5668,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,econ_2025,median,0.5335,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,d_econ,median,-0.0256,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,d_ll_econ,median,-7.55251e-06,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,dr_pdfo_civ_pc,median,-0.000776398,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,dr_single_tax_pc,median,-0.00232919,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,dr_property_tax_pc,median,-0.00330709,1034
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,r_pdfo_civ_growth_rel_2125,median,0.454969,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,pdfo_civ_growth_rel_2125,median,0.984315,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,fop_growth,median,0.405465,301
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,le_growth,median,0.0066298,346
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,pop_change,median,-0.128836,1038
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,d_ll_rights,median,-0.00478778,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,d_ll_cult,median,0.00388199,1037
+Q5,"Q5 economic change, Carpathian oblasts",rest,1038,is_city,share,0.244701,1038
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,is_carp,share,0.694064,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,in_zone,share,0.0593607,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,is_city,share,0.255708,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,exp_strikes_log,median,0,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,econ_2021,median,0.2208,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,d_econ,median,0.1541,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,d_ll_econ,median,0.0563127,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,dr_pdfo_civ_pc,median,0.0481366,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,dr_single_tax_pc,median,0.0302795,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,dr_property_tax_pc,median,0.0610732,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,r_pdfo_civ_growth_rel_2125,median,0.729037,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,d_ll_cult,median,0.00931677,219
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,fop_growth,median,0.517257,19
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,le_growth,median,0.0689929,15
+Q5,Q5 profile of LISA clusters: d_econ_national,HH,219,pop_change,median,-0.110887,219
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,is_carp,share,0,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,in_zone,share,0.782946,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,is_city,share,0.271318,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,exp_strikes_log,median,1.60944,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,econ_2021,median,0.5927,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,d_econ,median,-0.2423,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,d_ll_econ,median,-0.177098,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,dr_pdfo_civ_pc,median,-0.179348,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,dr_single_tax_pc,median,-0.113354,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,dr_property_tax_pc,median,-0.146432,126
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,r_pdfo_civ_growth_rel_2125,median,0.0714286,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,d_ll_cult,median,-0.0923913,129
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,fop_growth,median,0.250444,33
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,le_growth,median,0.0183491,63
+Q5,Q5 profile of LISA clusters: d_econ_national,LL,129,pop_change,median,-0.13273,129
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,is_carp,share,0.388889,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,in_zone,share,0.12963,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,is_city,share,0.444444,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,exp_strikes_log,median,0,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,econ_2021,median,0.45265,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,d_econ,median,-0.0186,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,d_ll_econ,median,-0.00283299,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,dr_pdfo_civ_pc,median,-0.0104814,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,dr_single_tax_pc,median,-0.00931677,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,dr_property_tax_pc,median,-0.0122073,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,r_pdfo_civ_growth_rel_2125,median,0.392081,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,d_ll_cult,median,0.0256211,54
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,fop_growth,median,0.35431,7
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,le_growth,median,0.0518436,13
+Q5,Q5 profile of LISA clusters: d_econ_national,HL or LH,54,pop_change,median,-0.11923,54
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,is_carp,share,0.0880361,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,in_zone,share,0.0835214,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,is_city,share,0.240406,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,exp_strikes_log,median,0,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,econ_2021,median,0.5653,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,d_econ,median,-0.00215,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,d_ll_econ,median,0.00622775,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,dr_pdfo_civ_pc,median,0.00388199,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,dr_single_tax_pc,median,0,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,dr_property_tax_pc,median,0.00288808,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,r_pdfo_civ_growth_rel_2125,median,0.501941,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,d_ll_cult,median,0.0106108,886
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,fop_growth,median,0.4145,242
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,le_growth,median,0,255
+Q5,Q5 profile of LISA clusters: d_econ_national,not significant,886,pop_change,median,-0.12687,886
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,is_carp,share,0.471429,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,in_zone,share,0.0142857,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,is_city,share,0.242857,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,exp_strikes_log,median,0,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,econ_2021,median,0.4397,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,d_econ,median,0.0894,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,d_ll_econ,median,0.0431265,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,dr_pdfo_civ_pc,median,0.0341615,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,dr_single_tax_pc,median,0.0232919,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,dr_property_tax_pc,median,0.0821051,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,r_pdfo_civ_growth_rel_2125,median,0.704581,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,d_ll_cult,median,0.0505952,70
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,fop_growth,median,0.449694,16
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,le_growth,median,0.0744313,8
+Q5,Q5 profile of LISA clusters: d_cult_national,HH,70,pop_change,median,-0.112793,70
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,is_carp,share,0,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,in_zone,share,0.902439,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,is_city,share,0.268293,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,exp_strikes_log,median,2.19722,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,econ_2021,median,0.57755,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,d_econ,median,-0.27235,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,d_ll_econ,median,-0.22637,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,dr_pdfo_civ_pc,median,-0.218944,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,dr_single_tax_pc,median,-0.153727,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,dr_property_tax_pc,median,-0.223203,79
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,r_pdfo_civ_growth_rel_2125,median,0.0539596,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,d_ll_cult,median,-0.15845,82
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,fop_growth,median,0.219709,20
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,le_growth,median,0.0295476,37
+Q5,Q5 profile of LISA clusters: d_cult_national,LL,82,pop_change,median,-0.131407,82
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,is_carp,share,0.259259,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,in_zone,share,0.185185,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,is_city,share,0.574074,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,exp_strikes_log,median,0,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,econ_2021,median,0.5229,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,d_econ,median,-0.0041,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,d_ll_econ,median,0.00951847,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,dr_pdfo_civ_pc,median,0.00349379,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,dr_single_tax_pc,median,0,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,dr_property_tax_pc,median,-0.00657189,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,r_pdfo_civ_growth_rel_2125,median,0.512811,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,d_ll_cult,median,0.0165631,54
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,fop_growth,median,0.399436,10
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,le_growth,median,0.0101524,13
+Q5,Q5 profile of LISA clusters: d_cult_national,HL or LH,54,pop_change,median,-0.125678,54
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,is_carp,share,0.18854,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,in_zone,share,0.101664,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,is_city,share,0.238447,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,exp_strikes_log,median,0,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,econ_2021,median,0.49795,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,d_econ,median,0.0182,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,d_ll_econ,median,0.00817805,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,dr_pdfo_civ_pc,median,0.00659938,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,dr_single_tax_pc,median,0.00310559,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,dr_property_tax_pc,median,0.00543569,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,r_pdfo_civ_growth_rel_2125,median,0.518245,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,d_ll_cult,median,0.00815217,1082
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,fop_growth,median,0.41094,255
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,le_growth,median,0,288
+Q5,Q5 profile of LISA clusters: d_cult_national,not significant,1082,pop_change,median,-0.123461,1082
