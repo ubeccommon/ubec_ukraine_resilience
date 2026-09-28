@@ -35,7 +35,8 @@ Q4 The negative cultural–light link: y_recent ~ the three cultural ranks 2021 
    log pupils per 1,000 in a separate row, about 60 % coverage) and with population change added. Profile by cultural-2021 quintile.
 Q5 The Carpathian economic rise: profiles of rank changes per economic indicator, registrations and population
    change by Carpathian oblast; Carpathian gap in the like-for-like economic change, per indicator, and with modelled
-   population change (no FE — the gap is an oblast contrast; WCB by oblast). Registration growth (09) exists only
+   population change (no FE — the gap is an oblast contrast; WCB by oblast); the same gap given the 2021 level
+   (the Carpathian oblasts started low: regression to the mean), also without Lviv and without the zone. Registration growth (09) exists only
    for 5 oblasts, none Carpathian: used only to check that single-tax revenue tracks registrations; profile of the national LISA clusters of economic change (36). IOM DTM figures, if present
    locally, are printed to the log only (DTM terms: no redistribution or derivative works).
 
@@ -298,6 +299,15 @@ def main():
           ["c_logpop"], fe=False, raw=("carp",))
     M.fit("Q5", "Carpathian gap without zone", "d_ll_econ", ["carp"], ["c_logpop"], fe=False, raw=("carp",),
           data=d[~d["in_zone"]])
+    # the Carpathian oblasts started low (regression to the mean): the same gap given the 2021 level
+    M.fit("Q5", "Carpathian gap given 2021 level, like-for-like", "ll_econ_2025", ["carp"], ["ll_econ_2021", "c_logpop"],
+          fe=False, raw=("carp",), ci=("carp",))
+    M.fit("Q5", "Carpathian gap given 2021 level, economic index", "econ_2025", ["carp"], ["econ_2021", "c_logpop"],
+          fe=False, raw=("carp",))
+    M.fit("Q5", "Carpathian gap given 2021 level, like-for-like, without Lviv", "ll_econ_2025", ["carp"],
+          ["ll_econ_2021", "c_logpop"], fe=False, raw=("carp",), data=d[d["k1"] != "46"])
+    M.fit("Q5", "Carpathian gap given 2021 level, like-for-like, without zone", "ll_econ_2025", ["carp"],
+          ["ll_econ_2021", "c_logpop"], fe=False, raw=("carp",), data=d[~d["in_zone"]])
     for nm, _, _ in COMMON["econ"]:
         M.fit("Q5", f"Carpathian gap: {nm}", f"dr_{nm}", ["carp"], ["c_logpop"], fe=False, raw=("carp",))
     M.fit("Q5", "Carpathian gap: PIT growth rank 2025", "r_pdfo_civ_growth_rel_2125", ["carp"], ["c_logpop"],
