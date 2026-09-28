@@ -1,4 +1,4 @@
-**Table 11. Carpathian oblasts and Ukraine, non-occupied hromadas**
+**Table 12. Carpathian oblasts and Ukraine, non-occupied hromadas**
 
 | Measure | Zakarpattia | Ivano-Frankivsk | Lviv | Chernivtsi | Carpathian (4 oblasts) | Ukraine (non-occupied) |
 |---|---|---|---|---|---|---|

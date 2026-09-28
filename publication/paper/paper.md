@@ -1,9 +1,9 @@
 ---
 title: "Hromada resilience under strikes in Ukraine, 2022–2026"
-subtitle: "Part I: local capacity, recovery and exposure · Part II: trust, cohesion and reception — an associational analysis with open data"
+subtitle: "Economic, rights and cultural life of Ukraine's hromadas — capacity, recovery, the three spheres, trust and reception: an associational analysis with open data"
 short-title: "Hromada resilience under strikes, 2022–2026"
 author: "Michel Garand, Ubuntu Bioregional Economic Commons"
-version: "v0.4 — internal draft (two parts, read through social threefolding)"
+version: "v0.5 — internal draft (three parts; the three spheres measured at hromada level)"
 date: "September 2026"
 licence: "Text and figures CC BY 4.0. Data package ODbL 1.0. Code MIT."
 ---
@@ -17,12 +17,13 @@ Conventions
 
 ## 0. Key findings
 
-This working paper is about the resilience of Ukraine's hromadas (municipal communities) under Russian strikes, from 2021 to {{nl_panel_end}}, and about how its different sides relate to one another and to the pressure of attack. It has two parts.
+This working paper is about the resilience of Ukraine's hromadas (municipal communities) under Russian strikes, from 2021 to {{nl_panel_end}}. It reads resilience through the three spheres of social threefolding — economic, rights and cultural life (section 1.4) — and asks how they relate to one another and to the pressure of attack. It has three parts.
 
-- **Part I — local capacity, recovery and exposure** works at hromada level. It relates fiscal capacity (the institutional side of resilience) and night-time light (a proxy for continued activity and services, the functional side) to strike and air-raid-alert exposure.
-- **Part II — trust, cohesion and reception** turns to the relational side: trust in local administration, community cohesion, belonging, and the movement and reception of displaced people and taxpayers. These data exist only by oblast, so Part II describes and compares, with a regional reading of the Carpathian oblasts.
+- **Part I — local capacity, recovery and exposure** works at hromada level. It relates fiscal capacity and night-time light (a proxy for continued activity and services, the functional side of resilience) to strike and air-raid-alert exposure.
+- **Part II — the three spheres at hromada level** measures economic, rights and cultural life for each hromada in 2021 and 2025 from open budget, election and school data, maps them, relates them to exposure, to functional resilience and to each other, and asks why the patterns fall where they do.
+- **Part III — trust, cohesion and reception** turns to the relational side: trust in local administration, community cohesion, belonging, and the movement of displaced people and taxpayers. These data exist only by oblast, so Part III describes and compares, with a regional reading of the Carpathian oblasts.
 
-All results are associations. The paper estimates no causal effects, and it does not measure resilience directly: it measures proxies and names them as such. The measures are ordered by the three spheres of social threefolding — rights, cultural and economic life (section 1.4).
+All results are associations. The paper estimates no causal effects, and it does not measure resilience directly: it measures proxies and names them as such.
 
 ### Part I — local capacity, recovery and exposure
 
@@ -47,29 +48,48 @@ All results are associations. The paper estimates no causal effects, and it does
    - For the 2024–26 trend it is slightly negative ({{slope_int}}, t {{slope_int_t}}): capacity helps the trend less where exposure is high.
    - The apparent buffering in the pooled model reflects differences between oblasts.
 
-### Part II — trust, cohesion and reception
+### Part II — the three spheres at hromada level
 
-7. **Relational resilience varies as much within the west as between west and east.** In the reSCORE 2024 survey (n = {{rescore_n}}), trust in local administration is far above the national average ({{trust_national}}) in Ivano-Frankivsk (+{{trust_diff_if}}) and Chernivtsi (+{{trust_diff_cv}}), close to it in Lviv (+{{trust_diff_lv}}), and far below it in Zakarpattia ({{trust_diff_zk}}) and neighbouring Ternopil ({{trust_diff_te}}).
+7. **Before the war, economic and rights life were strongest in the centre and east, weakest in the west; cultural life varies more locally.** In 2021 the median Carpathian hromada ranked {{sph_med_econ_2021_carp}} on economic life and {{sph_med_rights_2021_carp}} on rights life (national median 50), but {{sph_med_cult_2021_carp}} on cultural life. Economic and rights life form regional clusters (Moran's I {{lisa_nat_econ_2021_I}} and {{lisa_nat_rights_2021_I}}); cultural life, measured by what hromadas spend on culture and education per resident, does not ({{lisa_nat_cult_2021_I}}).
+
+8. **Strikes fell on stronger places, and the relative fall since 2021 is concentrated in the zone near the front line and the border.**
+   - Within oblasts, hromadas later struck more had stronger spheres before the war (economic {{a1_econ_b}}, rights {{a1_rights_b}}, cultural {{a1_cult_b}}; standardised). This describes where strikes fell, not what they did.
+   - From 2021 to 2025, more-exposed hromadas fell back in economic ({{a3_econ_b}}) and cultural life ({{a3_cult_b}}) relative to others in their oblast. Both associations disappear without the {{n_zone}} hromadas within 30 km of the front line or the Russian or Belarusian border.
+   - On the indicators measured in both years, zone hromadas fell {{q1zone_ll_econ_b}} (economic), {{q1zone_ll_rights_b}} (rights) and {{q1zone_ll_cult_b}} (cultural) standard deviations behind the rest of their oblast: income and property tax, rising dependence on transfers, and every cultural spending line.
+   - Hromada profiles became more balanced across the three spheres from 2021 to 2025, except in the zone, where the median distance from the national balance rose from {{q2_imbalance_2021_zone}} to {{q2_imbalance_2025_zone}}. The zone leans to rights life because economic life collapsed while transfers and capital programmes held the rights index up.
+
+9. **Outside the zone, struck hromadas spent more on capital works, social protection and education.** More-exposed hromadas raised their capital-expenditure share ({{q1expnz_capex_share_b}}), social protection spending ({{q1expnz_social_pc_b}}) and education spending per resident ({{q1expnz_education_pc_b}}), with no fall in economic or cultural life.
+
+10. **Fiscal autonomy before the war goes with keeping light when the grid failed.** Within oblasts, hromadas less dependent on transfers in 2021 lost less light in the summer-2024 outages ({{q3_transfer_dep_civ_b}}, 95 % interval {{q3_transfer_dep_civ_ci}}), with the tax base and cultural life held constant. The association holds on reliable light data and without the zone. In threefold terms, the outage result of Part I belongs to the rights sphere: the autonomy of local self-government. No sphere buffers exposure.
+
+11. **Economic and cultural life move together; rights life stands apart.** Economic and cultural life correlate at {{c_econ_cult_2025_rho}} (2025), within every oblast, and their changes since 2021 go together ({{c_econ_cult_change_b}}). Part of this is budget arithmetic: own revenue pays for culture. Rights and cultural life are only weakly related ({{c_rights_cult_2025_rho}}).
+
+12. **The Carpathian economic rise is mostly faster income-tax growth, catch-up and Lviv.** The region's economic index rose by a median {{q5_d_econ_carp}} from 2021 to 2025 (elsewhere outside the zone {{q5_d_econ_restnz}}), but on the tax bases measured in both years only {{q5_d_ll_econ_carp}} (Lviv {{q5_d_ll_econ_lv}}). Given the 2021 level, the Carpathian lead is {{q5lvl_ll_b}} (p = {{q5lvl_ll_p}}), and {{q5lvl_nolviv_b}} without Lviv. Civilian income tax did grow faster in the west ({{q5_pdfo_civ_growth_rel_2125_carp}} times the national median). Whether that follows relocated firms and people cannot be tested with open hromada-level data.
+
+### Part III — trust, cohesion and reception
+
+13. **Relational resilience varies as much within the west as between west and east.** In the reSCORE 2024 survey (n = {{rescore_n}}), trust in local administration is far above the national average ({{trust_national}}) in Ivano-Frankivsk (+{{trust_diff_if}}) and Chernivtsi (+{{trust_diff_cv}}), close to it in Lviv (+{{trust_diff_lv}}), and far below it in Zakarpattia ({{trust_diff_zk}}) and neighbouring Ternopil ({{trust_diff_te}}).
    - Attachment is not satisfaction: Kherson records the lowest satisfaction with the locality ({{locality_sat_ks}}) but the strongest sense of belonging ({{belonging_ks}}).
 
-8. **Relational and fiscal resilience do not line up.** Ivano-Frankivsk and Chernivtsi combine below-median fiscal capacity with trust well above the national average. Zakarpattia, the brightest of the four Carpathian oblasts, reports one of the lowest levels of trust. This sets hromada finances beside oblast survey means; it is a juxtaposition of two levels of measurement, not a measured relationship between them.
+14. **Relational and fiscal resilience do not line up.** Ivano-Frankivsk and Chernivtsi combine below-median fiscal capacity with trust well above the national average. Zakarpattia, the brightest of the four Carpathian oblasts, reports one of the lowest levels of trust. This sets hromada finances beside oblast survey means; it is a juxtaposition of two levels of measurement, not a measured relationship between them.
 
-9. **Money and people moved west, and are partly moving on.**
+15. **Money and people moved west, and are partly moving on.**
    - Civilian income tax in Carpathian hromadas, relative to 2021 and to the national median, peaked at {{pit_carp_peak}} in 2022 Q2–Q3 and has settled at {{pit_carp_recent}}.
    - Within oblasts, higher exposure goes with lower relative income tax ({{pit_exp_recent}}), consistent with taxpayers relocating away from exposed areas.
    - Registered IDPs in the Carpathian oblasts exceed those present by {{idp_west_gap}} (Zakarpattia: {{idp_reg_zk}} registered vs {{idp_present_zk}} present per 1,000 residents). Registrations there have fallen by {{idp_carp_decline}} since February 2023, while rising in Kherson (+{{idp_rise_ks}}), Sumy (+{{idp_rise_su}}) and Kyiv city (+{{idp_rise_kc}}).
    - Real own revenue of hromadas has been roughly flat since 2021.
 
-10. **The Carpathian region is quieter and brighter, but its four oblasts differ.**
+16. **The Carpathian region is quieter and brighter, but its four oblasts differ.**
     - A typical Carpathian hromada spent about {{carp_alert_hours_12m}} hours under alert in the last 12 months, against about {{nat_alert_hours_12m}} nationally.
     - Its recent light level is {{carp_level_recent}} of pre-war, against {{rest_level_recent}} elsewhere.
     - Fiscal capacity is below the national median in three of the four oblasts; Lviv is above it.
+    - In the three spheres, the four oblasts were the weakest in economic life before the war and weak in rights life except Lviv. Their economic rise by 2025 is mostly faster income-tax growth, catch-up from a low start and Lviv (finding 12).
 
-### How the two parts relate
+### How the three parts relate
 
-Part I finds that fiscal capacity goes with keeping light when the grid fails, but does not buffer exposure. Part II finds that relational indicators do not follow the fiscal ones. Because the relational data exist only by oblast, they cannot enter the hromada models: oblast fixed effects absorb them. The paper therefore cannot test whether trust or cohesion helps hromadas with weak budgets hold together under pressure. That test needs hromada-level survey and displacement data (section 10.5).
+Part I finds that fiscal capacity goes with keeping light when the grid fails, but does not buffer exposure. Part II splits that capacity into its economic and rights parts and adds cultural life. The outage association belongs to the rights sphere (fiscal autonomy), not to the tax base; exposure matters for the spheres mainly in the zone near the front line and the border. Part III finds that trust and cohesion, measured by oblast, follow neither the fiscal map nor the sphere indices. Because the relational data exist only by oblast, they cannot enter the hromada models, and the paper cannot test whether trust or cohesion helps hromadas with weak budgets hold together under pressure. That test needs hromada-level survey and displacement data (section 15.6).
 
-**What this paper does not show.** It does not show that local fiscal capacity causes recovery. It says nothing about individuals, only about hromadas and oblasts. It does not describe conditions in occupied territory. It does not describe anything below the hromada level, or current power conditions in any hromada.
+**What this paper does not show.** It does not show that local fiscal capacity or any sphere causes recovery. It says nothing about individuals, only about hromadas and oblasts. It does not describe conditions in occupied territory. It does not describe anything below the hromada level, or current power conditions in any hromada. The sphere indices measure what budgets, elections and the school register record; cultural and civic life outside them is not measured.
 
 ## 1. Introduction
 
@@ -79,21 +99,28 @@ Since February 2022, Russian strikes have reached nearly every region of Ukraine
 
 That combination raises an obvious question for recovery planning. Do hromadas with stronger local finances cope better with the same level of attack? If they do, strengthening local fiscal capacity would be a recovery priority in its own right. If they do not, the reasons matter: perhaps recovery is governed by systems larger than any hromada, such as the national grid.
 
-Resilience also has more than one side. Budgets and infrastructure describe what a hromada can pay for and keep running. Trust, cohesion and the reception of displaced people describe the relationships through which communities hold together. This paper looks at both, and at how each relates to exposure and to the other.
+Resilience also has more than one side. Budgets and infrastructure describe what a hromada can pay for and keep running. Its economic, political and cultural life describe what it is: a tax base and work, a self-governing community that allocates public funds, and schools and cultural institutions. Trust, cohesion and the reception of displaced people describe the relationships through which communities hold together. This paper looks at all of these, ordered by the three spheres of social threefolding, and at how each relates to exposure and to the others.
 
 ### 1.2 Questions
 
-The paper asks five questions, in two parts.
+The paper asks eight questions, in three parts.
 
 **Part I — local capacity, recovery and exposure (hromada level)**
 
 1. Is local fiscal capacity related to how exposed a hromada has been to strikes and air-raid alerts?
 2. Does recovery, measured with night-time lights, vary with exposure and with capacity?
 3. Does capacity moderate the association between exposure and recovery, so that stronger hromadas lose less for the same exposure?
-**Part II — trust, cohesion and reception (oblast level)**
 
-4. How do oblasts differ in trust in local administration, community cohesion and belonging, and do these relational indicators follow the fiscal ones?
-5. Where have displaced people and taxpayers moved, and what does that mean for the Carpathian region (Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi oblasts) as a region of reception?
+**Part II — the three spheres at hromada level**
+
+4. How do economic, rights and cultural life vary between hromadas, and how did they change from 2021 to 2025?
+5. How do the spheres relate to exposure, to functional resilience (night-time light) and to each other?
+6. Why are the clearest patterns where they are: which candidate explanations can open data tell apart, and which not?
+
+**Part III — trust, cohesion and reception (oblast level)**
+
+7. How do oblasts differ in trust in local administration, community cohesion and belonging, and do these relational indicators follow the fiscal ones?
+8. Where have displaced people and taxpayers moved, and what does that mean for the Carpathian region (Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi oblasts) as a region of reception?
 
 ### 1.3 Approach and contribution
 
@@ -102,21 +129,24 @@ We assemble a hromada-level dataset for {{n_hromadas_total}} spatial units, of w
 - local budget execution (openbudget.gov.ua);
 - monthly night lights (NASA Black Marble);
 - gridded population (JRC GHS-POP);
-- reconstruction projects (DREAM).
+- reconstruction projects (DREAM);
+- local budget spending by function, local taxes, the 2020 local elections (Central Election Commission) and the register of schools (Ministry of Education and Science).
 
 From these we build three indices:
 - a **fiscal capacity index** from own revenue, transfer dependency, capital spending and civilian income-tax growth;
 - a **night-light recovery ratio**, comparing lit-pixel ratios for 2024 and winter 2024–25 against pre-war baselines;
-- an **engagement measure**, DREAM reconstruction projects per 10,000 residents, kept separate because it responds to damage.
+- an **engagement measure**, DREAM reconstruction projects per 10,000 residents, kept separate because it responds to damage;
+- three **sphere indices**, for economic, rights and cultural life, in 2021 and 2025 (Part II).
 
-We relate these indices using pooled models, oblast fixed-effects models and spatial diagnostics, and set them against oblast-level survey (reSCORE 2024) and displacement (IOM DTM) data.
+We relate these indices using pooled models, oblast fixed-effects models, a wild-cluster bootstrap by oblast, spatially robust errors and local cluster statistics, and set them against oblast-level survey (reSCORE 2024) and displacement (IOM DTM) data.
 
 The contribution is threefold:
 - An open, reproducible hromada-level dataset joining exposure, local finance and night-light data, released with its code, data dictionary and source catalogue.
 - A transparent test of the "local capacity buffers exposure" hypothesis, including a clear negative result once oblast-level differences are controlled.
+- A first measurement of the three spheres of social threefolding for every non-occupied hromada, with maps of each sphere and of their balance, their associations with exposure and functional resilience, and a structured inquiry into why the patterns fall where they do.
 - A relational reading, by oblast, of trust, cohesion and displacement, with the Carpathian oblasts as a regional case, keeping survey, displacement and fiscal evidence at the levels where they are actually measured.
 
-**Terms.** We use "resilience" for the ability of hromadas to keep functioning and to hold together under attack, and distinguish three sides: *institutional* (fiscal capacity), *functional* (night-time light, a proxy for activity and services) and *relational* (trust, cohesion, belonging and the reception of displaced people). None is measured directly; the text names the proxy each time. Section 1.4 places these sides within the three spheres of social threefolding. "Relationship" and "association" mean statistical association, not cause.
+**Terms.** We use "resilience" for the ability of hromadas to keep functioning and to hold together under attack, and distinguish three sides: *institutional* (fiscal capacity), *functional* (night-time light, a proxy for activity and services) and *relational* (trust, cohesion, belonging and the reception of displaced people). None is measured directly; the text names the proxy each time. Section 1.4 places these sides within the three spheres of social threefolding, which Part II measures directly. "Relationship" and "association" mean statistical association, not cause.
 
 ### 1.4 Frame: social threefolding
 
@@ -138,29 +168,32 @@ The measures used in this paper fall into the spheres as follows.
 
 | Measure | Level | Sphere |
 |---|---|---|
-| Own revenue per resident; civilian income-tax growth (capacity components) | Hromada | Economic: the tax base |
-| Transfer dependency; capital-spending share (capacity components) | Hromada | Rights: autonomy and spending choices of local self-government |
-| Night-time light | Hromada | Economic activity, and infrastructure shared across the grid |
-| Relative civilian income tax | Hromada | Economic |
-| DREAM reconstruction projects | Hromada | Rights: public investment planning |
+| Civilian income tax, single tax, property and land payments per resident; civilian income-tax growth | Hromada | Economic: the tax base (economic sphere index, Part II) |
+| Transfer dependency; capital-expenditure share; social protection spending per resident | Hromada | Rights: autonomy and spending choices of local self-government (rights sphere index) |
+| Deputy candidates per council seat, 2020 local elections | Hromada | Rights: democratic contestation (rights index 2021) |
+| DREAM reconstruction projects | Hromada | Rights: public investment planning (rights index 2025; engagement in Part I) |
+| Culture and arts, education and extracurricular spending per resident; schools per 10,000 residents | Hromada | Cultural (cultural sphere index) |
+| Fiscal capacity index (Part I) | Hromada | Economic and rights components combined |
+| Night-time light | Hromada | Functional outcome; economic activity and infrastructure shared across the grid; in no sphere index |
 | Trust in local administration, civic engagement, locality satisfaction (reSCORE) | Oblast | Rights |
 | Belonging, mental wellbeing (reSCORE) | Oblast | Cultural |
 | Economic security (reSCORE) | Oblast | Economic |
 | Community cohesion (reSCORE); displacement (IOM DTM) | Oblast | Across spheres |
 
-Two consequences follow. First, the fiscal capacity index combines economic and rights components. Part I reports it as one index; separating the two is planned. Second, the cultural sphere has no hromada-level measure in this paper. It is the largest gap. The next version adds hromada-level measures for it, starting with education and culture spending from the same budget source (`resilience/docs/threefolding_framework.md`).
+Version 0.4 of this paper read the existing measures through the frame and noted two gaps: the fiscal capacity index mixed economic and rights components, and the cultural sphere had no hromada-level measure. Part II closes both, within the limits of open data. It splits the budget between the spheres and measures cultural life by what hromadas spend on culture and education and by the school network (`resilience/docs/threefolding_framework.md`). Cultural life outside the budget — associations, religious communities, the media — remains unmeasured, partly by design (rule R7, section 17).
 
 ### 1.5 Structure
 
-- Sections 2 and 3 define the spatial units, coverage and data sources shared by both parts.
+- Sections 2 and 3 define the spatial units, coverage and data sources shared by all parts.
 - **Part I** (sections 4–8): exposure (4), the capacity, recovery and engagement indices (5), how capacity and exposure relate (6), recovery models (7) and monthly trajectories (8).
-- **Part II** (sections 9–10): trust, cohesion and displacement by oblast (9), and the Carpathian region, where both parts are read together (10).
-- **Synthesis:** how the two parts relate.
-- **Methods, limits and sources** (sections 11–13): limitations, the rules applied to protect sensitive information, and reproducibility, followed by references and annexes.
+- **Part II** (sections 9–13): measuring the three spheres and their balance (9), the spheres and exposure (10), the spheres and functional resilience (11), how the spheres relate (12), and "why there?" (13).
+- **Part III** (sections 14–15): trust, cohesion and displacement by oblast (14), and the Carpathian region, where all three parts are read together (15).
+- **Synthesis:** resilience in the three spheres.
+- **Methods, limits and sources** (sections 16–18): limitations, the rules applied to protect sensitive information, and reproducibility, followed by references and annexes.
 
 ### 1.6 Author's position
 
-The author lives in the Carpathian region of Ukraine and writes field dispatches from it (*Soil and Peace — Carpathian Dispatch 2026*). That proximity shaped the regional focus of section 10. All results are nevertheless computed nationally, with the same methods for every oblast.
+The author lives in the Carpathian region of Ukraine and writes field dispatches from it (*Soil and Peace — Carpathian Dispatch 2026*). That proximity shaped the regional focus of section 15. All results are nevertheless computed nationally, with the same methods for every oblast.
 
 ## 2. Spatial units and coverage
 
@@ -191,10 +224,11 @@ Coverage falls from the full frame to each index, for different reasons (Table 1
 | Fiscal capacity index | Hromada | {{n_capacity}} | [[PENDING: request 1]] |
 | Night-light recovery ratio | Hromada | {{n_recovery}} | [[PENDING: request 1]] |
 | Engagement (DREAM projects) | Hromada | {{n_engagement}} | [[PENDING: request 1]] |
+| Sphere indices (economic, rights, cultural; 2021 and 2025) | Hromada | {{n_spheres}} | Fewer than three indicators (budget not served) |
 | reSCORE 2024 indicators | Oblast | {{n_rescore_oblasts}} (22 oblasts and Kyiv city) | Donetsk, Luhansk and Crimea not surveyed |
 | IOM DTM displacement | Oblast | {{n_dtm_oblasts}} | Only oblast level served for Ukraine |
 
-The largest drop, from {{n_hromadas_nonoccupied}} to {{n_recovery}} hromadas for the recovery ratio, matters for interpretation: the excluded hromadas are not a random subset (section 11.5).
+The largest drop, from {{n_hromadas_nonoccupied}} to {{n_recovery}} hromadas for the recovery ratio, matters for interpretation: the excluded hromadas are not a random subset (section 16.5).
 
 ## 3. Data sources
 
@@ -207,10 +241,13 @@ All inputs are open, aggregated data. None contains personal data. Table 2 lists
 | VIINA 2.0 | Geocoded strike events | Point / settlement | {{period_viina}} | ODbL 1.0 |
 | Air-raid alert records (Klimenko) | Alert start and end times | Oblast / raion / hromada | {{period_alerts}} | MIT |
 | OCHA COD-AB (from SSPE Kartographia) | Administrative boundaries | ADM3 polygons | {{version_codab}} | CC BY 3.0 IGO |
-| openbudget.gov.ua | Local budget execution: revenue by code, expenditure by economic classification | Hromada budget | 2021 Q1 – 2026 Q2, quarterly | Open data, CMU resolution 835 |
+| openbudget.gov.ua | Local budget execution: revenue by code (incl. single tax, property and land payments); expenditure by economic classification and by programme with functional codes | Hromada budget | 2021 Q1 – 2026 Q2, quarterly | Open data, CMU resolution 835 |
 | NASA Black Marble VNP46A3 | Monthly night-time radiance | ~500 m raster | Jan 2020 – Aug 2026, monthly | Public domain |
 | JRC GHS-POP R2023A | Population, 2020 epoch | 100 m raster | 2020 | EC reuse policy (attribution) |
 | DREAM | Reconstruction projects | Project, geocoded to hromada | {{period_dream}} | [[PENDING: terms — request 23]] |
+| Central Election Commission | Local elections of 25 Oct 2020: deputy candidates and seats per council (counts only) | Council (hromada) | 2020 | Open data, reuse with attribution; data.gov.ua copy CC BY |
+| Ministry of Education and Science, ЄДЕБО register | General secondary schools in operation, placed in hromadas through the KATOTTG codifier (counts only) | School → hromada | 2026 | [[CHECK: licence statement of the register]] |
+| Ministry of Education and Science, form ЗНЗ-1 | Pupils and classes per school, pre-war (context only) | School → hromada | 2021 | CC BY 4.0 (data.gov.ua) |
 | reSCORE Ukraine 2021, 2024 (SeeD–UNDP) | Trust, cohesion, locality satisfaction, belonging | Oblast | 2021, 2024 | [[PENDING: terms — request 23]] |
 | IOM DTM (API v3) | Registered IDPs by host and origin oblast; IDPs present (survey) | Oblast | Feb 2022 – Aug 2026; Aug 2024 – Mar 2026 | IOM terms of use |
 | OpenStreetMap | Basemap tiles only (maps) | Raster tiles | {{version_osm}} | ODbL 1.0 |
@@ -218,15 +255,15 @@ All inputs are open, aggregated data. None contains personal data. Table 2 lists
 
 Three properties of the sources shape the analysis:
 
-- **Level.** Exposure, finance, night lights, population and projects are available at hromada level. Survey and displacement data are available only at oblast level, so they appear only in the oblast context (section 9) and never as hromada-level predictors.
+- **Level.** Exposure, finance, night lights, population and projects are available at hromada level. Survey and displacement data are available only at oblast level, so they appear only in the oblast context (section 14) and never as hromada-level predictors.
 - **Timing.** Budget and night-light series start before February 2022, which allows pre-war baselines. Survey data has a 2021 wave but only oblast estimates. Displacement data starts with the invasion.
-- **Reporting.** Strike events come from open-source reporting and are affected by reporting density (section 11.4). Alerts, budgets and night lights are recorded administratively or by instrument.
+- **Reporting.** Strike events come from open-source reporting and are affected by reporting density (section 16.4). Alerts, budgets and night lights are recorded administratively or by instrument.
 
 Attribution for every source is given in `ATTRIBUTION.md` of the data package and in the caption of every map.
 
 # Part I — Local capacity, recovery and exposure
 
-Part I works at the level of the hromada. It asks whether local fiscal capacity, the institutional side of resilience, is related to exposure, and whether it goes with keeping or recovering night-time light, the functional side. All models are associational.
+Part I works at the level of the hromada. It asks whether local fiscal capacity, the institutional side of resilience, is related to exposure, and whether it goes with keeping or recovering night-time light, the functional side. All models are associational. Part II splits the capacity index into its economic and rights parts and tests the spheres against the same light outcomes.
 
 ## 4. Exposure
 
@@ -283,7 +320,7 @@ Exposure has a clear east–west gradient, with concentrations along the front l
 **Figures:** Map 01 — risk index by hromada. Map 04 — cumulative alert hours. Map 10 — strike density (KDE). Map 11 — Gi* hot and cold spots.
 
 ::: {.withheld}
-Maps 01, 10 and 11 are withheld from publication under rules R1, R3 and R5 (section 12) and are not reproduced here; Map 04 follows.
+Maps 01, 10 and 11 are withheld from publication under rules R1, R3 and R5 (section 17) and are not reproduced here; Map 04 follows.
 :::
 
 ::: {.plate}
@@ -310,8 +347,8 @@ Components are combined as the mean of their percentile ranks, after winsorising
 
 Two points of interpretation:
 
-- **Pre-war version.** Because civilian income-tax growth partly reflects recovery itself, we also compute capacity from 2021 data only. That version is the primary predictor in section 7 (see section 11.11).
-- **Garrison hromadas.** {{n_garrison}} hromadas had military payroll above a quarter of their 2021 income tax. Their revenue reflects where units were paid rather than local economic activity. They stay in the index and are excluded only in a sensitivity check. The flag is not published at hromada level (section 12).
+- **Pre-war version.** Because civilian income-tax growth partly reflects recovery itself, we also compute capacity from 2021 data only. That version is the primary predictor in section 7 (see section 16.11).
+- **Garrison hromadas.** {{n_garrison}} hromadas had military payroll above a quarter of their 2021 income tax. Their revenue reflects where units were paid rather than local economic activity. They stay in the index and are excluded only in a sensitivity check. The flag is not published at hromada level (section 17).
 
 ### 5.2 Night-light recovery ratio
 
@@ -324,7 +361,7 @@ The two ratios are closely correlated (ρ = {{rho_recovery_windows}}) and are co
 
 **Baseline.** 2021 was about {{nl_2021_vs_2020}} brighter than 2020 at the median, probably from LED retrofits and possibly from COVID-dimmed activity in 2020. The annual ratio uses a 2021-only baseline and therefore understates recovery by roughly {{nl_baseline_shift}}; the ranking of hromadas is unaffected. The monthly index in section 8 uses the more conservative mean of 2020 and 2021.
 
-Using lit pixels rather than all pixels reduces the influence of newly lit or very bright isolated sources, such as industrial sites. It does not remove the effects of blackouts or reduced street lighting (section 11.1).
+Using lit pixels rather than all pixels reduces the influence of newly lit or very bright isolated sources, such as industrial sites. It does not remove the effects of blackouts or reduced street lighting (section 16.1).
 
 ### 5.3 Engagement
 
@@ -354,7 +391,7 @@ Fiscal capacity and exposure are nearly independent. Across the {{n_capacity}} h
 
 *Spearman ρ with 95 % confidence intervals (Fisher z, Bonett–Wright standard error); n = 1,288. Within-oblast values are partial correlations after removing oblast means of the ranks.*
 
-The small positive correlation is consistent with larger urban hromadas being both better resourced and more often targeted and reported (section 11.4). It is too weak to matter for the models that follow: capacity is not a stand-in for exposure, and both can enter the same model without collinearity problems. Pre-war capacity is different. It correlates with alert hours at ρ = {{rho_cap_alerts_2021}} and with strikes at ρ = {{rho_cap_strikes_2021}}. The alert association is regional: within oblasts it falls to ρ = {{rho_cap_alerts_2021_within}}. Hromadas in the east and centre had stronger own finances before 2022 and now spend the most hours under alert; the gap to the west has narrowed since (section 10.1). Within oblasts, pre-war capacity and strikes keep a small positive association (ρ = {{rho_cap_strikes_2021_within}}), the same urban pattern as above. Models with pre-war capacity therefore rely on oblast fixed effects to separate capacity from regional exposure.
+The small positive correlation is consistent with larger urban hromadas being both better resourced and more often targeted and reported (section 16.4). It is too weak to matter for the models that follow: capacity is not a stand-in for exposure, and both can enter the same model without collinearity problems. Pre-war capacity is different. It correlates with alert hours at ρ = {{rho_cap_alerts_2021}} and with strikes at ρ = {{rho_cap_strikes_2021}}. The alert association is regional: within oblasts it falls to ρ = {{rho_cap_alerts_2021_within}}. Hromadas in the east and centre had stronger own finances before 2022 and now spend the most hours under alert; the gap to the west has narrowed since (section 15.1). Within oblasts, pre-war capacity and strikes keep a small positive association (ρ = {{rho_cap_strikes_2021_within}}), the same urban pattern as above. Models with pre-war capacity therefore rely on oblast fixed effects to separate capacity from regional exposure.
 
 ### 6.2 Where low capacity meets high exposure
 
@@ -440,7 +477,7 @@ $$
 R_i = \beta_1 C_i + \beta_2 E_i + \beta_3 (C_i \times E_i) + \alpha_{o(i)} + \varepsilon_i
 $$
 
-where $R_i$ is recovery, $C_i$ fiscal capacity, $E_i$ exposure and $\alpha_{o(i)}$ an oblast fixed effect. Variables are standardised. Standard errors are heteroskedasticity-robust (HC1); they do not account for residual spatial dependence (section 11.10). [[PENDING: wild-cluster bootstrap and spatially robust errors — requests 4, 5]]
+where $R_i$ is recovery, $C_i$ fiscal capacity, $E_i$ exposure and $\alpha_{o(i)}$ an oblast fixed effect. Variables are standardised. Standard errors are heteroskedasticity-robust (HC1); they do not account for residual spatial dependence (section 16.10). [[PENDING: wild-cluster bootstrap and spatially robust errors — requests 4, 5]]
 
 - $\beta_3$ tests **buffering**. A positive value would mean that, for the same exposure, higher-capacity hromadas lose less.
 - $\beta_1$ is the **main effect of capacity**: the difference in recovery between hromadas of different capacity at average exposure.
@@ -481,7 +518,7 @@ We report this as the central result of the paper: **within oblasts, we find no 
 
 Within oblasts, capacity is positively associated with recovery at average exposure. The coefficient is +{{cap_main_fe_min}} to +{{cap_main_fe_max}} (t {{cap_main_fe_t}}) across models using the 2025 index.
 
-This estimate is inflated by construction. The 2025 index includes civilian income-tax growth from 2021 to 2025, which partly reflects the same recovery the outcome measures (section 11.11). Using pre-war (2021) capacity instead, the coefficient falls to +{{cap_main_fe_2021}} (t {{cap_main_fe_2021_t}}, HC1; Conley t {{cap_main_fe_2021_conley}}). Removing income-tax growth from the 2025 index, and keeping its other three components, gives +{{cap_main_fe_no_pitgrowth}} (t {{cap_main_fe_no_pitgrowth_t}}). The income-tax component thus accounts for about a sixth of the 2025 estimate. Most of the gap to the pre-war estimate lies elsewhere: own revenue, transfers and capital spending in 2025 also move with the wartime economy.
+This estimate is inflated by construction. The 2025 index includes civilian income-tax growth from 2021 to 2025, which partly reflects the same recovery the outcome measures (section 16.11). Using pre-war (2021) capacity instead, the coefficient falls to +{{cap_main_fe_2021}} (t {{cap_main_fe_2021_t}}, HC1; Conley t {{cap_main_fe_2021_conley}}). Removing income-tax growth from the 2025 index, and keeping its other three components, gives +{{cap_main_fe_no_pitgrowth}} (t {{cap_main_fe_no_pitgrowth_t}}). The income-tax component thus accounts for about a sixth of the 2025 estimate. Most of the gap to the pre-war estimate lies elsewhere: own revenue, transfers and capital spending in 2025 also move with the wartime economy.
 
 We treat the pre-war estimate as the primary result. It is modest: with only 24 oblasts as clusters, the wild-cluster bootstrap gives p = {{cap_main_fe_2021_p}}, significant at the 10 % level but not at 5 %. The outage-loss result in section 8.5 is the stronger evidence. It says that hromadas with stronger finances before the invasion show modestly better night-light recovery than others in the same oblast. It does not say why. Pre-war capacity is correlated with size, urbanisation and economic structure, any of which could drive the association. A clearer version of this association appears in the summer-2024 outage loss (section 8.5).
 
@@ -572,7 +609,7 @@ For {{nl_worstq_2022_share}} of hromadas the worst quarter fell in 2022. Measure
 | Summer-2024 light as share of H2 2023 level | {{carp_outage_retained}} | {{rest_outage_retained}} |
 | Change since H2 2023: declined / stable / improved | {{nl_change_carp}} | {{nl_change_nat}} (national) |
 
-Carpathian hromadas were brighter throughout, and lost a smaller share of their light in the 2024 outages. They were not spared: in July 2024 they too fell to well below their usual level. Section 10 describes differences between the four oblasts.
+Carpathian hromadas were brighter throughout, and lost a smaller share of their light in the 2024 outages. They were not spared: in July 2024 they too fell to well below their usual level. Section 15 describes differences between the four oblasts.
 
 ![Carpathian oblasts: monthly night-light index, oblast medians (Figure 1 of the Carpathian brief).](resilience/docs/fig1_carpathian_light.png){width=100%}
 
@@ -641,26 +678,402 @@ The quarterly budget panel runs from 2021 Q1 to {{budget_panel_end}} ({{budget_p
 
 ### 8.7 Publication rule for time series
 
-Light levels in the last 12 months describe current power conditions. Under the rules in section 12:
+Light levels in the last 12 months describe current power conditions. Under the rules in section 17:
 - Hromada-level monthly values are released only for months at least 6 months before release.
 - The most recent 12 months are shown at oblast level only.
 - Hromadas within 30 km of the front line or border are aggregated to raion level.
 
 Map 19 and the right panel of Map 20 use "recent" windows. For publication, their windows end at least 6 months before release, or they are shown at raion level. [[PENDING: re-windowed or aggregated versions — request 33]] Historical windows (2022–2024), including the outage-loss panel of Map 20, carry lower risk and are published at hromada level.
 
-# Part II — Trust, cohesion and reception
+# Part II — The three spheres at hromada level
 
-Part II turns to the relational side of resilience: trust in local administration, community cohesion, belonging, and the movement of displaced people and taxpayers. These data are published only by oblast, so this part describes and compares; it does not model. Section 10 reads both parts together for the Carpathian oblasts.
+Part II measures the three spheres of social threefolding (section 1.4) for each non-occupied hromada, before the war (2021) and during it (2025). It asks where each sphere is strong, how the spheres relate to exposure, to the functional resilience measured in Part I and to each other, and why the patterns fall where they do. Everything here is associational. Night-time light is not part of any sphere index: it is the outcome against which the spheres are tested, and using it as an input would make the test circular.
 
-## 9. Relational resilience by oblast: trust, cohesion and displacement
+## 9. Measuring the three spheres
+
+### 9.1 Indicators
+
+Each sphere is measured with at least three hromada-level indicators in each year; otherwise the index is not computed (Table S1).
+
+**Table S1. Sphere indicators**
+
+| Sphere | Indicator | Direction | 2021 | 2025 | Source |
+|---|---|---|---|---|---|
+| Economic | Civilian income tax per resident | + | ✓ | ✓ | openbudget.gov.ua |
+| Economic | Single tax per resident (sole proprietors, small farms) | + | ✓ | ✓ | openbudget.gov.ua |
+| Economic | Property and land payments per resident | + | ✓ | ✓ | openbudget.gov.ua |
+| Economic | Civilian income-tax growth 2021–2025, relative to the national median | + | — | ✓ | openbudget.gov.ua |
+| Rights | Transfer dependency (transfers as share of revenue) | − | ✓ | ✓ | openbudget.gov.ua |
+| Rights | Capital-expenditure share | + | ✓ | ✓ (2023–25) | openbudget.gov.ua |
+| Rights | Social protection spending per resident | + | ✓ | ✓ | openbudget.gov.ua (functional code 10) |
+| Rights | Deputy candidates per council seat, local elections 2020, relative to the median of the same electoral system | + | ✓ | — | Central Election Commission |
+| Rights | DREAM reconstruction projects per 10,000 residents | + | — | ✓ | DREAM |
+| Cultural | Culture and arts spending per resident | + | ✓ | ✓ | openbudget.gov.ua (0820–0829) |
+| Cultural | Education spending per resident | + | ✓ | ✓ | openbudget.gov.ua (09) |
+| Cultural | Extracurricular education spending per resident (art and music schools, clubs) | + | ✓ | ✓ | openbudget.gov.ua (0960–0969) |
+| Cultural | General secondary schools in operation per 10,000 residents | + | — | ✓ | Ministry of Education and Science, ЄДЕБО register |
+
+Per-resident values use the 2020 population (GHS-POP). Spending is actual civilian spending by functional code; military finance is excluded throughout (rule R4).
+
+Four design choices shape the indices:
+
+- **Budget lines are split between spheres.** The tax base (income tax, single tax, property and land payments) is economic life. How far a hromada governs its own budget (transfer dependency), invests (capital share) and provides for its residents (social protection) is rights life, together with electoral contestation. What it spends on culture, education and extracurricular education is cultural life, measured here by its budget.
+- **Per resident, not shares.** Shares of one budget sum to one: a high education share lowers every other share. As shares, the cultural and rights spheres were built to oppose each other. Per-resident amounts avoid that, but they rise with the size of the budget, so the economic sphere partly supplies the means of the cultural one. Section 12 examines this.
+- **Property and land payments, not total own revenue.** Income tax is the largest part of own revenue, so total own revenue would count it twice.
+- **Electoral contestation, not turnout.** The Central Election Commission publishes no structured turnout for the 2020 local elections, and the protocols cannot be linked to the open-data council codes. Candidates per seat depend on the electoral system (party lists in hromadas above 10,000 voters, multi-member districts below), so each council is compared with the median of its own system. Only counts are kept; no candidate is named (rule R6).
+
+The oblast-level survey indicators of Part III (trust, cohesion, belonging) are read beside the sphere indices, never inside them. Schools, libraries, places of worship and media offices are never mapped as points, and no hromada-level table of religious affiliation, ethnicity or language is produced (rule R7, section 17).
+
+### 9.2 Construction and robustness
+
+Each indicator is transformed where it is a per-resident amount (logarithm), oriented so that higher means more, winsorised at the 2nd and 98th percentiles and turned into a percentile rank among non-occupied hromadas. A sphere index is the mean of its ranks, as for the capacity index (section 5.1). All six indices (three spheres, two years) are available for {{n_spheres}} hromadas.
+
+- **Within spheres,** the three tax bases agree well, while income-tax growth stands apart; the rights and cultural indicators agree loosely. Rank correlations between indicators range from {{sph_within_econ_min}} to {{sph_within_econ_max}} (economic; the lowest involve income-tax growth), {{sph_within_rights_min}} to {{sph_within_rights_max}} (rights) and {{sph_within_cult_min}} to {{sph_within_cult_max}} (cultural). In the cultural sphere, dense village school networks and town art schools pull in different directions. The rights and cultural indices are therefore composites of distinct things, not measures of one latent trait.
+- **Leave-one-out.** Dropping any one indicator leaves each index nearly unchanged (rank correlation at least {{sph_loo_econ}}, {{sph_loo_rights}} and {{sph_loo_cult}}).
+- **Stability.** Rank correlations between 2021 and 2025 are {{sph_stab_econ}} (economic), {{sph_stab_rights}} (rights) and {{sph_stab_cult}} (cultural).
+- **Budget sub-indices.** The economic and rights parts of the fiscal capacity index of Part I correlate at {{sph_rho_budget_sub}} (2025); they are related but not the same.
+
+**Change and like-for-like.** The 2025 indices contain indicators the 2021 indices lack: civilian income-tax growth (economic), DREAM projects instead of candidates per seat (rights) and schools (cultural). A change of index from 2021 to 2025 is therefore partly a change of measure. We also report a like-for-like index, the mean rank of the indicators measured in both years. Its change correlates with the change of the full index at {{ll_corr_econ}} (economic), {{ll_corr_rights}} (rights) and {{ll_corr_cult}} (cultural). Where the two diverge, as in the Carpathian oblasts (section 13), the text says which one it uses. All changes are changes of relative position among hromadas, not of absolute levels.
+
+### 9.3 Where each sphere is strong
+
+<!-- begin table: figures/tableS2_spheres_oblast.md (resilience/38_sphere_tables.py) -->
+**Table S2. Sphere indices by oblast, medians (0–100)**
+
+| Oblast | Hromadas | Economic 2021 | Rights 2021 | Cultural 2021 | Economic 2025 | Rights 2025 | Cultural 2025 |
+|---|---|---|---|---|---|---|---|
+| Cherkasy | 66 | 69 | 54 | 47 | 61 | 53 | 51 |
+| Chernihiv | 57 | 58 | 61 | 54 | 55 | 66 | 55 |
+| Chernivtsi | 52 | 13 | 27 | 38 | 29 | 26 | 42 |
+| Dnipropetrovsk | 82 | 63 | 52 | 57 | 63 | 62 | 53 |
+| Donetsk | 11 | 56 | 65 | 54 | 16 | 48 | 20 |
+| Ivano-Frankivsk | 62 | 16 | 32 | 43 | 31 | 28 | 45 |
+| Kharkiv | 51 | 57 | 62 | 51 | 40 | 65 | 38 |
+| Kherson | 16 | 61 | 44 | 50 | 15 | 61 | 42 |
+| Khmelnytskyi | 60 | 45 | 46 | 50 | 48 | 42 | 47 |
+| Kirovohrad | 49 | 73 | 57 | 63 | 71 | 60 | 66 |
+| Kyiv | 69 | 73 | 72 | 60 | 72 | 76 | 59 |
+| Kyiv City | 1 | 95 | 98 | 81 | 80 | 79 | 63 |
+| Lviv | 73 | 40 | 52 | 49 | 53 | 50 | 53 |
+| Mykolaiv | 52 | 59 | 44 | 48 | 58 | 60 | 51 |
+| Odesa | 91 | 55 | 49 | 50 | 59 | 45 | 49 |
+| Poltava | 60 | 74 | 71 | 60 | 61 | 61 | 56 |
+| Rivne | 64 | 32 | 33 | 48 | 37 | 28 | 53 |
+| Sumy | 51 | 62 | 57 | 56 | 46 | 57 | 39 |
+| Ternopil | 55 | 28 | 41 | 42 | 38 | 37 | 42 |
+| Vinnytsia | 63 | 45 | 47 | 43 | 51 | 43 | 44 |
+| Volyn | 54 | 34 | 35 | 55 | 49 | 36 | 58 |
+| Zakarpattia | 64 | 15 | 33 | 41 | 32 | 33 | 43 |
+| Zaporizhzhia | 19 | 54 | 51 | 51 | 35 | 53 | 42 |
+| Zhytomyr | 66 | 46 | 52 | 46 | 46 | 48 | 47 |
+| Carpathian (4 oblasts) | 251 | 20 | 38 | 43 | 37 | 35 | 46 |
+| Ukraine (non-occupied) | 1,288 | 50 | 50 | 50 | 50 | 50 | 49 |
+
+Mean percentile rank of the sphere's indicators among non-occupied hromadas (0–100; national median about 50). Zone hromadas are included in the oblast medians. Indicators: Table S1.
+<!-- end table: figures/tableS2_spheres_oblast.md -->
+
+- **Economic life** was strongest before the war in the centre and east: the median hromada ranked {{sph_med_econ_2021_32}} in Kyiv oblast, {{sph_med_econ_2021_53}} in Poltava and {{sph_med_econ_2021_35}} in Kirovohrad. The west was weakest: {{sph_med_econ_2021_21}} in Zakarpattia, {{sph_med_econ_2021_26}} in Ivano-Frankivsk and {{sph_med_econ_2021_73}} in Chernivtsi, with Lviv at {{sph_med_econ_2021_46}}. By 2025 the zone oblasts had fallen (Donetsk {{sph_med_econ_2021_14}} → {{sph_med_econ_2025_14}}, Kherson {{sph_med_econ_2021_65}} → {{sph_med_econ_2025_65}}, Kharkiv {{sph_med_econ_2021_63}} → {{sph_med_econ_2025_63}}) and the west had risen, largely through the growth indicator (section 13).
+- **Rights life** is low in the west in both years (Chernivtsi {{sph_med_rights_2021_73}}, Ivano-Frankivsk {{sph_med_rights_2021_26}}, Zakarpattia {{sph_med_rights_2021_21}}, Rivne {{sph_med_rights_2021_56}}) and highest around Kyiv ({{sph_med_rights_2021_32}}) and in Poltava ({{sph_med_rights_2021_53}}). In 2025 it stays high in Kharkiv ({{sph_med_rights_2025_63}}) and Kherson ({{sph_med_rights_2025_65}}), where capital programmes and reconstruction projects hold it up (section 10.3).
+- **Cultural life** varies less between oblasts. It is highest in a band through the centre (Kirovohrad {{sph_med_cult_2021_35}}) and lowest in the far west in 2021. By 2025 it had fallen in the oblasts along the front and the Russian border (Donetsk {{sph_med_cult_2021_14}} → {{sph_med_cult_2025_14}}, Sumy {{sph_med_cult_2021_59}} → {{sph_med_cult_2025_59}}, Kharkiv {{sph_med_cult_2021_63}} → {{sph_med_cult_2025_63}}) and risen slightly in the north-west (Rivne {{sph_med_cult_2021_56}} → {{sph_med_cult_2025_56}}).
+
+The economic and rights spheres are regional; the cultural sphere is local. Global Moran's I is {{lisa_nat_econ_2021_I}} for economic life and {{lisa_nat_rights_2021_I}} for rights life in 2021, but {{lisa_nat_cult_2021_I}} for cultural life (Table S8): what a hromada spends on culture and education per resident depends more on the hromada than on its region.
+
+**Figures:** Maps 21–23 — the three sphere indices, 2021 and 2025, national quintiles. In the 30 km zone, maps show population-weighted raion values (rule R3).
+
+::: {.plate}
+![Map 21 — economic sphere, 2021 and 2025](viina/qgis/maps/preview/21_sphere_economic.png)
+:::
+
+
+::: {.plate}
+![Map 22 — rights sphere, 2021 and 2025](viina/qgis/maps/preview/22_sphere_rights.png)
+:::
+
+
+::: {.plate}
+![Map 23 — cultural sphere, 2021 and 2025](viina/qgis/maps/preview/23_sphere_cultural.png)
+:::
+
+
+### 9.4 The threefold balance
+
+The balance map (Map 24) shows, for each hromada, how its three sphere indices weigh against each other rather than how high they are. Each index is divided by the sum of the three; the three weights form a composition. Following the centred ternary balance scheme of Schöley (2021), colours are centred on the national average composition ({{bal_centre_2021}} for economic : rights : cultural in 2021, {{bal_centre_2025}} in 2025). Hue shows which sphere weighs more than on national average; colour strength shows how far the hromada departs from that average. One scale is used for both years.
+
+For the analysis, the composition is expressed in isometric log-ratio coordinates (Egozcue et al. 2003), which give three measures:
+- **imbalance:** the distance from the national centre (the strength of colour on Map 24);
+- **lean to cultural:** the cultural weight against the other two;
+- **lean to economic (vs rights):** the economic weight against the rights weight.
+
+The median imbalance fell from {{bal_imb_med_2021}} in 2021 to {{bal_imb_med_2025}} in 2025: hromada profiles became more balanced overall, but not everywhere (section 10.3). In 2021 the Carpathian arc leaned to cultural and to rights over economic life: in the national cluster analysis, {{lisa_nat_lean_cult_2021_21_HH}}, {{lisa_nat_lean_cult_2021_26_HH}}, {{lisa_nat_lean_cult_2021_46_HH}} and {{lisa_nat_lean_cult_2021_73_HH}} hromadas of Zakarpattia, Ivano-Frankivsk, Lviv and Chernivtsi lie in high–high clusters of the cultural lean. By 2025 its clusters of imbalance had largely gone (from {{lisa_nat_imbalance_2021_21_HH}}, {{lisa_nat_imbalance_2021_26_HH}} and {{lisa_nat_imbalance_2021_73_HH}} to {{lisa_nat_imbalance_2025_21_HH}}, {{lisa_nat_imbalance_2025_26_HH}} and {{lisa_nat_imbalance_2025_73_HH}} in Zakarpattia, Ivano-Frankivsk and Chernivtsi), and the arc leaned to cultural and, slightly, to economic life.
+
+::: {.plate}
+![Map 24 — threefold balance, 2021 and 2025](viina/qgis/maps/preview/24_threefold_balance.png)
+:::
+
+
+## 10. The spheres and war exposure
+
+The models follow Part I: standardised variables, oblast fixed effects, log population as control. p-values come from a restricted wild-cluster bootstrap by oblast (24 clusters, Webb weights, 9,999 draws; Cameron et al. 2008, Webb 2023); every result called robust below also holds with Conley spatial-HAC errors at 50 and 100 km (Conley 1999). Exposure is the logarithm of one plus the strikes recorded since 24 February 2022; alert hours are a check.
+
+### 10.1 Where strikes fell
+
+Before the war, hromadas that were later struck more had stronger spheres, within oblasts as well as between them (Table S3, first column): economic {{a1_econ_b}} (p {{a1_econ_p}}), rights {{a1_rights_b}} (p {{a1_rights_p}}), cultural {{a1_cult_b}} (p {{a1_cult_p}}). Strikes come after 2021, so this row describes where strikes fell, not what they did. Larger and better-equipped places are both more often targeted and more often reported (section 16.4); log population does not remove the pattern, which also reflects the concentration of industry and infrastructure.
+
+### 10.2 From 2021 to 2025: the fall is concentrated in the zone
+
+<!-- begin table: figures/tableS3_spheres_exposure.md (resilience/38_sphere_tables.py) -->
+**Table S3. The spheres and war exposure**
+
+| Outcome | 2021 level (pre-war) | 2025 given 2021 [95 % interval] | 2025 given 2021, without zone | 2025 given 2021, alert hours |
+|---|---|---|---|---|
+| Economic sphere | +0.24 (< 0.001) | −0.15 (0.013) [−0.27 to −0.03] | 0.00 (0.974) | −0.27 (0.087) |
+| Rights sphere | +0.12 (0.009) | +0.01 (0.859) [−0.08 to +0.10] | +0.08 (0.013) | −0.11 (0.284) |
+| Cultural sphere | +0.13 (< 0.001) | −0.11 (0.044) [−0.22 to 0.00] | +0.02 (0.147) | −0.27 (0.079) |
+| Imbalance (distance from the national centre) | — | +0.30 (< 0.001) | +0.13 (< 0.001) | +0.04 (0.310) (without zone) |
+| Lean to cultural | — | 0.00 (0.956) | −0.03 (0.208) | 0.00 (0.995) (without zone) |
+| Lean to economic (vs rights) | — | −0.20 (0.028) | +0.01 (0.787) | −0.07 (0.135) (without zone) |
+
+Standardised coefficient of exposure (log strikes since 24 Feb 2022; last column: alert hours, 12 months), with p from a restricted wild-cluster bootstrap by oblast (24 clusters, 9,999 draws) in brackets and the 95 % interval from inverting that test. All models with oblast fixed effects and log population 2020; "given 2021" adds the 2021 value of the same outcome. Zone: the 196 hromadas within 30 km of the front line or the Russian or Belarusian border. The 2021 row describes where strikes later fell; strikes cannot affect the 2021 values.
+<!-- end table: figures/tableS3_spheres_exposure.md -->
+
+Given their own 2021 values, more-exposed hromadas fell back in economic life ({{a3_econ_b}}, 95 % interval {{a3_econ_ci}}) and in cultural life ({{a3_cult_b}}, {{a3_cult_ci}}) relative to other hromadas of the same oblast. Rights life did not change with exposure ({{a3_rights_b}}).
+
+**Both falls disappear without the {{n_zone}} hromadas within 30 km of the front line or the Russian or Belarusian border** (economic {{a3nz_econ_b}}, p {{a3nz_econ_p}}; cultural {{a3nz_cult_b}}, p {{a3nz_cult_p}}). Leaving out only the three frontline oblasts weakens but does not remove them (economic {{a3nf_econ_b}}, p {{a3nf_econ_p}}): the fall is carried by zone hromadas in the oblasts along the Russian border as well. The relative loss is a matter of the zone, not a general cost of being struck. Alert hours point the same way, but they are mostly an oblast-level signal and the fixed effects absorb them (p {{a3alert_econ_p}} for economic life).
+
+Outside the zone, more-exposed hromadas gained in rights life ({{a3nz_rights_b}}, p {{a3nz_rights_p}}).
+
+<!-- begin table: figures/tableS4_zone_gap.md (resilience/38_sphere_tables.py) -->
+**Table S4. The zone: change 2021–2025 by indicator**
+
+| Indicator | Median rank change, zone | Median rank change, rest of the same oblasts | Zone gap, 2025 given 2021 (p) [95 % interval] | Exposure outside the zone (p) |
+|---|---|---|---|---|
+| **Economic sphere, like-for-like** | −0.08 | +0.01 | −0.38 (0.009) [−0.62 to −0.14] | 0.00 (0.840) |
+| Civilian income tax per resident | −0.10 | +0.01 | −0.47 (0.004) | +0.02 (0.158) |
+| Single tax per resident | −0.04 | +0.01 | −0.19 (0.124) | +0.02 (0.207) |
+| Property and land payments per resident | −0.09 | 0.00 | −0.40 (0.004) | 0.00 (0.805) |
+| **Rights sphere, like-for-like** | −0.03 | +0.02 | −0.26 (0.007) [−0.39 to −0.14] | +0.07 (0.003) |
+| Transfer dependency (−) | −0.15 | +0.01 | −0.44 (0.005) | 0.00 (0.824) |
+| Capital-expenditure share | +0.10 | +0.02 | +0.05 (0.672) | +0.09 (0.012) |
+| Social protection spending per resident | −0.05 | 0.00 | −0.21 (0.009) | +0.12 (< 0.001) |
+| **Cultural sphere, like-for-like** | −0.07 | +0.02 | −0.55 (0.001) [−0.83 to −0.24] | +0.01 (0.460) |
+| Culture and arts spending per resident | −0.07 | +0.02 | −0.42 (0.005) | −0.02 (0.218) |
+| Education spending per resident | −0.07 | +0.02 | −0.44 (< 0.001) | +0.05 (0.001) |
+| Extracurricular education spending per resident | −0.01 | 0.00 | −0.22 (0.004) | 0.00 (0.824) |
+| Civilian income-tax growth 2021–25 (2025 only) | — | — | −0.81 (< 0.001) (2025 level) | — |
+| DREAM projects per 10,000 (2025 only) | — | — | −0.03 (0.800) (2025 level) | — |
+| Schools per 10,000 (2025 only) | — | — | −0.17 (0.123) (2025 level) | — |
+
+Rank change: percentile rank 2025 minus 2021 (0–1 scale) among non-occupied hromadas. Zone gap: difference between zone hromadas and other hromadas of the same oblast in the 2025 rank, given the 2021 rank and log population, in standard deviations. Exposure outside the zone: coefficient of log strikes in the same model without zone hromadas. Like-for-like: mean rank of the indicators measured in both years. Per-resident values use the 2020 population.
+<!-- end table: figures/tableS4_zone_gap.md -->
+
+Table S4 compares zone hromadas with the rest of their own oblast, indicator by indicator, on the like-for-like measure (section 9.2):
+
+- **Economic life** in the zone fell {{q1zone_ll_econ_b}} standard deviations behind the rest of the oblast (interval {{q1zone_ll_econ_ci}}). Civilian income tax ({{q1zone_pdfo_civ_pc_b}}) and property and land payments ({{q1zone_property_tax_pc_b}}) carry the fall; the single tax of small entrepreneurs fell less ({{q1zone_single_tax_pc_b}}, p {{q1zone_single_tax_pc_p}}). About half of the fall of the full economic index in the zone (median change {{q1m_d_econ_zone}}, like-for-like {{q1m_d_ll_econ_zone}}) comes from the growth indicator: the median zone hromada ranks {{q1r25_zone_pdfo_civ_growth_rel_2125}} on income-tax growth, against {{q1r25_rest_pdfo_civ_growth_rel_2125}} in the oblasts without zone hromadas.
+- **Rights life** fell too ({{q1zone_ll_rights_b}}, {{q1zone_ll_rights_ci}}), through rising transfer dependency ({{q1zone_transfer_dep_civ_b}} on the autonomy scale) and lower social spending per resident ({{q1zone_social_pc_b}}). Capital share and DREAM projects are no different from the rest of the oblast.
+- **Cultural life** fell most ({{q1zone_ll_cult_b}}, {{q1zone_ll_cult_ci}}): culture and arts ({{q1zone_culture_arts_pc_b}}), education ({{q1zone_education_pc_b}}) and extracurricular education ({{q1zone_extracurricular_pc_b}}) all fell.
+
+Per-resident values use the 2020 population. In the zone, where many people have left, the fall is also a fall in the number of people still paying taxes and using services; the data cannot separate the two.
+
+Outside the zone, exposure goes with no fall in any economic or cultural indicator. Instead, more-exposed hromadas raised their capital-expenditure share ({{q1expnz_capex_share_b}}, p {{q1expnz_capex_share_p}}), social protection spending ({{q1expnz_social_pc_b}}, p {{q1expnz_social_pc_p}}) and education spending per resident ({{q1expnz_education_pc_b}}, p {{q1expnz_education_pc_p}}). The rights gain of struck hromadas outside the zone is spending, not transfers.
+
+### 10.3 The balance
+
+Exposure goes with a more one-sided profile: given 2021, imbalance rises with exposure ({{a3_imbalance_b}}, p {{a3_imbalance_p}}). This also holds without the zone ({{q2nz_imbalance_b}}, p {{q2nz_imbalance_p}}) and inside it ({{q2in_imbalance_b}}, p {{q2in_imbalance_p}}; only 12 oblast clusters). The median imbalance fell from 2021 to 2025 everywhere except the zone:
+
+| | 2021 | 2025 |
+|---|---|---|
+| Zone hromadas | {{q2_imbalance_2021_zone}} | {{q2_imbalance_2025_zone}} |
+| Rest of the same oblasts | {{q2_imbalance_2021_same}} | {{q2_imbalance_2025_same}} |
+| Other oblasts | {{q2_imbalance_2021_other}} | {{q2_imbalance_2025_other}} |
+
+*Median distance from the national centre (isometric log-ratio units).*
+
+The direction of the shift is a matter of the zone. Given 2021, zone hromadas lean {{q2zone_lean_econ_rights_b}} standard deviations further to rights over economic life than the rest of their oblast (interval {{q2zone_lean_econ_rights_ci}}), and inside the zone the lean grows with exposure ({{q2in_lean_econ_rights_b}}, p {{q2in_lean_econ_rights_p}}). Without the zone there is none ({{q2nz_lean_econ_rights_b}}). The lean to cultural life does not change with exposure anywhere. The rights-leaning zone raions of Map 24 are therefore not places where rights life grew: like-for-like it fell (section 10.2). They are places where economic life collapsed while capital programmes (median capital-share rank {{q1m_capex_zone}} in the zone) and reconstruction projects held the rights index up.
+
+## 11. The spheres and functional resilience
+
+This section relates the pre-war (2021) spheres to the light outcomes of Part I. The 2025 spheres are contemporaneous with the outcomes and are not used here. All three spheres enter together, with exposure, the light controls of Part I (log population, log lit pixels, log 2021 radiance) and oblast fixed effects.
+
+<!-- begin table: figures/tableS5_functional.md (resilience/38_sphere_tables.py) -->
+**Table S5. Pre-war spheres (2021) and functional resilience**
+
+| Outcome | Economic 2021 | Rights 2021 | Cultural 2021 |
+|---|---|---|---|
+| Recovery index (2024 / 2021) | +0.02 (0.698) [−0.07 to +0.11] | +0.09 (0.048) [0.00 to +0.18] | −0.06 (0.052) [−0.12 to 0.00] |
+| Summer-2024 light vs H2 2023 | +0.06 (0.521) [−0.09 to +0.24] | +0.20 (0.002) [+0.08 to +0.32] | −0.11 (0.039) [−0.22 to −0.01] |
+| Recent light level | +0.08 (0.064) [0.00 to +0.18] | +0.08 (0.028) [+0.01 to +0.14] | −0.08 (< 0.001) [−0.12 to −0.05] |
+
+One model per outcome with all three 2021 sphere indices, log strikes, log population 2020, log lit pixels, log 2021 radiance and oblast fixed effects. Standardised coefficients, wild-cluster p in brackets, 95 % interval. Outcomes as in Part I (sections 5.2, 8.4); higher = more light kept.
+<!-- end table: figures/tableS5_functional.md -->
+
+**Outage loss.** Hromadas with a stronger pre-war rights sphere lost less light in the summer-2024 outages ({{b1_s24_rights_b}}, interval {{b1_s24_rights_ci}}; on hromadas with reliable light data {{b1r_s24_rights_b}}, p {{b1r_s24_rights_p}}). The economic sphere adds nothing once rights and cultural life are in the model ({{b1_s24_econ_b}}, p {{b1_s24_econ_p}}). This is the clearest link between a sphere and functional resilience in the study.
+
+<!-- begin table: figures/tableS6_rights_outage.md (resilience/38_sphere_tables.py) -->
+**Table S6. Which rights indicators go with the summer-2024 light loss**
+
+| Rights indicator, 2021 rank | All (p) [95 % interval] | Reliable light data | Without zone |
+|---|---|---|---|
+| Transfer dependency (−) | +0.21 (< 0.001) [+0.11 to +0.30] | +0.15 (0.016) | +0.29 (< 0.001) |
+| Capital-expenditure share | +0.08 (0.011) [+0.02 to +0.14] | +0.06 (0.097) | +0.09 (0.019) |
+| Social spending per resident | +0.05 (0.303) [−0.05 to +0.13] | +0.04 (0.464) | +0.05 (0.271) |
+| Candidates per seat 2020 | +0.04 (0.424) [−0.06 to +0.15] | +0.05 (0.465) | +0.03 (0.534) |
+
+Outcome: log summer-2024 light relative to July–December 2023 (higher = smaller loss). The four rights indicators enter together, with economic and cultural 2021, log strikes, the light controls and oblast fixed effects. Reliable light: at least 30 lit pixels and pre-war noise at most 0.35.
+<!-- end table: figures/tableS6_rights_outage.md -->
+
+One indicator carries it (Table S6): **lower transfer dependency before the war goes with a smaller outage loss** ({{q3_transfer_dep_civ_b}}, interval {{q3_transfer_dep_civ_ci}}). It holds on reliable light data ({{q3r_transfer_dep_civ_b}}, p {{q3r_transfer_dep_civ_p}}) and more strongly without the zone ({{q3nz_transfer_dep_civ_b}}). Capital share adds a little ({{q3_capex_share_b}}, p {{q3_capex_share_p}}). Social spending and electoral contestation add nothing. In threefold terms, the pre-war capacity result of Part I (section 8.5) is a rights-sphere result: it belongs to the fiscal autonomy of local self-government, with the tax base held constant. Section 13 sets out what could explain it.
+
+**Recovery and recent level.** For the annual recovery index the associations are weak (rights {{b1_rec_rights_b}}, p {{b1_rec_rights_p}}; cultural {{b1_rec_cult_b}}, p {{b1_rec_cult_p}}). For the recent light level, a stronger pre-war cultural sphere goes with less light ({{b1_recent_cult_b}}, interval {{b1_recent_cult_ci}}; reliable data {{b1r_recent_cult_b}}, p {{b1r_recent_cult_p}}). Section 13 finds no explanation for this and treats it as fragile.
+
+**No buffering.** Adding a sphere × exposure interaction, one sphere at a time, gives no reliable evidence that any sphere softens the association between exposure and light. One of nine interactions is nominally significant (cultural × exposure on the recent level, {{b2int_recent_cult_b}}, p {{b2int_recent_cult_p}}), which is about what nine tests produce by chance. This matches Part I (section 7.3).
+
+## 12. How the spheres relate
+
+### 12.1 Together or apart
+
+<!-- begin table: figures/tableS7_between.md (resilience/38_sphere_tables.py) -->
+**Table S7. The spheres against each other**
+
+| Pair | 2021: ρ \| within | 2021: b (p) [95 %] | 2025: ρ \| within | 2025: b (p) [95 %] | Change: ρ \| within | Change: b (p) [95 %] |
+|---|---|---|---|---|---|---|
+| Economic–rights | 0.55 \| 0.36 | +0.52 (< 0.001) [+0.43 to +0.61] | 0.58 \| 0.53 | +0.62 (< 0.001) [+0.54 to +0.70] | 0.09 \| 0.17 | +0.18 (< 0.001) [+0.11 to +0.24] |
+| Economic–cultural | 0.58 \| 0.58 | +0.42 (< 0.001) [+0.38 to +0.47] | 0.63 \| 0.61 | +0.53 (< 0.001) [+0.48 to +0.59] | 0.38 \| 0.29 | +0.38 (< 0.001) [+0.29 to +0.47] |
+| Rights–cultural | 0.22 \| 0.13 | +0.22 (< 0.001) [+0.19 to +0.25] | 0.27 \| 0.25 | +0.36 (< 0.001) [+0.31 to +0.40] | 0.14 \| 0.18 | +0.19 (< 0.001) [+0.14 to +0.25] |
+
+ρ: Spearman rank correlation, plain and within oblasts (ranks demeaned by oblast). b: standardised coefficient of the second sphere in a model of the first with log population and oblast fixed effects, wild-cluster p and 95 % interval. Change: 2025 minus 2021 index (change of relative position).
+<!-- end table: figures/tableS7_between.md -->
+
+- **Economic and cultural life go together,** in every oblast (rank correlation {{c_econ_cult_2021_rho}} in 2021, {{c_econ_cult_2021_rhow}} within oblasts), and their changes from 2021 to 2025 go together too ({{c_econ_cult_change_b}}, interval {{c_econ_cult_change_ci}}). Part of this is budget arithmetic: own revenue pays for culture and part of education. It is the sense in which the economic sphere supplies the means of the cultural one (section 9.1).
+- **Economic and rights life** were related in 2021 mainly between oblasts ({{c_econ_rights_2021_rho}} overall, {{c_econ_rights_2021_rhow}} within oblasts). By 2025 the relation holds within oblasts as well ({{c_econ_rights_2025_rhow}}): the tax base and budget autonomy have come closer inside each oblast.
+- **Rights and cultural life** are only weakly related ({{c_rights_cult_2021_rho}} in 2021, {{c_rights_cult_2025_rho}} in 2025).
+
+No pair moves in opposite directions. There is no sign that a weak sphere is compensated by a strong one; the picture is of two coupled spheres and one apart. Residual spatial dependence remains in these models (Moran's I {{c_moran_min}} to {{c_moran_max}}), so shared regional factors below the oblast level are not captured.
+
+### 12.2 Clusters
+
+<!-- begin table: figures/tableS8_lisa.md (resilience/38_sphere_tables.py) -->
+**Table S8. Spatial clustering of the spheres and the balance**
+
+| Variable | National: Moran's I | National: HH / LL clusters (after FDR) | Carpathian: Moran's I | Carpathian: HH / LL clusters (after FDR) |
+|---|---|---|---|---|
+| Economic 2021 | 0.48 | 200 / 255 (106 / 192) | 0.39 | 29 / 33 (17 / 6) |
+| Economic 2025 | 0.42 | 186 / 225 (70 / 119) | 0.49 | 42 / 43 (27 / 18) |
+| Economic change | 0.45 | 219 / 129 (81 / 71) | 0.01 | 7 / 3 (0 / 0) |
+| Rights 2021 | 0.41 | 167 / 199 (97 / 117) | 0.30 | 41 / 23 (6 / 3) |
+| Rights 2025 | 0.43 | 189 / 217 (80 / 120) | 0.31 | 41 / 24 (11 / 1) |
+| Rights change | 0.11 | 79 / 66 (18 / 11) | 0.01 | 9 / 11 (0 / 0) |
+| Cultural 2021 | 0.11 | 57 / 89 (4 / 9) | 0.15 | 17 / 26 (1 / 2) |
+| Cultural 2025 | 0.16 | 72 / 111 (6 / 22) | 0.22 | 19 / 34 (3 / 10) |
+| Cultural change | 0.24 | 70 / 82 (9 / 38) | 0.07 | 11 / 8 (0 / 0) |
+| Imbalance 2021 | 0.29 | 122 / 77 (56 / 9) | 0.22 | 25 / 29 (0 / 5) |
+| Imbalance 2025 | 0.21 | 81 / 82 (0 / 0) | 0.11 | 15 / 32 (0 / 0) |
+| Lean to cultural 2021 | 0.41 | 173 / 133 (105 / 38) | 0.31 | 32 / 37 (6 / 13) |
+| Lean to cultural 2025 | 0.32 | 142 / 132 (57 / 28) | 0.20 | 19 / 29 (0 / 0) |
+| Lean to economic vs rights 2021 | 0.27 | 105 / 110 (22 / 54) | 0.13 | 19 / 16 (0 / 0) |
+| Lean to economic vs rights 2025 | 0.30 | 81 / 101 (10 / 41) | 0.04 | 6 / 15 (0 / 4) |
+
+Global Moran's I and local Moran (LISA) with six nearest neighbours (UA_LAEA representative points, row-standardised), 9,999 permutations; HH = high values among high neighbours, LL = low among low, at p < 0.05 and, in brackets, after a false-discovery-rate cut (Benjamini–Hochberg, 0.05). Carpathian: weights built within the four oblasts only. Counts of hromadas; no hromada is named or mapped (rule R3).
+<!-- end table: figures/tableS8_lisa.md -->
+
+Local indicators of spatial association (LISA; Anselin 1995) identify hromadas whose values resemble those of their neighbours.
+- **Economic and rights life** form large regional clusters in both years; cultural life forms few.
+- **The economic change** is strongly clustered (Moran's I {{lisa_nat_d_econ_I}}). High–high clusters of economic rise number {{lisa_nat_d_econ_HH}}; {{q5lisa_hh_carp}} of them lie in the Carpathian oblasts ({{lisa_nat_d_econ_21_HH}} in Zakarpattia, {{lisa_nat_d_econ_26_HH}} in Ivano-Frankivsk, {{lisa_nat_d_econ_46_HH}} in Lviv, {{lisa_nat_d_econ_73_HH}} in Chernivtsi) and they started low (median economic index {{q5lisa_hh_econ21}} in 2021). Low–low clusters of economic fall number {{lisa_nat_d_econ_LL}}, {{q5lisa_ll_zone}} of them in the zone and none in the Carpathian oblasts. Within the four Carpathian oblasts the rise is even (Moran's I {{lisa_carp_d_econ_I}}): the region moved as a whole.
+- **Imbalance** clustered in 2021 ({{lisa_nat_imbalance_2021_HH}} high–high hromadas); in 2025 no cluster survives the false-discovery-rate cut.
+
+Cluster counts after the false-discovery-rate cut (Benjamini and Hochberg 1995) are smaller, often by half. Hromada cluster membership is not published: it includes zone hromadas (rule R3).
+
+## 13. Why there?
+
+For each clear pattern, this section lists the candidate explanations, the data that would tell them apart, what the data show and what remains open. The tests are in `resilience/37_why_there.py`. "Against" means the data contradict the candidate as a main explanation, not that it plays no part.
+
+**Table W1. The fall of economic and cultural life in the zone**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| Strikes themselves | Exposure inside and outside the zone | Against as a general cause: outside the zone, exposure goes with no economic or cultural fall (like-for-like economic {{q1expnz_ll_econ_b}}, cultural {{q1expnz_ll_cult_b}}) | Whether damage or proximity to the front drives the zone gap |
+| People left: fewer taxpayers and users per pre-war resident | Hromada-level population or displacement, 2025 | Not testable: only modelled population (GHS 2025) and oblast-level IOM data are available | Main open question |
+| Firms left or closed | Registrations by hromada | Registration growth exists for five oblasts only (Vinnytsia, Zhytomyr, Rivne, Kharkiv, Khmelnytskyi); the single tax fell least ({{q1zone_single_tax_pc_b}}, p {{q1zone_single_tax_pc_p}}) | Needs registration data for all oblasts |
+| Military administrations replaced council budget decisions | Status by hromada | Not assembled | Candidate for the next version |
+| A change of measure | Like-for-like index | Partly: about half of the full index fall is the 2025-only growth indicator; like-for-like the gap is still {{q1zone_ll_econ_b}} | — |
+
+**Table W2. Profiles more one-sided with exposure, and rights-leaning in the zone**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| State transfers replaced own revenue | Transfer dependency | Supported for the zone: transfer dependency rose ({{q1zone_transfer_dep_civ_b}} on the autonomy scale) | — |
+| Reconstruction and capital programmes | Capital share, DREAM projects | Capital share high in the zone (median rank {{q1m_capex_zone}}) but not above the rest of its oblasts ({{q1zone_capex_share_b}}); DREAM no different ({{q1zone25_dream_per10k_b}}) | Oblast-wide capital programmes |
+| Economic collapse, rights held up | Like-for-like indices | Supported: economic {{q1zone_ll_econ_b}}, rights {{q1zone_ll_rights_b}} against the rest of the oblast | — |
+| General war pressure outside the zone | Imbalance and leans without the zone | Imbalance rises with exposure outside the zone ({{q2nz_imbalance_b}}), but in no common direction (leans {{q2nz_lean_cult_b}} and {{q2nz_lean_econ_rights_b}}) | Which spheres move in struck hromadas outside the zone |
+
+**Table W3. Fiscal autonomy and a smaller loss of light in the summer-2024 outages**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| A stronger local economy (more users on priority supply) | Economic sphere in the same model | Against as the main explanation: the economic sphere adds nothing ({{b1_s24_econ_b}}); transfer dependency carries the result | — |
+| Budgets with room to act: generators, backup power, network repairs | Municipal procurement of generators and repairs (Prozorro), by hromada | Not tested | First candidate for further work; procurement data are public, but must be screened under rules R1 and R3 |
+| Local network condition and grid topology | Grid and outage-group data by area | Not available in open data (security) | Open |
+| An artefact of the frontline zone | Model without zone hromadas | Against: the association is stronger without the zone ({{q3nz_transfer_dep_civ_b}}) | — |
+| Noise in small light counts | Reliable light data only | Against: holds ({{q3r_transfer_dep_civ_b}}, p {{q3r_transfer_dep_civ_p}}) | — |
+
+<!-- begin table: figures/tableS9_carpathian_econ.md (resilience/38_sphere_tables.py) -->
+**Table S9. The Carpathian economic change, medians**
+
+| Measure | Zakarpattia | Ivano-Frankivsk | Lviv | Chernivtsi | Carpathian | Rest, outside zone |
+|---|---|---|---|---|---|---|
+| Economic index 2021 | 0.15 | 0.16 | 0.40 | 0.13 | 0.20 | 0.57 |
+| Economic index 2025 | 0.32 | 0.31 | 0.53 | 0.29 | 0.37 | 0.57 |
+| Change, index | +0.14 | +0.14 | +0.17 | +0.14 | +0.15 | −0.01 |
+| Change, like-for-like | +0.02 | +0.02 | +0.09 | +0.03 | +0.04 | 0.00 |
+| … civilian income tax | +0.02 | +0.01 | +0.07 | +0.01 | +0.03 | +0.01 |
+| … single tax | 0.00 | +0.02 | +0.05 | +0.03 | +0.02 | 0.00 |
+| … property and land | +0.04 | +0.02 | +0.11 | +0.03 | +0.04 | 0.00 |
+| Income-tax growth, rank 2025 | 0.68 | 0.68 | 0.79 | 0.65 | 0.70 | 0.52 |
+| Income-tax growth 2021–25 / national median | 1.08 | 1.08 | 1.15 | 1.07 | 1.09 | 1.01 |
+
+Index values 0–1 (percentile-rank means); changes 2025 minus 2021. Like-for-like: the three tax bases measured in both years; the 2025 index adds civilian income-tax growth. Income-tax growth: civilian PIT 2025 / 2021 relative to the national median (1 = national median).
+<!-- end table: figures/tableS9_carpathian_econ.md -->
+
+**Table W4. The Carpathian economic rise**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| A change of measure (income-tax growth added in 2025) | Like-for-like index | Supported: the index rose {{q5_d_econ_carp}}, like-for-like only {{q5_d_ll_econ_carp}} (Lviv {{q5_d_ll_econ_lv}}); about three quarters of the rise is the growth indicator | — |
+| Catch-up from a low start (regression to the mean) | Gap given the 2021 level | Supported: given 2021, the Carpathian lead is {{q5lvl_ll_b}} (interval {{q5lvl_ll_ci}}) | — |
+| Lviv alone | Gap without Lviv | Largely: {{q5lvl_nolviv_b}} (p {{q5lvl_nolviv_p}}) | — |
+| Relocation of firms and people | Registrations and displacement by hromada | Not testable: registration growth covers no Carpathian oblast; displacement data are oblast-level. The single tax, the nearest small-business signal, rose little ({{q5_dr_single_tax_pc_carp}}) | Main open question |
+| Faster earnings growth in the west | Civilian income-tax growth | Real: {{q5_pdfo_civ_growth_rel_2125_carp}} times the national median (Lviv {{q5_pdfo_civ_growth_rel_2125_lv}}) | Whether it follows relocated employers (tax is booked at the employer's address, section 16.7) |
+
+**Table W5. Economic and cultural life move together**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| Budget arithmetic: own revenue pays for culture | Spending as shares instead of per resident | Consistent: as shares the cultural sphere did not cohere and opposed the rights sphere (section 9.1) | — |
+| Shared population denominator | Population control, within-oblast models | Against as the whole story: holds with log population and within oblasts ({{c_econ_cult_2025_b}}) | — |
+| Economic life supplies the means of cultural life (threefold reading) | Non-budget cultural life (associations, media, religious communities) | Not distinguishable from the arithmetic with budget data | Cultural life outside the budget is not measured (rule R7 limits what may be) |
+
+**Table W6. A stronger pre-war cultural sphere and less light now (fragile)**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| Education spending marks dense rural school networks in shrinking places | Class size, rural school share, pupils per 1,000, population change | Against: the coefficient does not move ({{q4_school_b}} with school network, {{q4_pop_b}} with population change) | — |
+| One cultural indicator | Indicators separately | No single indicator holds on reliable light data (culture and arts {{q4r_culture_arts_pc_b}}, p {{q4r_culture_arts_pc_p}}) | — |
+| Small, well-funded rural hromadas | Hromada type; profile by quintile | Present in settlement ({{q4_settlement_b}}) and village ({{q4_village_b}}) hromadas, absent in cities ({{q4_city_b}}); the top cultural quintile is small (median population {{q4_pop_q5}}, against {{q4_pop_q1}} in the bottom one) and economically strong (economic index {{q4_econ_q5}}) | Unexplained; not a finding |
+
+The two remaining patterns named in the plan for this version, the four Carpathian light curves and high trust with weak finances, concern oblast-level data and are discussed in section 15.5.
+
+# Part III — Trust, cohesion and reception
+
+Part III turns to the relational side of resilience: trust in local administration, community cohesion, belonging, and the movement of displaced people and taxpayers. These data are published only by oblast, so this part describes and compares; it does not model. Section 15 reads all three parts together for the Carpathian oblasts.
+
+## 14. Relational resilience by oblast: trust, cohesion and displacement
 
 Survey and displacement data are available only by oblast. They cannot enter the hromada models: any oblast-level variable is absorbed completely by the oblast fixed effects. This section is therefore descriptive. It asks how oblasts differ in social conditions and displacement, not whether these conditions explain hromada recovery.
 
-### 9.1 Trust, cohesion and satisfaction (reSCORE 2024)
+### 14.1 Trust, cohesion and satisfaction (reSCORE 2024)
 
 reSCORE Ukraine 2024 surveyed {{rescore_n}} respondents in all oblasts except Donetsk, Luhansk and Crimea. We use four indicators, each on a 0–10 scale: trust in local administration, community cohesion, locality satisfaction and sense of belonging.
 
-**Table 10. Selected reSCORE 2024 indicators by oblast** [[PENDING: full table with sample sizes and 95 % intervals — request 9]]
+**Table 11. Selected reSCORE 2024 indicators by oblast** [[PENDING: full table with sample sizes and 95 % intervals — request 9]]
 
 | Oblast | Trust in local admin. (diff. from national {{trust_national}}) | Community cohesion | Locality satisfaction | Belonging |
 |---|---|---|---|---|
@@ -678,7 +1091,7 @@ Two patterns stand out.
 
 [[PENDING: change 2021 → 2024 in trust and cohesion by oblast — request 28]]
 
-### 9.2 Displacement (IOM DTM)
+### 14.2 Displacement (IOM DTM)
 
 Two DTM series are available by oblast:
 - **Registration:** monthly counts of registered IDPs by host and origin oblast, February 2022 – August 2026. Three months are missing (December 2024, January 2025, March 2025).
@@ -703,11 +1116,11 @@ A plausible reading is that many people registered in the west early in the war,
 :::
 
 
-### 9.3 Why these data stay at oblast level
+### 14.3 Why these data stay at oblast level
 
 Displacement is the most obvious candidate explanation for the within-oblast capacity association in section 7.4. Hromadas that received many IDPs may have both higher income-tax growth and brighter nights. Testing this requires hromada-level displacement data, which has been requested from IOM. Removing income-tax growth from the capacity index lowers the within-oblast association only modestly (section 7.4), so displacement acting through income tax alone does not explain it. It could still act through other channels, such as own revenue or the demand for lighting. Until hromada-level data are available, the capacity association remains open to this interpretation.
 
-## 10. The Carpathian region
+## 15. The Carpathian region
 
 This section applies the national results to the {{n_carp_hromadas}} non-occupied hromadas of four oblasts: {{carpathian_oblasts}}. All figures use the same methods and thresholds as the national analysis. Map 17 shows capacity and exposure as terciles computed within the region, so that differences between Carpathian hromadas are visible rather than lost in the national range.
 
@@ -721,7 +1134,7 @@ This section applies the national results to the {{n_carp_hromadas}} non-occupie
 :::
 
 
-### 10.1 Profile
+### 15.1 Profile
 
 **Exposure.**
 - A typical Carpathian hromada spent about {{carp_alert_hours_12m}} hours under alert in the last 12 months, against about {{nat_alert_hours_12m}} nationally.
@@ -734,7 +1147,7 @@ This section applies the national results to the {{n_carp_hromadas}} non-occupie
 - Chernivtsi is weaker still, at under {{own_rev_pc_cv}} hryvnias.
 
 <!-- begin table: figures/table11_carpathian.md (resilience/26_publication_tables.py) -->
-**Table 11. Carpathian oblasts and Ukraine, non-occupied hromadas**
+**Table 12. Carpathian oblasts and Ukraine, non-occupied hromadas**
 
 | Measure | Zakarpattia | Ivano-Frankivsk | Lviv | Chernivtsi | Carpathian (4 oblasts) | Ukraine (non-occupied) |
 |---|---|---|---|---|---|---|
@@ -755,13 +1168,15 @@ Number of hromadas with a value in brackets. Capacity: mean percentile rank of t
 
 In July 2024 all four fell together. Even Zakarpattia dropped to about half its usual light, which points to a cause shared across the grid. What drives the differences at other times is not visible in these data. Grid connection and supply in each part of the western network, and oblast and hromada decisions on street lighting, are the obvious candidates. In the Carpathian oblasts, darkness is not a measure of attack.
 
+**The three spheres** (Table S2). Before the war the four oblasts were the weakest in the country in economic life (median {{sph_med_econ_2021_21}} in Zakarpattia, {{sph_med_econ_2021_26}} in Ivano-Frankivsk, {{sph_med_econ_2021_46}} in Lviv and {{sph_med_econ_2021_73}} in Chernivtsi, on a scale where the national median is 50) and weak in rights life except Lviv; cultural life was closer to the national median. Their profile leaned to cultural life and to rights over economic life, and it was one of the most unbalanced in the country; by 2025 much of that imbalance had gone (section 9.4).
+
 The national models apply here too. Most of the region's brightness is what oblast fixed effects capture: lower exposure and grid conditions shared across each oblast. It is not evidence that Carpathian hromadas manage recovery better than hromadas elsewhere.
 
-### 10.2 Capacity and outage loss
+### 15.2 Capacity and outage loss
 
 Within the region, as nationally, hromadas with more fiscal capacity kept relatively more of their light in the 2024 outages. The pattern is also regional. Of the {{carp_weak_hit}} Carpathian hromadas with both low capacity and large outage loss, {{carp_weak_hit_if_cv}} are in Ivano-Frankivsk and Chernivtsi. At the other corner, Lviv (15) and Zakarpattia (12) hold most of the {{carp_strong_steady}} hromadas with high capacity and small losses. Both groups are corners of a regional classification: terciles, within the four oblasts, of the 2025 capacity index and of the light kept in June–July 2024 as a share of the second half of 2023. Low capacity is the bottom third (percentile rank below about 30), a large loss the bottom third of retention (at most 24 % of the 2023 level); the top thirds start at about 52 and 47 %. On the same rule with national terciles, {{nat_weak_hit}} hromadas are weak and hit. Much of what looks like a local story is the grid of the oblast.
 
-### 10.3 Low fiscal capacity, high local trust, but not everywhere
+### 15.3 Low fiscal capacity, high local trust, but not everywhere
 
 The oblast pattern:
 - **Ivano-Frankivsk** combines below-median fiscal capacity with trust in local administration of {{trust_if_abs}} on a 0–10 scale, the highest of the four oblasts. It also records the highest community cohesion and locality satisfaction in the country, and above-average economic security.
@@ -771,7 +1186,7 @@ The oblast pattern:
 
 This is a juxtaposition of two levels of measurement: hromada fiscal data and oblast survey means. It is not a relationship. We cannot say whether the hromadas with low capacity are the ones whose residents report high trust. The observation matters because fiscal indicators alone would rank much of the region as weak. Survey evidence suggests that, in at least two of its oblasts, local government holds a resource the budget data does not measure. Light, budgets and trust point in different directions here: a place can keep its lights on and distrust those who run it, or go dark and hold together.
 
-### 10.4 A region of reception
+### 15.4 A region of reception
 
 The Carpathian oblasts gained income tax as firms and workers moved west.
 - **2022.** In the third quarter of 2022, the median hromada in all four oblasts collected {{carp_pit_q3_2022_range}} more civilian income tax, relative to its own 2021 level, than the median hromada nationally. Ivano-Frankivsk gained most. The gain was unrelated to fiscal capacity: it followed people, not institutions.
@@ -782,39 +1197,65 @@ Displaced people show the same movement:
 - Registered IDPs range from {{idp_reg_carp_range}} per 1,000 pre-war residents across the four oblasts. IOM's estimate of those actually present is lower and strikingly even: {{idp_present_carp_range}} in all four.
 - Registrations have fallen by {{idp_carp_decline}} since February 2023.
 
-Per-capita figures based on pre-war population are therefore especially uncertain here (section 11.6), and in both directions.
+Per-capita figures based on pre-war population are therefore especially uncertain here (section 16.6), and in both directions.
 
-### 10.5 What the region suggests for further work
+Part II adds a caution to the income-tax story. Measured on the tax bases available in both years, the region's economic position rose only a little from 2021 to 2025 (median {{q5_d_ll_econ_carp}}; Lviv {{q5_d_ll_econ_lv}}), and given its low starting point the Carpathian lead is not robust ({{q5lvl_ll_b}}, p = {{q5lvl_ll_p}}). The faster growth of civilian income tax ({{q5_pdfo_civ_growth_rel_2125_carp}} times the national median) is real, but in level the west has caught up only slightly, mostly in Lviv (section 13, Table W4).
+
+### 15.5 Why there? The four light curves and trust with weak finances
+
+**Table W7. Four different light curves in four neighbouring oblasts**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| Exposure | Strikes and alert hours by oblast | Against: Ivano-Frankivsk, the least struck of the four, is the darkest; alert hours are similar in all four (Table 12) | — |
+| Fiscal capacity or the spheres | Oblast medians; within-oblast models | Against as the explanation between oblasts: Zakarpattia, the brightest, is among the weakest in economic life ({{sph_med_econ_2021_21}}). Within oblasts, pre-war fiscal autonomy goes with a smaller outage loss (section 11) | — |
+| Grid topology and supply priorities in the western network | Outage groups and supply schedules by area | Not available in open data. All four fell together in July 2024, which points to a shared grid cause | Needs grid data released with a security delay |
+| Street-lighting decisions of oblasts and hromadas | Lighting policy by hromada | Not collected | Open |
+| Terrain: mountain and lowland | A mountain indicator; comparison within the region | Not yet tested (request 30) | Next version |
+
+**Table W8. High trust in local administration with weak finances (Ivano-Frankivsk, Chernivtsi)**
+
+| Candidate explanation | Data that would distinguish | Result | Open |
+|---|---|---|---|
+| Trust mirrors the rights sphere measured from budgets and elections | Rights sphere by oblast | Against: rights life is low in Ivano-Frankivsk ({{sph_med_rights_2021_26}}) and Chernivtsi ({{sph_med_rights_2021_73}}), where trust is high | The survey and the budget measure different things |
+| Trust mirrors cultural life | Cultural sphere by oblast | Not supported: cultural life in both is below the national median ({{sph_med_cult_2021_26}}, {{sph_med_cult_2021_73}}) | — |
+| Small, close-knit communities | Hromada-level survey | Not testable: the survey is published by oblast | Needs hromada-level survey data |
+| Regional history of institutions | Comparison across regions with similar finances | Not tested | Open |
+
+Neither pattern can be explained with the open data available. Both are regional, both concern systems or relationships above the budget, and both need data that exist but are not published at the needed level.
+
+### 15.6 What the region suggests for further work
 
 Three questions follow, and none can be answered with current open data:
 1. Does local trust or cohesion help hromadas with weak budgets sustain services under pressure? This needs hromada-level survey data.
-2. Did hosting IDPs and relocated firms raise civilian income tax, and with it measured capacity, in western hromadas? This needs hromada-level displacement data.
+2. Did hosting IDPs and relocated firms raise civilian income tax, and with it measured capacity, in western hromadas? Part II finds faster income-tax growth but little change in relative level (section 13, Table W4). Telling relocation apart needs hromada-level displacement and registration data.
 3. What explains the four different light curves: grid topology, supply priorities or lighting policy? This needs grid and policy data by area, released with a security delay.
 
-A fourth can be tested with the existing data: whether mountain and lowland hromadas differ within the region. [[PENDING: optional — request 30]]
+A fourth can be tested with the existing data: whether mountain and lowland hromadas differ within the region. The school register flags mountain schools and could supply a mountain indicator. [[PENDING: optional — request 30]]
 
-# Synthesis: resilience and its relationships
+# Synthesis: resilience in three spheres
 
-Read together, the two parts suggest four points. Each is an association, not a cause.
+Read together, the three parts suggest five points. Each is an association, not a cause.
 
-1. **Exposure and institutional resilience are largely separate.** Fiscal capacity is nearly unrelated to how exposed a hromada has been (section 6). Hromadas with strong and weak finances face similar pressure.
-2. **Institutional resilience shows when shared systems fail, not against heavier attack.** Within oblasts, hromadas with higher pre-war capacity kept more of their light in the summer-2024 outages (section 8.5), but capacity does not buffer exposure once differences between oblasts are accounted for (section 7).
-3. **Functional resilience is largely shared at oblast level.** Oblast fixed effects account for most of the variation in light recovery; grid conditions and oblast-wide decisions weigh more than any one hromada's budget (sections 7 and 8).
-4. **Relational resilience does not follow the fiscal map.** In the Carpathian oblasts, weak finances coexist with high trust in Ivano-Frankivsk and Chernivtsi, and the brightest oblast, Zakarpattia, reports among the lowest trust (sections 9 and 10). Displacement links the two sides: the west received people and taxpayers, and part of its measured fiscal capacity may reflect that (sections 8.6, 9.2, 9.3 and 10.4).
+1. **Exposure and local capacity are largely separate, and capacity does not buffer exposure.** Fiscal capacity is nearly unrelated to how exposed a hromada has been (section 6). Within oblasts, neither fiscal capacity nor any sphere softens the association between exposure and light (sections 7 and 11). Light recovery is largely shared at oblast level: grid conditions and oblast-wide decisions weigh more than any one hromada's budget (sections 7 and 8).
+2. **Economic life: stronger where strikes later fell, hit hardest in the zone.** The pre-war tax base was stronger in the centre and east, where strikes concentrated. The relative economic fall since 2021 is concentrated in the zone near the front line and the border; elsewhere, being struck goes with no economic fall (section 10). Western hromadas gained income tax faster, but caught up in level only a little, mostly in Lviv (section 13).
+3. **Rights life: autonomy goes with keeping light, and struck hromadas outside the zone spent more.** Hromadas less dependent on transfers before the war lost less light when the grid failed in summer 2024 — the clearest link between a sphere and functional resilience (section 11). Outside the zone, struck hromadas raised capital, social and education spending; inside it, transfers replaced own revenue (section 10). Trust in local administration, measured by oblast, follows neither the fiscal nor the rights measures (sections 14 and 15).
+4. **Cultural life: local, tied to the budget, and hit in the zone.** What hromadas spend on culture and education varies from hromada to hromada more than between regions, moves with the economic sphere, and fell most in the zone (sections 9, 10 and 12). No robust link between cultural life and functional resilience was found (section 11).
+5. **The balance: more even everywhere except the zone.** Hromada profiles across the three spheres became more balanced from 2021 to 2025. In the zone they became more one-sided: economic life collapsed, and transfers and capital programmes kept the rights index up (section 10.3). The Carpathian arc, the most unbalanced region in 2021, moved towards the national balance (section 9.4).
 
-**Through the threefold frame.** Part I rests on the economic and rights spheres. The capacity index, which combines the tax base with the autonomy of local self-government, goes with keeping light when the grid fails, but does not shield hromadas from heavier attack. Part II sees the rights sphere from the other side, as trust in local administration, and it does not follow the fiscal map. The cultural sphere — education, culture, religious and media life — is the one this paper cannot yet see at hromada level. Whether freedom in cultural life helps communities hold together under attack is the question the next version is built to ask.
+**Through the threefold frame.** The frame expects a hromada to be resilient when each sphere keeps its own principle working and none takes over the tasks of another. The data show where that fails most visibly: in the zone near the front line, where economic life and cultural provision fall and the state's transfers and programmes carry what local economic life no longer can. They also suggest where it holds: fiscal autonomy — a hromada governing its own budget rather than administering transfers — goes with keeping light when shared systems fail. The frame is normative and is not tested here; it orders the measures and the reading.
 
-Whether relational resilience helps hromadas with weak budgets hold together under pressure is the question this paper cannot answer. It needs trust, cohesion and displacement data at hromada level, joined to the fiscal and light measures used here (section 10.5).
+Two questions remain beyond what open data can answer. Whether relational resilience — trust, cohesion, belonging — helps hromadas with weak budgets hold together under pressure needs trust, cohesion and displacement data at hromada level (section 15.6). Whether cultural life outside the budget — associations, religious communities, the media — does so needs measures this study does not collect, partly by design (rule R7).
 
 # Methods, limits and sources
 
 The remaining sections set out the limitations of both parts, the rules applied to protect sensitive information and how to reproduce the results, followed by references and annexes.
 
-## 11. Limitations
+## 16. Limitations
 
 The limitations below are ordered by how much they constrain the paper's main claims.
 
-### 11.1 Night lights are an indirect measure of recovery
+### 16.1 Night lights are an indirect measure of recovery
 
 Night-time light responds to physical damage and economic activity, but also to:
 - blackout orders and curfews, as in March 2022;
@@ -827,39 +1268,39 @@ Two further measurement issues apply:
 - **Baseline choice.** The choice of baseline shifts levels by about {{nl_baseline_shift}} (section 5.2).
 - **Monthly noise.** Monthly values are noisy, especially in small hromadas (section 8.1). Single-month values for individual hromadas should not be interpreted; publication of single-hromada values is limited to hromadas with at least [[CHECK: 30 lit pixels, as in the Carpathian dispatch — confirm as the general rule]] lit pixels.
 
-### 11.2 Recovery is dominated by oblast-wide grid patterns
+### 16.2 Recovery is dominated by oblast-wide grid patterns
 
 Oblast fixed effects explain most of the variation in the recovery ratio (R² {{r2_no_fe}} → {{r2_fe}}), and residuals remain spatially clustered (Moran's I = {{resid_moran_fe}} with fixed effects). This is consistent with recovery being governed by grid and supply decisions made above the hromada level. It follows that the within-oblast association between capacity and recovery is estimated from a limited share of the total variation, and that claims about the effect of local capacity must stay modest. We make no causal claim.
 
-### 11.3 Ecological inference
+### 16.3 Ecological inference
 
 All associations are measured between hromadas or between oblasts. They say nothing about individual households, businesses or officials. In particular, the oblast-level survey results (trust, cohesion, satisfaction) cannot be attributed to particular hromadas, and the juxtaposition of low fiscal capacity with high local trust in parts of the Carpathian region is a description at oblast level, not a hromada-level relationship.
 
-### 11.4 Strike counts reflect reporting as well as attacks
+### 16.4 Strike counts reflect reporting as well as attacks
 
 VIINA records events reported in open sources. Reporting density is higher where media, local channels and population are denser, and lower near the front line and in occupied areas. Strike counts therefore partly measure visibility. Air-raid alert hours are recorded administratively and do not share this bias, which is one reason we report both. The stronger association of recovery with alert hours than with strike counts may partly reflect this difference in measurement quality.
 
-### 11.5 Under-coverage of occupied and frontline areas
+### 16.5 Under-coverage of occupied and frontline areas
 
 Indices are computed only for non-occupied hromadas ({{n_capacity}} for capacity, {{n_recovery}} for recovery). Budget, survey and displacement data are thin or absent for occupied and frontline areas. [[PENDING: breakdown of the {{n_hromadas_nonoccupied}} → {{n_recovery}} drop by reason and oblast — request 1]] The hromadas most affected by the war are the ones least represented in the models, which likely weakens the observed association between exposure and recovery.
 
-### 11.6 Pre-war population denominators
+### 16.6 Pre-war population denominators
 
 Per-capita measures use JRC GHS-POP 2020 population. Displacement since 2022 has changed populations substantially, raising them in many western hromadas and lowering them near the front. Per-capita revenue and per-capita project counts are therefore biased: downward where population grew and upward where it fell. No reliable hromada-level wartime population series exists in open data.
 
-### 11.7 Income tax is booked at the employer's address
+### 16.7 Income tax is booked at the employer's address
 
-Personal income tax is attributed to the hromada where the employer is registered, not where the employee lives. Hromadas hosting head offices, large enterprises or military units appear richer than their residents are. We flag {{n_garrison}} hromadas where military payroll made up at least a quarter of 2021 income tax. The flag is used only as a sensitivity check and is not published at hromada level (see section 12). In addition, from Q4 2023 military income tax was redirected from local budgets to the state budget; it had been {{military_pit_share_range}} of local income tax from Q2 2022. This creates a structural break in any budget series crossing that date.
+Personal income tax is attributed to the hromada where the employer is registered, not where the employee lives. Hromadas hosting head offices, large enterprises or military units appear richer than their residents are. We flag {{n_garrison}} hromadas where military payroll made up at least a quarter of 2021 income tax. The flag is used only as a sensitivity check and is not published at hromada level (see section 17). In addition, from Q4 2023 military income tax was redirected from local budgets to the state budget; it had been {{military_pit_share_range}} of local income tax from Q2 2022. This creates a structural break in any budget series crossing that date.
 
-### 11.8 Survey sampling and exclusions
+### 16.8 Survey sampling and exclusions
 
 reSCORE 2024 excludes Donetsk, Luhansk and Crimea, and its oblast estimates carry sampling error. [[PENDING: oblast sample sizes and confidence intervals for the trust differences — request 9]] Oblast differences smaller than their confidence intervals are not interpreted.
 
-### 11.9 Registered vs present IDPs, and oblast-only data
+### 16.9 Registered vs present IDPs, and oblast-only data
 
-IOM DTM data for Ukraine is available to us only at oblast level. Registration figures record where people registered, not where they currently live. The gap between registered and present IDPs (section 9) is itself a finding, but it means neither series is a reliable denominator. Because the displacement figures are oblast-level, they are collinear with oblast fixed effects and cannot enter the hromada models. [[PENDING: hromada-level DTM data requested from IOM]]
+IOM DTM data for Ukraine is available to us only at oblast level. Registration figures record where people registered, not where they currently live. The gap between registered and present IDPs (section 14) is itself a finding, but it means neither series is a reliable denominator. Because the displacement figures are oblast-level, they are collinear with oblast fixed effects and cannot enter the hromada models. [[PENDING: hromada-level DTM data requested from IOM]]
 
-### 11.10 Inference: few oblast clusters and spatial dependence
+### 16.10 Inference: few oblast clusters and spatial dependence
 
 The reported t-values use heteroskedasticity-robust (HC1) standard errors. These do not account for two features of the data:
 - **Few clusters.** Hromadas in the same oblast share unobserved conditions, and there are only about two dozen oblasts.
@@ -867,23 +1308,36 @@ The reported t-values use heteroskedasticity-robust (HC1) standard errors. These
 
 The t-values for these outcomes are therefore optimistic. The outage-loss result, with low residual dependence (Moran's I {{outage_moran}}), is least affected. [[PENDING: wild-cluster bootstrap p-values and spatially robust errors — requests 4, 5]]
 
-### 11.11 Composition of the capacity index
+### 16.11 Composition of the capacity index
 
-The 2025 capacity index includes civilian income-tax growth from 2021 to 2025, which is partly a consequence of the wartime economy and of recovery itself. This builds a degree of circularity into any model predicting recovery from 2025 capacity. We therefore report pre-war (2021) capacity as the primary specification, and the 2025 index as descriptive. Removing the income-tax component from the 2025 index lowers the within-oblast capacity coefficient to +{{cap_main_fe_no_pitgrowth}} and leaves the interaction at zero, so that component is not what drives the 2025 results.
+The 2025 capacity index includes civilian income-tax growth from 2021 to 2025, which is partly a consequence of the wartime economy and of recovery itself. This builds a degree of circularity into any model predicting recovery from 2025 capacity. We therefore report pre-war (2021) capacity as the primary specification, and the 2025 index as descriptive. Removing the income-tax component from the 2025 index lowers the within-oblast capacity coefficient to +{{cap_main_fe_no_pitgrowth}} and leaves the interaction at zero, so that component is not what drives the 2025 results. Part II separates the economic and rights components (section 9).
+
+### 16.12 The sphere indices measure budgets and registers more than lives
+
+Most sphere indicators are budget lines. They record what a hromada collects and spends, not the quality of its economic, political or cultural life. Education spending is largely the state education subvention and partly measures pupil numbers. Electoral contestation rests on one election, in 2020, before the invasion. Schools per 10,000 residents are higher where settlement is dispersed. Cultural life outside the budget — associations, religious communities, the media — is not measured; rule R7 limits what may be. The rights and cultural indices combine indicators that are only loosely correlated (section 9.2): they summarise several things, not one latent trait.
+
+### 16.13 Index composition and change
+
+The 2025 indices contain indicators that the 2021 indices lack. The economic 2025 index includes civilian income-tax growth, kept as agreed because it measures wartime dynamism; its change from 2021 is therefore partly a change of measure, most visibly in the Carpathian oblasts (section 13). Like-for-like indices are reported beside the full indices. All indices are percentile ranks: a change is a change of position among hromadas, not of absolute level, and one hromada's rise is another's fall.
+
+### 16.14 Many tests
+
+Part II rests on about two hundred models. Among so many, some p-values below 0.05 arise by chance. The findings reported in section 0 hold under the wild-cluster bootstrap by oblast and Conley spatial errors, and under at least one check (reliable light data, without the zone, or given the 2021 level). Single results near p = 0.05, such as the one nominal sphere × exposure interaction, are not treated as findings. The negative link between cultural life and recent light (section 11) is reported but treated as fragile.
 
 ### What would change the conclusions
 
-The main conclusions would need revision in three cases:
-- if hromada-level displacement data showed that population shifts account for the within-oblast capacity association;
+The main conclusions would need revision in five cases:
+- if hromada-level displacement data showed that population shifts account for the within-oblast capacity association, or for the fall of economic and cultural life in the zone;
+- if hromada-level registration data showed a relocation of firms to the Carpathian oblasts that the income-tax measures miss;
 - if the monthly trajectory metrics revealed local differences in recovery that the annual ratio hides;
 - if a direct measure of grid restoration became available at hromada level.
 
-The first two are in progress.
+The first is in progress (a request to IOM). The monthly trajectory metrics are done (section 8).
 
 
-## 12. Protecting sensitive information
+## 17. Protecting sensitive information
 
-### 12.1 Principles
+### 17.1 Principles
 
 This study publishes analysis of an ongoing war. Four principles govern every map, table and file released:
 
@@ -892,7 +1346,7 @@ This study publishes analysis of an ongoing war. Four principles govern every ma
 3. **No operational uplift.** Hromada-level outputs should not tell an attacker anything new, and in particular nothing about when and where the grid failed or recovered in the recent past.
 4. **The raw inputs are already public.** VIINA events, Black Marble radiance and budget execution data can all be downloaded by anyone. The rules below therefore limit what this study *adds*: the joining, cleaning, timing and packaging that make patterns easier to read. They are not a claim that the underlying information is secret.
 
-### 12.2 Rules
+### 17.2 Rules
 
 | Rule | Applies to | What is released | What is withheld |
 |---|---|---|---|
@@ -902,15 +1356,16 @@ This study publishes analysis of an ongoing war. Four principles govern every ma
 | R4. Military finance | Budget tables, capacity index | Civilian income tax; the count of garrison hromadas and sensitivity results | The garrison flag and military income-tax share at hromada level |
 | R5. Strike events | VIINA-derived outputs | Hromada counts; point maps at national extent only | Republished event points; point maps at regional or local zoom |
 | R6. Personal data | DREAM and any record-level source | Project counts per hromada | Names, contractors, addresses, free-text fields |
-| R7. Review | Every release | none | Release proceeds only after the checklist in Annex E is complete and one Ukrainian reader outside the project has reviewed all maps |
+| R7. Sensitive cultural data | Sphere indices, cultural and rights sources | Counts of institutions per hromada (schools); spending by function | Hromada-level maps or tables of religious affiliation, ethnicity or language; anything that could single out a community; locations of schools, libraries, places of worship and media offices |
+| R8. Review | Every release | none | Release proceeds only after the checklist in Annex E is complete and one Ukrainian reader outside the project has reviewed all maps |
 
 The front-line reference for R3 is [[PENDING: source and date of front-line geometry — request 31]].
 
 KDE, IDW and kriging surfaces (Maps 07, 06, 05; Annex D) are published as national-extent images only. The underlying grids are not included in the data package.
 
-### 12.3 Audit
+### 17.3 Audit
 
-**Table 12. Security audit of published outputs** [[PENDING: complete after request 13]]
+**Table 13. Security audit of published outputs** [[PENDING: complete after request 13]]
 
 | Output | Finest spatial level | Finest time step | Rules checked | Status |
 |---|---|---|---|---|
@@ -923,16 +1378,19 @@ KDE, IDW and kriging surfaces (Maps 07, 06, 05; Annex D) are published as nation
 | Map 20 left (outage loss, summer 2024) | Hromada | 2024 window | R2, R3 | |
 | Map 20 right (change classes since H2 2023) | Hromada | Last 12 months | R2, R3 | Re-window or aggregate (request 33) |
 | Carpathian light chart (oblast medians) | Oblast | Month | R2 | |
+| Maps 21–23 (sphere indices) | Hromada; raion in the 30 km zone | 2021, 2025 | R1, R3, R4, R7 | Published |
+| Map 24 (threefold balance) | Hromada; raion in the 30 km zone | 2021, 2025 | R1, R3, R7 | Published |
+| Tables S2–S9, W1–W8 | Oblast, group or national aggregates | Year | R1–R7 | Hromada cluster classes not published (R3) |
 | Data package tables | | | R1–R6 | |
 | Data package GeoPackages | | | R1, R3, R5 | |
 
-## 13. Reproducibility
+## 18. Reproducibility
 
-### 13.1 Environment
+### 18.1 Environment
 
 The analysis runs in Python 3.13 in a virtual environment, with package versions pinned in `requirements.txt`. Maps are produced in QGIS 3.40 from the project `viina/qgis/ukraine_strikes.qgz`. [[PENDING: operating system and QGIS plugin versions — request 25]]
 
-### 13.2 Pipeline
+### 18.2 Pipeline
 
 `./run_all.sh` rebuilds all tables, indices, models and figures from cached source downloads. A full run takes about {{run_time}}. The repository is organised as:
 
@@ -940,25 +1398,27 @@ The analysis runs in Python 3.13 in a virtual environment, with package versions
 - `resilience/` — budget, night-light, population, survey and displacement processing; indices; tidy tables;
 - `publication/` — this paper, the policy brief, the Dispatch essay, the data package documentation and the build script.
 
-### 13.3 Data availability
+The three-sphere analysis of Part II runs in `resilience/`: functional spending (`31_`), elections (`33_`), schools (`34_`), sphere indices (`32_`), map layers (`35_`), associations and clusters (`36_`), the "why there?" tests (`37_`) and the paper tables S2–S9 with their quoted numbers (`38_`, which writes `publication/numbers_spheres.yaml`). Tables S2–S9 are built from published tables only and can be reproduced without the local data.
+
+### 18.3 Data availability
 
 The data package on Zenodo ({{zenodo_doi}}) contains:
 - tidy tables for all indices and model inputs;
 - GeoPackages of hromada and oblast boundaries with attributes;
 - the data dictionary (Annex A) and source catalogue (Annex B).
 
-It is subject to the rules in section 12.
+It is subject to the rules in section 17.
 
 Not every input can be redistributed:
 - **Raw source downloads** are not included. Fetch scripts with recorded access dates retrieve them.
 - **IOM DTM data** is retrieved through the IOM API under IOM's terms of use. The package contains the fetch script and, where the terms allow, oblast aggregates only. [[PENDING: confirm DTM redistribution terms — request 23]]
 - **Night-light rasters** are withheld under rule R1 and can be downloaded directly from NASA.
 
-### 13.4 Versions
+### 18.4 Versions
 
 This paper describes release {{release_version}} (commit {{commit_hash}}, {{release_date}}). Later releases will be listed with their changes on the Zenodo record.
 
-### 13.5 Licences
+### 18.5 Licences
 
 - Text and figures: CC BY 4.0.
 - Data package: ODbL 1.0. It contains databases derived from VIINA and OpenStreetMap, which are themselves licensed under ODbL.
@@ -966,7 +1426,7 @@ This paper describes release {{release_version}} (commit {{commit_hash}}, {{rele
 
 Every map and table credits its sources. Full attribution statements are in Annex F.
 
-### 13.6 Suggested citation
+### 18.6 Suggested citation
 
 Garand, M. ({{release_year}}). *Hromada resilience under strikes in Ukraine, 2022–2026: An associational analysis with open data* (Working paper {{release_version}}). SocArXiv. {{socarxiv_doi}}
 
@@ -976,6 +1436,13 @@ Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dat
 
 [[CHECK: verify every entry and add methods references used in the pipeline]]
 
+- Anselin, L. (1995). Local indicators of spatial association — LISA. *Geographical Analysis*, 27(2), 93–115.
+- Benjamini, Y., & Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society, Series B*, 57(1), 289–300.
+- Cameron, A. C., Gelbach, J. B., & Miller, D. L. (2008). Bootstrap-based improvements for inference with clustered errors. *Review of Economics and Statistics*, 90(3), 414–427.
+- Conley, T. G. (1999). GMM estimation with cross sectional dependence. *Journal of Econometrics*, 92(1), 1–45.
+- Egozcue, J. J., Pawlowsky-Glahn, V., Mateu-Figueras, G., & Barceló-Vidal, C. (2003). Isometric logratio transformations for compositional data analysis. *Mathematical Geology*, 35(3), 279–300.
+- Schöley, J. (2021). The centered ternary balance scheme: A technique to visualize surfaces of unbalanced three-part compositions. *Demographic Research*, 44(19), 443–458.
+- Webb, M. D. (2023). Reworking wild bootstrap-based inference for clustered errors. *Canadian Journal of Economics*, 56(3), 839–858.
 - Steiner, R. (1919). *Die Kernpunkte der sozialen Frage in den Lebensnotwendigkeiten der Gegenwart und Zukunft*. Stuttgart: Greifenverlag. English: *Towards Social Renewal*.
 - Getis, A., & Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. *Geographical Analysis*, 24(3), 189–206.
 - Román, M. O., et al. (2018). NASA's Black Marble nighttime lights product suite. *Remote Sensing of Environment*, 210, 113–143.
@@ -986,6 +1453,8 @@ Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dat
 - SeeD & UNDP. *SCORE / reSCORE Ukraine 2021 and 2024*. Accessed {{access_rescore}}.
 - Ministry of Finance of Ukraine. *openbudget.gov.ua — local budget execution*. Accessed {{access_openbudget}}.
 - DREAM — Digital Restoration Ecosystem for Accountable Management. Accessed {{access_dream}}.
+- Central Election Commission of Ukraine. *Місцеві вибори 2020* (election 695), open data. [[CHECK: access date]]
+- Ministry of Education and Science of Ukraine. *ЄДЕБО — Реєстр суб'єктів освітньої діяльності*; form ЗНЗ-1, data.gov.ua. [[CHECK: access dates]]
 
 ## Annexes
 
@@ -993,7 +1462,7 @@ Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dat
 |---|---|---|
 | A | Data dictionary | `resilience/tidy/data_dictionary.csv` |
 | B | Source catalogue, with versions and access dates | `resilience/tidy/source_catalogue.md` |
-| C | Full model output: M1–M7, sensitivity, spatial models, trajectory models | [[PENDING: requests 4, 5, 7, 12]] |
+| C | Full model output: M1–M7, sensitivity, spatial models, trajectory models; sphere models and "why there?" tests | [[PENDING: requests 4, 5, 7, 12]]; `resilience/tidy/sphere_associations.csv`, `why_there_models.csv`, `why_there_profiles.csv`, `sphere_lisa_summary.csv` |
 | D | Additional maps 02–13, after security review | `viina/` map pages |
 | E | Security audit checklist, completed for this release | [[PENDING: request 13]] |
 | F | Attribution statements for every source | `data_package/ATTRIBUTION.md` |
@@ -1018,4 +1487,11 @@ Data: Garand, M. ({{release_year}}). *Ukraine hromada strikes and resilience dat
 - **Night-light index** — monthly radiance of a hromada's lit pixels relative to the same calendar month in 2020–21 (section 8.1). 1 = pre-war level.
 - **Outage loss** — a hromada's light in June–July 2024 relative to its own July–December 2023 level (section 8.4).
 - **Relative civilian income tax** — civilian PIT in a quarter relative to the same quarter of 2021, divided by the national median.
+- **Sphere index** — the mean percentile rank of a sphere's indicators among non-occupied hromadas, for economic, rights or cultural life, in 2021 or 2025 (section 9).
+- **Like-for-like index** — a sphere index built only from the indicators measured in both 2021 and 2025, used to compare the two years (section 9.2).
+- **Zone** — the hromadas within 30 km of the front line or of the Russian or Belarusian border (rule R3); {{n_zone}} non-occupied hromadas.
+- **Threefold balance, imbalance, lean** — how a hromada's three sphere indices weigh against each other; imbalance is the distance from the national average composition, a lean the direction of the departure (section 9.4).
+- **LISA** — local indicators of spatial association: hromadas whose values resemble those of their neighbours (high–high, low–low) or differ from them.
+- **Wild-cluster bootstrap** — a resampling test that allows for errors shared within oblasts when there are few oblasts; used for all p-values in Parts I and II.
+- **Conley errors** — standard errors that allow for correlation between nearby hromadas, up to a distance cut-off (50 and 100 km).
 - **Gi\*** — the Getis-Ord local statistic used to identify spatial clusters of high or low values (hot spots and cold spots).

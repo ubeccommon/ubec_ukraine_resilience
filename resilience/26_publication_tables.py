@@ -1,5 +1,5 @@
 """26_publication_tables.py — paper Table 1 (coverage and exclusions), Table 3 (exposure descriptives),
-Table 5 (capacity × exposure rank correlations), Table 6 (capacity × exposure terciles), Table 11
+Table 5 (capacity × exposure rank correlations), Table 6 (capacity × exposure terciles), Table 12
 (Carpathian vs national), the capacity × outage-loss classes (request 37) and the light publication
 threshold counts (request 38).
 
@@ -150,7 +150,7 @@ for col, label, stat, scale, dp in MEAS:
     wide.append(row)
 pd.DataFrame(long).to_csv(FIG / "table11_carpathian.csv", index=False)
 md_table(pd.DataFrame(wide), FIG / "table11_carpathian.md",
-         "Table 11. Carpathian oblasts and Ukraine, non-occupied hromadas",
+         "Table 12. Carpathian oblasts and Ukraine, non-occupied hromadas",
          "Number of hromadas with a value in brackets. Capacity: mean percentile rank of the capacity components "
          "(2021 budgets for 2021; 2025 index). Recovery: mean radiance of pixels lit in 2021, 2024 relative to 2021.")
 

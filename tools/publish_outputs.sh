@@ -36,6 +36,7 @@ OUTPUTS=(
   "resilience/docs/fig1_carpathian_light.png"
   "resilience/docs/fig1_carpathian_light.svg"
   "publication/figures/"
+  "publication/numbers_spheres.yaml"
   "viina/strikes_by_month_oblast.csv"
   "viina/qgis/meta.json"
   "viina/qgis/maps/preview/"

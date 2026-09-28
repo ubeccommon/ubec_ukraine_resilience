@@ -9,7 +9,8 @@ Build the publication outputs from Markdown sources and numbers.yaml.
   report                                          -> build/out/report.md (not tracked)
 
 Steps
-  1. Read numbers.yaml (flat `key: "value"  # comment` lines; no PyYAML needed).
+  1. Read numbers.yaml (flat `key: "value"  # comment` lines; no PyYAML needed) and the
+     generated numbers_spheres.yaml (resilience/38_sphere_tables.py); keys must not repeat.
   2. Strip HTML comments from Markdown sources.
   3. Replace {{key}} with its value. Keys whose value is PENDING, and unknown
      keys, are marked visibly.
@@ -52,6 +53,8 @@ BUILD = PUB / "build"
 OUT = BUILD / "out"
 AUX = BUILD / "aux"
 NUMBERS = PUB / "numbers.yaml"
+NUMBERS_GENERATED = [PUB / "numbers_spheres.yaml"]   # written by resilience/38_sphere_tables.py
+GENERATED_KEYS: set[str] = set()                      # not listed as "unused" in the report
 
 DOCS = {
     "paper": PUB / "paper" / "paper.md",
@@ -386,7 +389,7 @@ def write_report(reports: list[FileReport], numbers: dict[str, Number], stamp: s
     if checks:
         lines += ["## Values marked CHECK in numbers.yaml", ""]
         lines += [f"- `{k}` = {numbers[k].value} — {numbers[k].comment}" for k in checks] + [""]
-    unused = sorted(set(numbers) - used)
+    unused = sorted(set(numbers) - used - GENERATED_KEYS)
     if unused:
         lines += ["## Keys defined but not used in any output", "", ", ".join(unused), ""]
 
@@ -413,6 +416,14 @@ def main() -> int:
             sys.exit(f"{args.pdf_engine} not found (pip install weasyprint, or use --no-pdf / --pdf-engine xelatex)")
 
     numbers = load_numbers(NUMBERS)
+    for gen in NUMBERS_GENERATED:
+        if gen.exists():
+            extra = load_numbers(gen)
+            dup = sorted(set(extra) & set(numbers))
+            if dup:
+                sys.exit(f"{gen.name} repeats keys of numbers.yaml: {', '.join(dup[:10])}")
+            numbers.update(extra)
+            GENERATED_KEYS.update(extra)
     targets = args.only or [*DOCS, "data"]
     stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     mode = "release" if args.release else "draft"

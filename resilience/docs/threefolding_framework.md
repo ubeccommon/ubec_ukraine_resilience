@@ -342,3 +342,17 @@ Treated as fragile: not a finding for the paper.
 
 **Decision for step 9:** keep PIT growth in the economic 2025 index (it measures war-time dynamism, agreed in section
 6) or report the like-for-like index as the main 2021 → 2025 comparison. Either way the paper states the split.
+
+## 11. Paper v0.5 (step 9, 28 Sep 2026)
+
+- **Structure:** Part I local capacity, recovery and exposure (sections 4–8, unchanged); **Part II the three
+  spheres at hromada level** (9 measuring, 10 exposure, 11 functional resilience, 12 relations and clusters, 13 why
+  there?); Part III trust, cohesion and reception (14–15, formerly Part II); synthesis by sphere; methods 16–18.
+- **Tables:** S1 indicators (in the text); S2–S9 from `resilience/38_sphere_tables.py`, which reads published
+  tidy tables only and writes `publication/numbers_spheres.yaml` (generated keys; `build.py` reads it beside
+  `numbers.yaml`). Why-there tables W1–W6 (section 13) and W7–W8 (Carpathian light curves, trust with weak
+  finances; section 15.5). Carpathian table renumbered 12, reSCORE 11, security audit 13.
+- **Decision:** the economic 2025 index keeps civilian income-tax growth (as agreed in section 6); the paper
+  reports the like-for-like change beside it and names the split wherever the two diverge.
+- **Rules:** R7 (sensitive cultural data) in the paper's rule table; the review rule becomes R8.
+- Open in the paper: register licence statement (ЄДЕБО), CEC and MES access dates, reference check.

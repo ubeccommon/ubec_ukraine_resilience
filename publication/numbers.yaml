@@ -2,6 +2,8 @@
 # Values are display strings (Unicode minus −). Keys marked PENDING block release.
 # Status: v1.1 findings + trajectory update of 25 Sep 2026 (step 2);
 # alert window fixed at 1 Sep 2025 – 31 Aug 2026 (yellow/red levels from Sep 2026), 26 Sep 2026.
+# Paper v0.5 / data v1.3 (28 Sep 2026): three-sphere numbers are generated in numbers_spheres.yaml
+# (resilience/38_sphere_tables.py); build.py reads both files.
 
 # --- Units and coverage
 n_hromadas_total: "1,763"
@@ -206,7 +208,7 @@ version_codab: "v05, valid from 1 Sep 2025 (HDX release 26 Jan 2026, accessed 22
 version_osm: "tiles retrieved 26 Sep 2026"
 
 # --- Release (fill at release)
-release_version: "v1.2"            # CHECK
+release_version: "v1.3"            # CHECK
 release_date: "PENDING"
 release_year: "2026"
 commit_hash: "PENDING"
