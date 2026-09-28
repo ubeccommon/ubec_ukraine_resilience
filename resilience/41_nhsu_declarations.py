@@ -10,9 +10,16 @@
 
 Source: "Інформація щодо статистики поданих декларацій про вибір лікаря первинної медичної допомоги", National Health
 Service of Ukraine, data.gov.ua dataset a8228262-5576-4a14-beb8-789573573546 (CC BY 4.0, weekly). The dataset
-describes declarations by region, community (hromada), settlement, facility, doctor, age group and sex. The exact
-files and columns were not visible from Claude's workspace (28 Sep 2026): run `probe` first and set RESOURCES and the
-column map (COLS) from its output, then `pull` and `build`.
+describes declarations by region, community (hromada), settlement, facility, doctor, age group and sex. Probe of
+28 Sep 2026: the file used is active_declarations_by_age_gender.csv (158 MB; columns legal_entity_id, area,
+gromada_koatuu, gromada_name, settlement_koatuu, settlement, settlement_type, person_gender, person_age in single
+years, count_declarations). The hromada carries a KOATUU code, not KATOTTG: it is placed by name within its oblast
+through the matcher of 33_elections_2020.py (synthetic test on 400 real hromada names: 399 placed, all correctly);
+--koatuu-xw offers the code route if a KOATUU-KATOTTG table is at hand. The other two files (by doctor; doctor info)
+carry doctors' identifiers or names and are never downloaded (R6).
+Caveat to check on the first build: the rows carry the provider (legal_entity_id), so the geography may be the
+provider's division rather than the patient's settlement. Hromadas with very few declarations per resident are
+then served from a neighbouring hromada; the log prints their share.
 
 Why: the paper's per-resident measures use GHS-POP 2020 (limitation 16.6). Active declarations are the closest open
 measure of the people actually present now, with an age structure, for every hromada. Declarations lag moves (IDPs
@@ -56,13 +63,13 @@ RESOURCES = ["active_declarations_by_age_gender"]
 # koatuu (KOATUU code of the hromada, with --koatuu-xw), hromada (hromada name), oblast (oblast name),
 # settlement (settlement name), age (age band label),
 # sex, count (number of active declarations), date (snapshot date, if a column; else the file date is used)
-COLS = {
-    # "katottg": "katottg",     # e.g. "КАТОТТГ" or "katottg_code"
-    # "Громада": "hromada",
-    # "Область": "oblast",
-    # "Вікова група": "age",
-    # "Стать": "sex",
-    # "Кількість декларацій": "count",
+COLS = {                                   # set from the probe of 28 Sep 2026 (attribute file of the dataset)
+    "gromada_koatuu": "koatuu",            # КОАТУУ of the hromada (code of its centre)
+    "gromada_name": "hromada",
+    "area": "oblast",                      # oblast name in capitals, without "область"
+    "person_gender": "sex",                # чоловіча / жіноча
+    "person_age": "age",                   # single years of age
+    "count_declarations": "count",
 }
 AGE_BANDS = {"0-17": ("0-5", "6-11", "12-17", "0-17", "до 18"), "18-64": ("18-39", "40-64", "18-64"),
              "65+": ("65+", "65 і старше", "65 та старше")}
@@ -208,29 +215,42 @@ def cmd_build(raw_dir, koatuu_xw=None):
     keys["k3"] = keys["k3"].str.zfill(7)
     import importlib
     sys.path.insert(0, str(BASE))
-    ob = importlib.import_module("03_openbudget")
+    if "koatuu" in df and not koatuu_xw and {"hromada", "oblast"} <= set(df.columns):
+        df = df.rename(columns={"koatuu": "koatuu_h"})      # grouping key only; the name route places the hromada
     if "katottg" in df:
+        ob = importlib.import_module("03_openbudget")
         df["k3"], _ = ob.katottg_parts(df["katottg"].astype("string"))     # UA + oblast + raion + hromada -> k3
     elif "koatuu" in df:
+        ob = importlib.import_module("03_openbudget")
         xw = koatuu_crosswalk(koatuu_xw)
         code = df["koatuu"].astype(str).str.replace(r"\D", "", regex=True).str.zfill(10)
         kat = code.map(xw)
         df["k3"], _ = ob.katottg_parts(kat.astype("string"))
         log(f"KOATUU -> KATOTTG: {kat.notna().mean():.1%} of rows mapped through the crosswalk")
     elif {"hromada", "oblast"} <= set(df.columns):
-        # name match: hromada name + oblast (k1 from keys) — the same route as 34_schools.py; ambiguous names are dropped
-        import importlib
-        sys.path.insert(0, str(BASE))
-        norm_oblast = importlib.import_module("33_elections_2020").norm_oblast
-        kk = keys.copy()
-        kk["_n"] = kk["name"].astype(str).str.lower().str.replace(r"\s+", " ", regex=True)
-        kk["_ob"] = kk["oblast_uk"].map(norm_oblast)
-        df["_n"] = df["hromada"].astype(str).str.lower().str.replace(r"\s+", " ", regex=True)
-        df["_ob"] = df["oblast"].map(norm_oblast)
-        m = df.merge(kk[["_n", "_ob", "k3"]].drop_duplicates(), on=["_n", "_ob"], how="left")
-        dup = m.groupby(["_n", "_ob"])["k3"].transform("nunique") > 1
-        m.loc[dup, "k3"] = np.nan
-        df["k3"] = m["k3"].values
+        # name match, one row per hromada (oblast + hromada name, KOATUU as the grouping key), through the matcher of
+        # 33_elections_2020.py (stem and council type within the oblast, centre settlement, stem only, close spelling;
+        # ambiguous matches dropped). Hromada names are not personal data.
+        e33 = importlib.import_module("33_elections_2020")
+        grp = ["oblast", "hromada"] + (["koatuu_h"] if "koatuu_h" in df else [])
+        u = df[grp].drop_duplicates().reset_index(drop=True)
+        ob_ = u["oblast"].astype(str).str.strip()
+        low = ob_.str.lower()
+        c = pd.DataFrame(index=u.index)
+        city = low.str.replace(r"[^а-яіїєґ]", "", regex=True).isin(["київ", "мкиїв", "містокиїв"])
+        crimea = low.str.contains("крим") | low.str.contains("автономн")
+        c["oblast"] = np.where(city, "м. Київ", np.where(crimea, "Автономна Республіка Крим",
+                               ob_.str.capitalize() + np.where(low.str.contains("област"), "", " область")))
+        typ = u["hromada"].map(lambda n: e33.stem_type(n)[1])
+        c["council_type"] = typ.map({"m": "міська", "s": "селищна", "v": "сільська"}).fillna("сільська")
+        c["rada_name"] = u["hromada"].astype(str)
+        m = e33.match_k3(c)
+        u["k3"] = m["k3"].reindex(u.index)
+        log(f"hromadas in the source: {len(u)}; matched {int(u['k3'].notna().sum())}")
+        miss = u[u["k3"].isna()]
+        if len(miss):
+            log("unmatched: " + "; ".join(f"{r.oblast[:14]}|{r.hromada}" for r in miss.head(40).itertuples()))
+        df = df.merge(u[grp + ["k3"]], on=grp, how="left")
     else:
         sys.exit("COLS must map a katottg column, a koatuu column (with --koatuu-xw), or hromada + oblast columns")
     unmatched = df["k3"].isna().mean()
@@ -238,6 +258,10 @@ def cmd_build(raw_dir, koatuu_xw=None):
     df = df[df["k3"].notna()]
 
     def band(v):
+        m = re.search(r"\d+", str(v))
+        if m:                                              # single years of age (the NHSU file, 2026)
+            a = int(m.group())
+            return "0-17" if a < 18 else "18-64" if a < 65 else "65+"
         v = str(v).strip().lower()
         for b, labels in AGE_BANDS.items():
             if any(v.startswith(l.lower()) for l in labels):
@@ -262,8 +286,11 @@ def cmd_build(raw_dir, koatuu_xw=None):
     out["snapshot"] = day
     out = keys[["k1", "k2", "k3", "name"]].merge(out.drop(columns=["pop_ghs_2020"]), on="k3", how="left")
     out.to_csv(OUT, index=False)
+    r = out["decl_per1000_pop2020"]
     log(f"wrote {OUT.relative_to(BASE)}: {int(out['decl_total'].notna().sum())} hromadas with declarations; "
-        f"median per 1,000 residents (2020) {out['decl_per1000_pop2020'].median():.0f}")
+        f"per 1,000 residents (2020): median {r.median():.0f}, p10 {r.quantile(.1):.0f}, p90 {r.quantile(.9):.0f}; "
+        f"below 300: {int((r < 300).sum())} hromadas (probably served from a neighbouring hromada), "
+        f"above 1,200: {int((r > 1200).sum())} (serving neighbours, or inflow)")
     long = out.dropna(subset=["decl_total"])
     if OUT_LONG.exists():
         prev = pd.read_csv(OUT_LONG, dtype={"k1": str, "k2": str, "k3": str})

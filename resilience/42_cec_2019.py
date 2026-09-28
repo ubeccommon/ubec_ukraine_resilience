@@ -13,6 +13,13 @@ State Voter Register (drv.gov.ua, open data). Turnout per station, placed in its
 gives a pre-war measure of participation for every hromada — a rights-sphere condition the pattern-language round
 lacks (docs/pattern_language.md, 6.1).
 
+STATUS (probe of 28 Sep 2026): PARKED. The CEC results on data.gov.ua (od_result_21072019.xml, parliamentary;
+od_result_1.xml, presidential) are aggregated by single-member electoral district (<ovo>, 199 districts, about
+150,000 voters each), not by polling station: too coarse for hromadas, and district boundaries are published only as
+text (DRV GetAreasService). Polling-station turnout exists on the CEC website as HTML tables per district and round;
+the DRV API (GetPSService: stations with addresses; GetCntVotPSService: voters per station) was not reachable from
+the data machine. The script is kept for the probe; the route below is what a build would need.
+
 The exact resources and columns were not visible from Claude's workspace (28 Sep 2026): run `probe`, then set
 RESOURCES and the two column maps (COLS_RESULTS for the results table, COLS_STATIONS for the station list) from its
 output, then `pull` and `build`. Placement by settlement name reuses 34_schools.py (KATOTTG codifier; ambiguous

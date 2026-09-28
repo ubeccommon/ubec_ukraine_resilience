@@ -191,6 +191,17 @@ declarations (present population by hromada, weekly, CC BY 4.0) and the 2019 tur
 next round; then the civic-life and reserve sources of section 6 in the order of the consequences table.
 (3) Keep the composite only as a check.
 
+### 5.6 Round 2 set-up (28 Sep 2026)
+
+Three qualities in `39`: composite (check), functional (light), fiscal (budgets). First results: the functional
+quality has no pre-war budget signal at all (tree 0.50; no condition above the linear ceiling of 0.115, autonomy
++0.08); the fiscal quality has a weak linear local-tax-base signal (single tax +0.16, property tax +0.13, payroll PIT
++0.10, autonomy +0.09; ceiling 0.085) and no configuration. The functional "kinds" split sharply: a well-off,
+village, western kind and a poorer, urban, central kind. Neither quality clusters much (I 0.10–0.11).
+
+New sources: `41_nhsu_declarations.py` is ready (hromada placed by name through 33's matcher; age bands from single
+years; counts only). `42_cec_2019.py` is parked: the open CEC results are by electoral district, not polling station.
+
 ## 6. Data not yet used
 
 Discovery can only find configurations among the variables it is given; the current 111 describe budgets, light,
