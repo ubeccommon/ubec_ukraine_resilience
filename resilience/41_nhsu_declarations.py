@@ -14,7 +14,9 @@ describes declarations by region, community (hromada), settlement, facility, doc
 28 Sep 2026: the file used is active_declarations_by_age_gender.csv (158 MB; columns legal_entity_id, area,
 gromada_koatuu, gromada_name, settlement_koatuu, settlement, settlement_type, person_gender, person_age in single
 years, count_declarations). The hromada carries a KOATUU code, not KATOTTG: it is placed by name within its oblast
-through the matcher of 33_elections_2020.py (synthetic test on 400 real hromada names: 399 placed, all correctly);
+through the matcher of 33_elections_2020.py (synthetic test on 400 real hromada names: 399 placed, all correctly;
+first real build: 1,351 of 1,387), then renamed hromadas and names repeated within an oblast by a declarations-
+weighted vote of the settlements named in their rows (KATOTTG codifier, as 34_schools.py);
 --koatuu-xw offers the code route if a KOATUU-KATOTTG table is at hand. The other two files (by doctor; doctor info)
 carry doctors' identifiers or names and are never downloaded (R6).
 Caveat to check on the first build: the rows carry the provider (legal_entity_id), so the geography may be the
@@ -246,10 +248,37 @@ def cmd_build(raw_dir, koatuu_xw=None):
         c["rada_name"] = u["hromada"].astype(str)
         m = e33.match_k3(c)
         u["k3"] = m["k3"].reindex(u.index)
-        log(f"hromadas in the source: {len(u)}; matched {int(u['k3'].notna().sum())}")
+        u["route"] = np.where(u["k3"].notna(), "name", "")
+        log(f"hromadas in the source: {len(u)}; placed by name {int(u['k3'].notna().sum())}")
+        # fallback: settlement vote. Renamed hromadas and names repeated within an oblast (the source gives the name
+        # without its type) are placed by the settlements named in their rows: each settlement name that is unique in
+        # its oblast in the KATOTTG codifier (34_schools.settlements) votes for its hromada, weighted by declarations;
+        # accepted when one hromada has >= 60 % of the placed weight and is not already taken by another row.
+        if u["k3"].isna().any() and "settlement" in df:
+            s34 = importlib.import_module("34_schools")
+            st, _ = s34.settlements()
+            st = st.dropna(subset=["k3"])
+            uniq = st.groupby(["obl", "nn"])["k3"].agg(lambda x: x.iloc[0] if x.nunique() == 1 else None).dropna()
+            taken = set(u["k3"].dropna())
+            miss_i = u.index[u["k3"].isna()]
+            sub = df.merge(u.loc[miss_i, grp].assign(_u=miss_i), on=grp, how="inner")
+            sub["_obl"] = sub["oblast"].map(s34.obl_norm)
+            sub["_nn"] = sub["settlement"].map(s34.norm)
+            sub["_k3"] = pd.Series(list(zip(sub["_obl"], sub["_nn"]))).map(uniq).values
+            placed = []
+            for i, g in sub.groupby("_u"):
+                w = g.dropna(subset=["_k3"]).groupby("_k3")["count"].sum().sort_values(ascending=False)
+                if w.empty:
+                    continue
+                share = w.iloc[0] / w.sum()
+                if share >= 0.6 and w.index[0] not in taken:
+                    u.at[i, "k3"], u.at[i, "route"] = w.index[0], "settlements"
+                    taken.add(w.index[0])
+                    placed.append(f"{u.at[i, 'hromada']} -> {w.index[0]} ({share:.0%})")
+            log(f"placed by settlement vote: {len(placed)}" + (": " + "; ".join(placed) if placed else ""))
         miss = u[u["k3"].isna()]
         if len(miss):
-            log("unmatched: " + "; ".join(f"{r.oblast[:14]}|{r.hromada}" for r in miss.head(40).itertuples()))
+            log(f"still unplaced ({len(miss)}): " + "; ".join(f"{r.oblast[:14]}|{r.hromada}" for r in miss.itertuples()))
         df = df.merge(u[grp + ["k3"]], on=grp, how="left")
     else:
         sys.exit("COLS must map a katottg column, a koatuu column (with --koatuu-xw), or hromada + oblast columns")

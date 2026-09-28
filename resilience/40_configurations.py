@@ -120,6 +120,9 @@ def main():
     ap.add_argument("--pop", default="outside", choices=("outside", "zone"))
     ap.add_argument("--max-k", type=int, default=3, choices=(1, 2, 3))
     ap.add_argument("--with-region", action="store_true", help="is_village, is_city, carp as conditions")
+    ap.add_argument("--with-present", action="store_true",
+                    help="add NHSU 2026 measures (declarations per 1,000 of 2020, share 65+) as conditions — concurrent, "
+                         "not pre-war: configurations found with them describe, they do not precede")
     ap.add_argument("--outcome", default="composite", choices=("composite", "func", "fisc", "s24", "recent", "econ", "cult", "own"),
                     help="fuzzy outcome: the composite quality (default), the functional (func) or fiscal (fisc) quality, "
                          "or one family's residual")
@@ -174,6 +177,13 @@ def main():
         x = pd.to_numeric(d[col], errors="coerce") * sign
         F[nm] = oblast_rank(x, d["k1"])
     conds = list(CONDITIONS)
+    if a.with_present:
+        nh = rd("nhsu_declarations_k3.csv").set_index("k3")
+        for col in ("decl_per1000_pop2020", "decl_share_65plus"):
+            d[col] = d["k3"].map(nh[col])                     # map, not merge: keeps d aligned with F
+        for nm, col, sign in (("people_present", "decl_per1000_pop2020", +1), ("young", "decl_share_65plus", -1)):
+            F[nm] = oblast_rank(pd.to_numeric(d[col], errors="coerce") * sign, d["k1"])
+            conds.append(nm)
     if a.with_region:
         for nm in STRUCT:
             F[nm] = d[nm]

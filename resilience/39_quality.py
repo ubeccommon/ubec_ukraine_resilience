@@ -48,7 +48,8 @@ parts: CONDITIONS — pre-war (2021) sphere inputs (32), 2020 election contestat
 2020, hromada type, balance 2021, Carpathian flag — and CONSEQUENCES — the 2025 inputs, DREAM, schools 2026,
 balance 2025, modelled population change. The econ and cult families are built from the 2025 inputs, so the
 consequences describe what holding up looks like, not what precedes it; only the conditions are candidates for a
-pattern. Exposure is a control, listed with the consequences for reference.
+pattern. Exposure is a control, listed with the consequences for reference. PRESENT: the NHSU declarations of
+41 (per 1,000 residents of 2020, share aged 65+, share under 18; snapshot 2026) — concurrent with the outcomes.
 
 LISA (KNN 6, as 36) on the composite, non-zone population: where the quality clusters, the configuration behind it
 is probably regional (oblast row); where it is scattered, hromada-level.
@@ -201,6 +202,10 @@ def main():
             pd.to_numeric(sc.get("schools_2026"), errors="coerce").where(lambda v: v > 0)
         d = d.merge(sc[["k3"] + keep + ["rural_school_share"]], on="k3", how="left",
                     suffixes=("", "_sc"))
+    nh = rd("nhsu_declarations_k3.csv", required=False)          # 41 (NHSU, CC BY 4.0), snapshot 2026
+    if nh is not None:
+        keep = [c for c in ("decl_per1000_pop2020", "decl_share_65plus", "decl_share_0_17") if c in nh]
+        d = d.merge(nh[["k3"] + keep], on="k3", how="left")
     pop = rd("population_k3.csv", required=False)
     if pop is not None:
         pop["pop_change"] = np.log(pd.to_numeric(pop["pop_ghs_2025"], errors="coerce") /
@@ -328,11 +333,12 @@ def main():
     cons = [c for c in inputs if c not in cond]
     cons += [c for c in ("schools_suspended_2026", "rural_school_share", "pop_change", "imbalance_2025",
                          "lean_cult_2025", "lean_econ_rights_2025", "exp", "exp_alert") if c in d and c not in cons]
+    present = [c for c in ("decl_per1000_pop2020", "decl_share_65plus", "decl_share_0_17") if c in d]
     binary = [c for c in ("is_city", "is_settlement", "is_village", "carp", "light_reliable") if c in d]
     rows = []
     out = d[d["pop"] == "outside"].copy()
     for qset, qcol in (("composite", "quality"), ("func", "quality_func"), ("fisc", "quality_fisc")):
-        for part, vs in (("condition", cond), ("consequence", cons)):
+        for part, vs in (("condition", cond), ("consequence", cons), ("present", present)):
             for v in vs:
                 x = pd.to_numeric(out[v], errors="coerce")
                 med = x.groupby(out["k1"]).transform("median")
@@ -361,6 +367,13 @@ def main():
             wide["gap"] = wide["held_up"] - wide["faltered"]
             wide = wide.sort_values("gap", ascending=False)
         log(f"\n-- CONDITIONS, {qset} quality\n" + wide.round(3).to_string())
+    if present:
+        wide = P[P["part"] == "present"].pivot_table(index=["variable", "quality_set"], columns="group",
+                                                     values="share_above_oblast_median", sort=False)
+        if {"held_up", "faltered"} <= set(wide.columns):
+            wide["gap"] = wide["held_up"] - wide["faltered"]
+        log("\n-- PRESENT (NHSU declarations, 2026 snapshot: concurrent with the outcomes, read as association)\n"
+            + wide.round(3).to_string())
     P = P[P["quality_set"] == "composite"]
     for part, vs in (("condition", cond), ("consequence", cons)):
         wide = P[P["part"] == part].pivot_table(index="variable", columns="group",
