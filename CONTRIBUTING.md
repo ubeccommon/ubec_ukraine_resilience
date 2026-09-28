@@ -42,7 +42,7 @@ with a `Co-Authored-By: Claude …` trailer and a `Claude-Session:` link. Commit
   CI (`.github/workflows/checks.yml`) runs on every push and must stay green; a red run on
   `main` is fixed by the next commit, not by force-pushing.
 - **Exception: `claude/<topic>` branch and pull request** for large or risky changes: new
-  methodology, anything touching rules R1–R6, release preparation, or whenever the maintainer
+  methodology, anything touching rules R1–R7, release preparation, or whenever the maintainer
   asks. The maintainer reviews and merges on GitHub. Claude cannot delete remote branches from
   its environment; enable Settings → General → "Automatically delete head branches", or delete
   the merged branch on GitHub.
@@ -90,7 +90,7 @@ The script:
 6. commits with a fixed message and pushes.
 
 If it stops, nothing is committed and the index is restored: copy the output to Claude, who
-fixes the cause (for example adds a new table to `ALLOW_NEW` after checking it against R1–R6,
+fixes the cause (for example adds a new table to `ALLOW_NEW` after checking it against R1–R7,
 or restores a changed script). A new tracked output therefore always passes through a
 deliberate decision.
 
@@ -164,6 +164,8 @@ from cache.
 
 - Aggregated open data only. No personal data; no names of officials or volunteers.
 - Nothing that locates shelters, volunteers or critical infrastructure below hromada level.
+- Rule R7: religious affiliation, ethnicity and language never at hromada level; schools,
+  libraries, places of worship and media offices as counts only, never as points.
 - Hromada-level night-light tables covering the most recent 12 months stay out of git until a
   publication rule (time lag or aggregation) is agreed.
 - Data whose terms forbid redistribution (IOM DTM, ACLED; reSCORE pending permission) stays out.

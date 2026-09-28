@@ -166,6 +166,7 @@ The repository follows the publication rules of the companion paper:
 | R4 Military finance | No garrison flag and no military income-tax fields at hromada level. |
 | R5 Strike events | Hromada counts only; VIINA event points are not republished. |
 | R6 Personal data | No names, addresses or free-text fields from any source. |
+| R7 Sensitive cultural data | No hromada-level maps or tables of religious affiliation, ethnicity or language, and nothing that could single out a community. Institutions appear as counts only, never their locations: schools, libraries, places of worship and media offices are never mapped as points. |
 
 If you believe anything here could put people or infrastructure at risk, open a private
 security advisory on GitHub or contact the author before republishing.
