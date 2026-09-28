@@ -124,7 +124,7 @@ Status: **E** existing in `tidy/`; **C** computed from an existing cache, no new
 
 | Indicator | Direction | 2021 | 2025 | Status | Source / note |
 |---|---|---|---|---|---|
-| Own revenue per resident, general fund | + | ✓ | ✓ | E | `03_openbudget.py` INCOMES |
+| Property and land payments (1801xxxx) per resident | + | ✓ | ✓ | C | INCOMES cache; replaces total own revenue (step 5): PIT is the largest part of own revenue (rank correlation 0.93), so total own revenue would count PIT twice. Own revenue stays in the economic budget sub-index |
 | Civilian income tax per resident | + | ✓ | ✓ | E | booked at the employer's address |
 | Single tax (єдиний податок, 1805xxxx) per resident | + | ✓ | ✓ | C | INCOMES cache; sole proprietors and group-4 farmers |
 | Civilian income-tax growth 2021–2025 | + | — | ✓ | E | `pdfo_civ_growth_rel_2125` |
