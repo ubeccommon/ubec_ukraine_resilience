@@ -139,7 +139,7 @@ Not feasible: cooperatives and associations (ЄДР has no address field).
 |---|---|---|---|---|---|
 | Transfer dependency | − | ✓ | ✓ | E / C | INCOMES (2021 from cache) |
 | Capital-expenditure share | + | ✓ | ✓ (2023–25) | E / N | 2021: `03_openbudget.py pull --items EXPENSES_ECONOMIC --years 2021` |
-| Social protection spending share (functional 10) | + | ✓ | ✓ | N | `31_functional_spending.py` |
+| Social protection spending per resident (functional 10) | + | ✓ | ✓ | N | `31_functional_spending.py`; per resident, not share (step 5, 28 Sep 2026) |
 | DREAM projects per 10,000 | + | — | ✓ | E | also reflects damage and donor attention |
 | Contestation of the 2020 council election: candidates per seat, relative to its electoral system | + | ✓ | — | done (step 4a) | `33_elections_2020.py`, CEC open data; 1,276 of 1,289 non-occupied hromadas |
 | Women's share of council seats 2020 | + | ✓ | — | V, S | aggregated from candidate lists; names never stored |
@@ -153,9 +153,9 @@ administration, civic engagement, locality satisfaction (oblast).
 
 | Indicator | Direction | 2021 | 2025 | Status | Source / note |
 |---|---|---|---|---|---|
-| Culture and arts spending share (functional 0820) | + | ✓ | ✓ | N | if sub-codes are served; otherwise 08 as a whole |
-| Education spending share (functional 09) | + | ✓ | ✓ | N | largely the education subvention: partly measures pupil numbers |
-| Extracurricular education spending share (functional 0960) | + | ✓ | ✓ | N | art and music schools, clubs; if sub-codes are served |
+| Culture and arts spending per resident (functional 082x) | + | ✓ | ✓ | N | per resident, not share (step 5) |
+| Education spending per resident (functional 09) | + | ✓ | ✓ | N | largely the education subvention: partly measures pupil numbers |
+| Extracurricular education spending per resident (functional 096x) | + | ✓ | ✓ | N | art and music schools, clubs; 0 where absent |
 | General secondary schools in operation per 10,000 residents | + | — | ✓ | done (step 4b) | `34_schools.py`, ЄДЕБО register (KATOTTG), 1,438 hromadas; higher where settlement is dispersed |
 
 Context, not in the index: sport (0810) and media (0830) spending shares; reSCORE belonging and mental
@@ -179,5 +179,9 @@ damaged education facilities (S; impact, not capacity).
 3. Administrative service centres, ЦНАП (rights).
 4. Military administrations (stratifier).
 
-If the functional sub-codes (0820, 0960) are not served by the API, the cultural sphere has two budget
-inputs and needs step 4b to reach three.
+Spending enters the cultural and rights spheres **per resident, not as shares** (decision of 28 Sep 2026).
+Shares of one budget sum to 1: a high education share lowers every other share, so shares built a
+negative cultural–rights correlation into the indices (−0.38) and did not cohere as a cultural sphere
+(−0.16 to 0.10). Per-resident amounts rise with fiscal size (cultural–economic 0.61–0.66) — the
+economic sphere supplies the means of the cultural one; step 7 examines this. Shares remain a
+sensitivity check and context.

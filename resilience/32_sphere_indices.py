@@ -20,14 +20,21 @@ Indicators (direction):
                  largest part (rank correlation 0.93 with PIT per resident), so it would count PIT
                  twice; it stays in budget_econ_2025.
   economic 2025  the same three for 2025 (+), civilian PIT growth 2021–25 (+)
-  rights   2021  transfer dependency (−), capital-expenditure share (+), social protection share
-                 of civilian spending (+), candidates per council seat 2020, relative to the
-                 electoral system (+)
+  rights   2021  transfer dependency (−), capital-expenditure share (+), social protection spending
+                 per resident (+), candidates per council seat 2020, relative to the electoral
+                 system (+)
   rights   2025  transfer dependency (−), capital-expenditure share 2023–25 (+), social protection
-                 share (+), DREAM projects per 10,000 (+)
-  cultural 2021  culture and arts, education, extracurricular education shares of civilian
-                 spending (+)
+                 spending per resident (+), DREAM projects per 10,000 (+)
+  cultural 2021  spending per resident on culture and arts (082x), education (09xx) and
+                 extracurricular education (096x) (+)
   cultural 2025  the same three (+), general secondary schools in operation per 10,000 (+)
+Spending enters per resident, not as shares (decision of 28 Sep 2026): shares of one budget sum to 1,
+so a high education share lowers every other share and builds a negative cultural–rights
+correlation into the indices (−0.38 in 2025); the cultural indicators as shares did not cohere
+(−0.16 to 0.10). Per-resident amounts rise with fiscal size (cultural–economic 0.61–0.66): the
+economic sphere supplies the means of the cultural one, which step 7 examines. Education per resident
+is largely the education subvention. Zero spending (no art school, no culture budget) ranks lowest
+(log1p). Shares are kept as a printed sensitivity check.
 Budget sub-indices 2025 (the fiscal capacity index split, framework decision of 26 Sep 2026):
   budget_econ_2025   own revenue per resident, civilian PIT growth
   budget_rights_2025 transfer dependency (−), capital-expenditure share
@@ -73,17 +80,19 @@ SPHERES = {
     ("econ", 2025): {"pdfo_civ_pc_2025": (+1, "log"), "single_tax_pc_2025": (+1, "log"),
                      "property_tax_pc_2025": (+1, "log"), "pdfo_civ_growth_rel_2125": (+1, "log")},
     ("rights", 2021): {"transfer_dep_civ_2021": (-1, None), "capex_share_2021": (+1, None),
-                       "sh_10_social_2021": (+1, None), "cand_per_seat_rel_2020": (+1, "log")},
+                       "social_pc_2021": (+1, "log1p"), "cand_per_seat_rel_2020": (+1, "log")},
     ("rights", 2025): {"transfer_dep_civ_2025": (-1, None), "capex_share_2325": (+1, None),
-                       "sh_10_social_2025": (+1, None), "dream_per10k": (+1, "log1p")},
-    ("cult", 2021): {"sh_082_culture_arts_2021": (+1, None), "sh_09_education_2021": (+1, None),
-                     "sh_0960_extracurricular_2021": (+1, None)},
-    ("cult", 2025): {"sh_082_culture_arts_2025": (+1, None), "sh_09_education_2025": (+1, None),
-                     "sh_0960_extracurricular_2025": (+1, None), "schools_per10k_2026": (+1, "log")},
+                       "social_pc_2025": (+1, "log1p"), "dream_per10k": (+1, "log1p")},
+    ("cult", 2021): {"culture_arts_pc_2021": (+1, "log1p"), "education_pc_2021": (+1, "log1p"),
+                     "extracurricular_pc_2021": (+1, "log1p")},
+    ("cult", 2025): {"culture_arts_pc_2025": (+1, "log1p"), "education_pc_2025": (+1, "log1p"),
+                     "extracurricular_pc_2025": (+1, "log1p"), "schools_per10k_2026": (+1, "log")},
 }
 SUB = {"budget_econ_2025": {"own_gf_civ_pc_2025": (+1, "log"), "pdfo_civ_growth_rel_2125": (+1, "log")},
        "budget_rights_2025": {"transfer_dep_civ_2025": (-1, None), "capex_share_2325": (+1, None)}}
 FUNC = ["sh_082_culture_arts", "sh_09_education", "sh_0960_extracurricular", "sh_10_social"]
+FULL = TIDY / "functional_spending_full_k3_year.csv"   # internal (31_), UAH by functional code
+PC_GROUPS = {"culture_arts": "082", "extracurricular": "096", "education": "09", "social": "10"}
 _logf = None
 
 
@@ -177,6 +186,22 @@ def load_inputs():
             for c in FUNC:
                 df[f"{c}_{y}"] = np.nan
 
+    if FULL.exists():
+        f = zk(pd.read_csv(FULL, dtype={"k3": str}))
+        f = f[f["last_month"] == 12]
+        fk = [c for c in f.columns if c.startswith("fk_")]
+        for y in (2021, 2025):
+            fy = f[f["year"] == y].set_index("k3")
+            for g, pre in PC_GROUPS.items():
+                cols = [c for c in fk if c[3:].startswith(pre)]
+                amt = fy[cols].fillna(0).sum(axis=1) if cols else pd.Series(0.0, index=fy.index)
+                df[f"{g}_pc_{y}"] = df["k3"].map(amt) / df["k3"].map(P)   # 0 where the code is absent
+    else:
+        log("  functional_spending_full_k3_year.csv not found — run 31_functional_spending.py shares")
+        for y in (2021, 2025):
+            for g in PC_GROUPS:
+                df[f"{g}_pc_{y}"] = np.nan
+
     el = zk(pd.read_csv(TIDY / "elections_2020_k3.csv", dtype={"k3": str})).set_index("k3")
     df["cand_per_seat_rel_2020"] = df["k3"].map(el["cand_per_seat_rel"])
     sc = zk(pd.read_csv(TIDY / "schools_k3.csv", dtype={"k3": str})).set_index("k3")
@@ -214,61 +239,34 @@ def wmean(v, w):
 
 
 # ---------------------------------------------------------------- variant: per resident
-FULL = TIDY / "functional_spending_full_k3_year.csv"   # internal (31_), UAH by functional code
-PC_GROUPS = {"culture_arts": "082", "extracurricular": "096", "education": "09", "social": "10"}
-
-
-def percap_variant(df, free, res):
-    """Diagnostic: cultural and rights spheres with spending per resident instead of shares of
-    civilian spending. Shares of one budget sum to 1, so a high education share lowers every
-    other share and builds a negative correlation between spheres into the index; amounts per
-    resident carry no such constraint (but rise with fiscal size). Printed only."""
-    if not FULL.exists():
-        log("\nper-resident variant skipped: functional_spending_full_k3_year.csv not found")
-        return
-    f = zk(pd.read_csv(FULL, dtype={"k3": str}))
-    f = f[f["last_month"] == 12]
-    fk = [c for c in f.columns if c.startswith("fk_")]
-    P = df.set_index("k3")["pop_ghs_2020"]
-    v = df[["k3"]].copy()
-    for y in (2021, 2025):
-        fy = f[f["year"] == y].set_index("k3")
-        for g, pre in PC_GROUPS.items():
-            cols = [c for c in fk if c[3:].startswith(pre)]
-            amt = fy[cols].fillna(0).sum(axis=1) if cols else pd.Series(dtype=float)
-            v[f"{g}_pc_{y}"] = v["k3"].map(amt) / v["k3"].map(P)
-    X = df.copy()
-    for c in v.columns[1:]:
-        X[c] = v[c].values
+def shares_variant(df, free, res):
+    """Sensitivity (printed only): cultural and rights spheres with spending as shares of civilian
+    spending, the specification used before 28 Sep 2026."""
     spec = {
-        ("cult", 2021): {"culture_arts_pc_2021": (+1, "log"), "education_pc_2021": (+1, "log"),
-                         "extracurricular_pc_2021": (+1, "log")},
-        ("cult", 2025): {"culture_arts_pc_2025": (+1, "log"), "education_pc_2025": (+1, "log"),
-                         "extracurricular_pc_2025": (+1, "log"), "schools_per10k_2026": (+1, "log")},
+        ("cult", 2021): {"sh_082_culture_arts_2021": (+1, None), "sh_09_education_2021": (+1, None),
+                         "sh_0960_extracurricular_2021": (+1, None)},
+        ("cult", 2025): {"sh_082_culture_arts_2025": (+1, None), "sh_09_education_2025": (+1, None),
+                         "sh_0960_extracurricular_2025": (+1, None), "schools_per10k_2026": (+1, "log")},
         ("rights", 2021): {"transfer_dep_civ_2021": (-1, None), "capex_share_2021": (+1, None),
-                           "social_pc_2021": (+1, "log"), "cand_per_seat_rel_2020": (+1, "log")},
+                           "sh_10_social_2021": (+1, None), "cand_per_seat_rel_2020": (+1, "log")},
         ("rights", 2025): {"transfer_dep_civ_2025": (-1, None), "capex_share_2325": (+1, None),
-                           "social_pc_2025": (+1, "log"), "dream_per10k": (+1, "log1p")},
+                           "sh_10_social_2025": (+1, None), "dream_per10k": (+1, "log1p")},
     }
-    log("\n=== variant: spending per resident (diagnostic, not written)")
+    if not all(df.loc[free, c].notna().any() for sp in spec.values() for c in sp):
+        log("\nsensitivity (shares) skipped: functional shares missing")
+        return
+    log("\n=== sensitivity: spending as shares of civilian spending (printed only)")
     alt = pd.DataFrame(index=df.index)
     for (sph, y), sp in spec.items():
-        R = ranks(X, sp, free)
-        alt[f"{sph}_{y}"] = index(R, MIN_IND)
-        log(f"  {sph}_{y}: n={alt.loc[free, f'{sph}_{y}'].notna().sum()}  within-sphere rank correlations:")
-        log("\n".join("      " + l for l in R[free].corr(method="spearman").round(2).to_string().splitlines()))
+        alt[f"{sph}_{y}"] = index(ranks(df, sp, free), MIN_IND)
     for y in (2021, 2025):
-        C = pd.DataFrame({"econ": res[f"econ_{y}"], "rights_pc": alt[f"rights_{y}"], "cult_pc": alt[f"cult_{y}"]})[free]
-        log(f"  between-sphere rank correlations {y} (econ unchanged):")
+        C = pd.DataFrame({"econ": res[f"econ_{y}"], "rights_sh": alt[f"rights_{y}"], "cult_sh": alt[f"cult_{y}"]})[free]
+        log(f"  between-sphere rank correlations {y}, shares version:")
         log("\n".join("      " + l for l in C.corr(method="spearman").round(3).to_string().splitlines()))
-        for s in ("rights", "cult"):
-            ok = free & res[f"{s}_{y}"].notna() & alt[f"{s}_{y}"].notna()
-            log(f"    {s}_{y}: shares vs per-resident version rho="
-                f"{res.loc[ok, f'{s}_{y}'].corr(alt.loc[ok, f'{s}_{y}'], method='spearman'):.3f}")
-    carp = free & df["k1"].isin(CARP)
-    g = alt[carp].assign(k1=df.loc[carp, "k1"]).groupby("k1").median().round(3)
-    g.index = [CARP[k] for k in g.index]
-    log("  Carpathian medians (variant):\n" + "\n".join("      " + l for l in g.to_string().splitlines()))
+        for sph in ("rights", "cult"):
+            ok = free & res[f"{sph}_{y}"].notna() & alt[f"{sph}_{y}"].notna()
+            log(f"    {sph}_{y}: per-resident vs shares version rho="
+                f"{res.loc[ok, f'{sph}_{y}'].corr(alt.loc[ok, f'{sph}_{y}'], method='spearman'):.3f}")
 
 
 # ---------------------------------------------------------------- main
@@ -350,7 +348,7 @@ def main():
         nat = res.loc[free, cols].median().round(3).rename("Україна (медіана)")
         log("\nCarpathian oblasts, median index:\n" + pd.concat([g, nat.to_frame().T]).to_string())
 
-    percap_variant(df, free, res)
+    shares_variant(df, free, res)
 
     res["occupied"] = df["occupied"]
     res.loc[~free, [c for c in res.columns if c not in ("k1", "k2", "k3", "name", "occupied")]] = np.nan
@@ -400,6 +398,11 @@ def main():
              ["property_tax_pc_2021 / property_tax_pc_2025", "openbudget.gov.ua INCOMES (codes 1801xxxx) + GHS-POP",
               "UA open data (CMU Res. 835) + EC reuse notice", "UAH/person", "2021, 2025", "hromada",
               "property tax incl. land payments, FUND_TYP T, December YTD, leaf codes / pop_ghs_2020"],
+             ["culture_arts_pc / education_pc / extracurricular_pc / social_pc (_2021, _2025)",
+              "openbudget.gov.ua localBudgetData EXPENSES PROGRAM (31_) + GHS-POP",
+              "UA open data (CMU Res. 835) + EC reuse notice", "UAH/person", "2021, 2025", "hromada",
+              "actual spending on functional codes 082x, 09xx, 096x, 10xx (FUND_TYP T, December YTD, "
+              "economic sub-rows de-duplicated) / pop_ghs_2020; 0 where the code is absent"],
              ["transfer_dep_civ_2021 / transfer_dep_civ_2025", "public/budget_long_k3_year.csv",
               "UA open data (CMU Res. 835)", "ratio", "2021, 2025", "hromada",
               "transfers / civilian total revenue (military PIT removed, rule R4)"]]
