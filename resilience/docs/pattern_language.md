@@ -153,6 +153,44 @@ for a caveat; none for a hypothesis kept for the next round. Tests in the field:
 pattern in the Carpathian oblasts, from the held-up set, through the dispatch series; a pattern nobody recognises
 is wrong or badly named. Language: the co-occurrence matrix, placement in spheres and scales, links up and down.
 
+### 5.5 Round 1 results (28 Sep 2026, `39_quality.py --reliable-light`, `40_configurations.py`)
+
+**The observation set.** Outside the zone 181 held up, 181 faltered, 731 middle; zone 36 / 34 / 125. Moran's I of the
+composite 0.09 (p = 0.001), nothing after FDR: the quality is hromada-level, not regional. Villages are 58 % of the
+held-up against 37 % of the faltered; Carpathian hromadas are 30 % of both extremes against 19 % of the middle.
+
+**The composite is not one quality.** Rank correlations between the five residual families: the two light families
+0.53 with each other, the three budget families 0.09–0.33 among themselves, light with budget 0.02–0.22 (mean
+off-diagonal 0.17). Held-up hromadas qualified mostly through budgets (top quarter on econ 69 %, cult 61 %, own
+64 %; summer-2024 light 30 %). Holding light and holding the tax base are different things.
+
+**The pre-war budget profile carries no configuration.** Composite and every single family: the tree is at chance
+(balanced accuracy 0.48–0.61 with oblasts held out); of 5,252 conjunctions of up to three conditions, none beats the
+permutation ceiling for holding up. One exception, for faltering on cultural retention: low payroll PIT, low single
+tax and low autonomy in 2021 each pass alone (excess over the ceiling 0.03, precision 0.62–0.64) — cultural provision
+held where the 2021 tax base paid for it (the paper's finding 6 as a condition; Annex A's "culture from own
+revenue"; budget arithmetic more than a pattern). The "kinds" of held-up hromada are the same in every family: a
+well-off kind high on every budget line and a poor kind low on every line, in similar numbers — holding up happens
+at both ends of the budget.
+
+**The recovery test.** Autonomy does not surface on summer-2024 retention, where the paper finds +0.21 SD within
+oblasts (+0.15 on reliable light). The configurational search is calibrated to invariants (synthetic tests: it
+finds a single condition at r ≈ 0.5 and rejects noise); the paper's associations are 0.1–0.2 SD. They are real,
+and they are not patterns in Alexander's sense. `40` now reports the linear side beside the search (rank
+correlation of each condition with the outcome against a permutation ceiling), so that weak associations are
+visible rather than absent.
+
+**Reading.** The design's own rule applies: fewer than seven configurations means the profile is missing what
+matters. The budget lines record means, not the configuration that keeps a place going. The consequences table
+gives the first lead — held-up hromadas had modelled population growth 2020 → 2025 (65 % above their oblast median
+against 46 % of the faltered) — so people moving in, and who receives them, is the first thing to measure.
+
+**Decisions for round 2.** (1) Split the quality: a functional quality (the two light families, reliable light
+only) and a fiscal quality (the three budget families), each its own observation set. (2) Pull the NHSU
+declarations (present population by hromada, weekly, CC BY 4.0) and the 2019 turnout by polling station before the
+next round; then the civic-life and reserve sources of section 6 in the order of the consequences table.
+(3) Keep the composite only as a check.
+
 ## 6. Data not yet used
 
 Discovery can only find configurations among the variables it is given; the current 111 describe budgets, light,

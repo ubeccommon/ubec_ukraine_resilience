@@ -23,6 +23,10 @@ methods are configurational, not regression:
      payroll booked at employers.
   2. Rule induction: a classification tree (depth <= 3, >= 20 hromadas per leaf) on held_up vs faltered, its
      accuracy cross-validated with oblasts held out (GroupKFold 5); the rules printed. Leaves are conjunctions.
+  2b. For the record, the linear side: Spearman correlation of each condition with the outcome rank, against the
+     chance ceiling for the largest of 13 correlations (outcome permuted within oblasts). The paper's associations
+     (0.1–0.2 SD) live here; the configurational search below is calibrated to invariants (a single condition
+     needs about r >= 0.4 to pass), so this table says whether anything weaker is present at all.
   3. Fuzzy-set consistency and coverage (Ragin 2008) of every conjunction of 1..max_k conditions, each present or
      absent, against the fuzzy outcome Y = within-population percentile rank of the composite residual (held up)
      and 1 − Y (faltered):  consistency = sum(min(X, Y)) / sum(X)   coverage = sum(min(X, Y)) / sum(Y).
@@ -212,6 +216,28 @@ def main():
     except Exception as ex:
         log(f"note: tree skipped ({ex})")
 
+    # ---- 2b. linear associations, for the record: weak paper-scale associations that no configuration will show
+    lin = []
+    from scipy.stats import spearmanr
+    rng_l = np.random.default_rng(20260928)
+    k1v_l = do["k1"].values
+    yv_l = Yo.values
+    perm_r = []
+    for _ in range(max(a.perms, 1) * 10):
+        yp = yv_l.copy()
+        for g in np.unique(k1v_l):
+            idx = np.where(k1v_l == g)[0]
+            yp[idx] = yp[rng_l.permutation(idx)]
+        perm_r.append(max(abs(spearmanr(Fo[nm].values, yp).statistic) for nm in conds))
+    r_ceiling = float(np.percentile(perm_r, 95))
+    for nm in conds:
+        r = spearmanr(Fo[nm].values, yv_l).statistic
+        lin.append({"condition": nm, "rho": round(float(r), 3), "above_ceiling": bool(abs(r) > r_ceiling)})
+    lin = sorted(lin, key=lambda t: -abs(t["rho"]))
+    log(f"\n== linear associations (Spearman of each condition's oblast rank with the outcome rank); chance ceiling "
+        f"for the largest |rho| among {len(conds)} conditions = {r_ceiling:.3f}")
+    log("  " + "  ".join(f"{t['condition']} {t['rho']:+.2f}{'*' if t['above_ceiling'] else ''}" for t in lin))
+
     # ---- 3. necessary conditions and conjunctions ---------------------------------------------------------
     outcomes = {"held_up": (Yo, held, falt), "faltered": (1 - Yo, falt, held)}
     log("\n== necessary conditions (consistency of necessity >= 0.90)")
@@ -367,7 +393,8 @@ def main():
             "conditions": {nm: CONDITIONS[nm][2] for nm in CONDITIONS} | ({nm: STRUCT[nm] for nm in STRUCT} if a.with_region else {}),
             "thresholds": {"consistency": CONS_MIN, "coverage": COV_MIN, "crisp_n": CRISP_N, "crisp_precision": CRISP_PREC,
                            "necessity": NEC_MIN, "superset_gain": GAIN_MIN},
-            "tree": tree_info, "necessary": nec, "noise_ceiling": ceiling,
+            "tree": tree_info, "linear": {"rho_ceiling_p95": round(r_ceiling, 3), "conditions": lin},
+            "necessary": nec, "noise_ceiling": ceiling,
             "retained": {oc: R[(R["outcome"] == oc) & R["retained"]][show].head(25).to_dict("records") for oc in outcomes},
             "kinds": kinds}
     OUT_S.write_text(json.dumps(summ, ensure_ascii=False, indent=1, default=lambda o: None if (isinstance(o, float) and np.isnan(o)) else str(o)),
