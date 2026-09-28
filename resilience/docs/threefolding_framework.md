@@ -284,3 +284,61 @@ below that is called robust also holds with Conley t at 50 and 100 km. Cross-sec
 (2) the balance shift without the zone; (3) which rights indicators carry the summer-2024 link (transfer dependency,
 capital share, social spending, candidates per seat); (4) the negative cultural–light link by indicator and settlement
 type; (5) the Carpathian economic rise — relocation of firms and people (IDPs, registrations).
+
+## 10. Why there? (step 8, 28 Sep 2026)
+
+`37_why_there.py` (shared code with 36 in `sphere_common.py`) → `tidy/why_there_models.csv` (117 rows),
+`tidy/why_there_profiles.csv` (group medians, groups < 5 suppressed; no light values, rule R2). Same inference as
+section 9. **Like-for-like** = mean rank of the indicators measured in both years (the 2025 indices add PIT growth,
+DREAM projects and schools; the 2021 rights index has candidates per seat). Rank correlation of like-for-like with
+index change: economic 0.83, rights 0.73, cultural 0.64.
+
+**Q1 — the zone carries the fall.** Zone gap within oblasts, 2025 given 2021 (SD): like-for-like economic −0.38
+[−0.62, −0.14], rights −0.26 [−0.39, −0.14], cultural −0.55 [−0.83, −0.24].
+- Economic: civilian PIT −0.47 and property tax −0.40 per resident; single tax −0.19 (p = 0.12). Half of the
+  zone's economic-index fall comes from the 2025-only PIT-growth indicator (zone median rank 0.12, elsewhere ≈ 0.55).
+- Rights: transfer dependency rose (−0.44), social spending per resident fell (−0.21); capital share and DREAM
+  projects no different from the rest of the oblast. The zone's rights index holds up in 2025 only because of
+  capital share (median rank 0.73) and DREAM; like-for-like it fell.
+- Cultural: all three items fell (culture and arts −0.42, education −0.44, extracurricular −0.22).
+- Exposure without the zone: no fall in any economic or cultural indicator. Struck hromadas outside the zone raised
+  capital share (+0.09) and social spending (+0.12) and education per resident (+0.05) — the rights gain of section
+  9 is spending, not transfers.
+- Per-resident terms use the 2020 population: in the zone the fall is also a fall in the people still paying and
+  served.
+
+**Q2 — balance.** Median imbalance fell from 2021 to 2025 everywhere except the zone (zone 0.40 → 0.59; rest of the
+same oblasts 0.39 → 0.33; other oblasts 0.43 → 0.32). Exposure goes with a more one-sided profile also without the
+zone (+0.13, p < 0.001) and inside it (+0.47). The shift from economic to rights is a zone matter: none without the
+zone (+0.01), zone gap −0.63 [−1.06, −0.18], inside the zone −0.45 with exposure. Map 24's rights-leaning zone
+raions = economic collapse with capital share and reconstruction projects holding the rights index up.
+
+**Q3 — summer-2024 outages: fiscal independence.** Lower transfer dependency in 2021 goes with a smaller summer-2024
+light loss: +0.21 [+0.11, +0.30] (reliable light +0.15, p = 0.016; without zone +0.30, p < 0.001). Capital share
+adds +0.08 [+0.02, +0.14] (p = 0.10 on reliable light). Social spending and candidates per seat: nothing. The
+"rights" link of section 9 is the fiscal-autonomy part of the rights sphere, with economic and cultural 2021 held
+constant.
+
+**Q4 — the negative cultural–light link stays unexplained.** No single cultural indicator carries it robustly
+(culture and arts −0.08, p = 0.15; extracurricular −0.05, p = 0.04, gone on reliable light; education 0). School
+network (class size, rural school share, pupils per 1,000) and modelled population change leave the coefficient
+unchanged (−0.08). Present in settlement and village hromadas (−0.08, −0.07; p 0.08, 0.14), absent in cities.
+Higher cultural quintiles are smaller (median population 13,100 → 6,200) and richer (economic 2021 0.30 → 0.77).
+Treated as fragile: not a finding for the paper.
+
+**Q5 — the Carpathian rise: measure, catch-up and Lviv.**
+- Economic index change 2021 → 2025: Carpathian median +0.15, rest −0.03; like-for-like only +0.04 (Lviv +0.09,
+  the other three +0.02). About three quarters of the rise is the 2025-only PIT-growth indicator (Carpathian median
+  rank 0.70; PIT growth 1.09 × national median, Lviv 1.15 ×).
+- Given the 2021 level (the four oblasts started lowest, 0.13–0.40): like-for-like gap +0.18 [−0.03, +0.39],
+  p = 0.08; without Lviv +0.08 (p = 0.21); without the zone p = 0.52. With PIT growth included +0.36 (p = 0.018).
+- Clusters of economic rise (national LISA HH, 219): 69 % Carpathian, 6 % zone, low start (economic 2021 0.22).
+  Clusters of fall (LL, 129): 78 % zone, none Carpathian.
+- Relocation cannot be tested: registration growth covers five oblasts, none Carpathian; hromada-level displacement
+  data are not available for publication. Where registrations exist, sole-proprietor growth goes with the single-tax
+  change (+0.53), but not robustly (p = 0.21).
+- Reading: faster civilian earnings growth in the west is real, but the rise in level is small, concentrated in
+  Lviv and partly catch-up. Captions of maps 21 and 24 should say that the 2025 economic index includes PIT growth.
+
+**Decision for step 9:** keep PIT growth in the economic 2025 index (it measures war-time dynamism, agreed in section
+6) or report the like-for-like index as the main 2021 → 2025 comparison. Either way the paper states the split.
