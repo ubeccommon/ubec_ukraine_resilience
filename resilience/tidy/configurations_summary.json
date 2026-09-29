@@ -1,0 +1,112 @@
+{
+ "date": "2026-09-28",
+ "population": "outside",
+ "outcome": "composite",
+ "variant": "raw",
+ "n": 1093,
+ "complete_cases": 1084,
+ "conditions": {
+  "local_tax_base": "local taxes (property, land, single) as share of the tax base 2021",
+  "property_tax": "property and land payments per resident 2021",
+  "single_tax": "single tax per resident 2021 (sole proprietors, farms)",
+  "payroll_pit": "civilian PIT per resident 2021 (booked at employers)",
+  "autonomy": "fiscal autonomy 2021 (low transfer dependency)",
+  "investment": "capital-expenditure share 2021",
+  "social": "social protection spending per resident 2021",
+  "culture": "culture and arts spending per resident 2021",
+  "education": "education spending per resident 2021",
+  "extracurricular": "extracurricular education per resident 2021",
+  "contestation": "candidates per council seat 2020, relative",
+  "balance": "three-sphere balance 2021 (small distance from the national centre)",
+  "small": "small population 2020"
+ },
+ "thresholds": {
+  "consistency": 0.8,
+  "coverage": 0.1,
+  "crisp_n": 20,
+  "crisp_precision": 0.6,
+  "necessity": 0.9,
+  "superset_gain": 0.05
+ },
+ "tree": {
+  "n": 359,
+  "balanced_accuracy_cv": 0.567,
+  "sd": 0.019,
+  "rules": "|--- single_tax <= 0.89\n|   |--- local_tax_base <= 0.81\n|   |   |--- extracurricular <= 0.74\n|   |   |   |--- class: 0\n|   |   |--- extracurricular >  0.74\n|   |   |   |--- class: 0\n|   |--- local_tax_base >  0.81\n|   |   |--- education <= 0.34\n|   |   |   |--- class: 0\n|   |   |--- education >  0.34\n|   |   |   |--- class: 1\n|--- single_tax >  0.89\n|   |--- contestation <= 0.56\n|   |   |--- class: 1\n|   |--- contestation >  0.56\n|   |   |--- class: 1\n",
+  "importance": {
+   "single_tax": 0.322,
+   "local_tax_base": 0.25,
+   "extracurricular": 0.193,
+   "contestation": 0.142,
+   "education": 0.094
+  }
+ },
+ "necessary": [],
+ "noise_ceiling": {
+  "perms": 20,
+  "p95_by_k": {
+   "1": 0.686,
+   "2": 0.816,
+   "3": 0.872
+  },
+  "median_by_k": {
+   "1": 0.681,
+   "2": 0.81,
+   "3": 0.865
+  }
+ },
+ "retained": {
+  "held_up": [],
+  "faltered": []
+ },
+ "kinds": {
+  "k": 2,
+  "silhouette": 0.184,
+  "profiles": {
+   "0": {
+    "local_tax_base": 0.48,
+    "property_tax": 0.74,
+    "single_tax": 0.75,
+    "payroll_pit": 0.79,
+    "autonomy": 0.71,
+    "investment": 0.62,
+    "social": 0.7,
+    "culture": 0.74,
+    "education": 0.72,
+    "extracurricular": 0.53,
+    "contestation": 0.56,
+    "balance": 0.62,
+    "small": 0.62,
+    "n": 82.0,
+    "village": 0.65,
+    "carp": 0.32,
+    "west": 0.48,
+    "centre": 0.37,
+    "south": 0.11,
+    "east": 0.05
+   },
+   "1": {
+    "local_tax_base": 0.57,
+    "property_tax": 0.39,
+    "single_tax": 0.41,
+    "payroll_pit": 0.34,
+    "autonomy": 0.42,
+    "investment": 0.51,
+    "social": 0.39,
+    "culture": 0.39,
+    "education": 0.4,
+    "extracurricular": 0.44,
+    "contestation": 0.54,
+    "balance": 0.46,
+    "small": 0.46,
+    "n": 97.0,
+    "village": 0.53,
+    "carp": 0.29,
+    "west": 0.44,
+    "centre": 0.34,
+    "south": 0.12,
+    "east": 0.09
+   }
+  }
+ }
+}

@@ -1,0 +1,319 @@
+{
+ "date": "2026-09-28",
+ "cut": 4,
+ "variant": "raw",
+ "reliable_light": true,
+ "rule": "held_up: top 1/4 on >= 2 families and bottom 1/4 on none; faltered: the reverse",
+ "families": {
+  "s24": {
+   "y": "y_s24",
+   "controls": [
+    "exp",
+    "c_logpop",
+    "c_loglit",
+    "c_rad21"
+   ]
+  },
+  "recent": {
+   "y": "y_recent",
+   "controls": [
+    "exp",
+    "c_logpop",
+    "c_loglit",
+    "c_rad21"
+   ]
+  },
+  "econ": {
+   "y": "ll_econ_2025",
+   "controls": [
+    "ll_econ_2021",
+    "exp",
+    "c_logpop"
+   ]
+  },
+  "cult": {
+   "y": "ll_cult_2025",
+   "controls": [
+    "ll_cult_2021",
+    "exp",
+    "c_logpop"
+   ]
+  },
+  "own": {
+   "y": "y_own",
+   "controls": [
+    "exp",
+    "c_logpop"
+   ]
+  }
+ },
+ "fits": {
+  "outside_res_s24": {
+   "n": 534,
+   "r2": 0.322
+  },
+  "outside_res_recent": {
+   "n": 541,
+   "r2": 0.544
+  },
+  "outside_res_econ": {
+   "n": 1093,
+   "r2": 0.923
+  },
+  "outside_res_cult": {
+   "n": 1093,
+   "r2": 0.858
+  },
+  "outside_res_own": {
+   "n": 1093,
+   "r2": 0.058
+  },
+  "outside_res0_s24": {
+   "n": 534,
+   "r2": 0.307
+  },
+  "outside_res0_recent": {
+   "n": 541,
+   "r2": 0.534
+  },
+  "outside_res0_econ": {
+   "n": 1093,
+   "r2": 0.922
+  },
+  "outside_res0_cult": {
+   "n": 1093,
+   "r2": 0.84
+  },
+  "outside_res0_own": {
+   "n": 1093,
+   "r2": 0.038
+  },
+  "zone_res_s24": {
+   "n": 59,
+   "r2": 0.566
+  },
+  "zone_res_recent": {
+   "n": 81,
+   "r2": 0.647
+  },
+  "zone_res_econ": {
+   "n": 195,
+   "r2": 0.76
+  },
+  "zone_res_cult": {
+   "n": 195,
+   "r2": 0.653
+  },
+  "zone_res_own": {
+   "n": 195,
+   "r2": 0.268
+  },
+  "zone_res0_s24": {
+   "n": 59,
+   "r2": 0.452
+  },
+  "zone_res0_recent": {
+   "n": 81,
+   "r2": 0.639
+  },
+  "zone_res0_econ": {
+   "n": 195,
+   "r2": 0.755
+  },
+  "zone_res0_cult": {
+   "n": 195,
+   "r2": 0.649
+  },
+  "zone_res0_own": {
+   "n": 195,
+   "r2": 0.258
+  }
+ },
+ "classes": {
+  "composite": {
+   "outside": {
+    "middle": 731,
+    "held_up": 181,
+    "faltered": 181
+   },
+   "zone": {
+    "middle": 125,
+    "held_up": 36,
+    "faltered": 34,
+    "na": 1
+   }
+  },
+  "func": {
+   "outside": {
+    "na": 559,
+    "held_up": 188,
+    "faltered": 179,
+    "middle": 167
+   },
+   "zone": {
+    "na": 137,
+    "middle": 22,
+    "held_up": 20,
+    "faltered": 17
+   }
+  },
+  "fisc": {
+   "outside": {
+    "middle": 758,
+    "held_up": 174,
+    "faltered": 161
+   },
+   "zone": {
+    "middle": 127,
+    "held_up": 35,
+    "faltered": 33,
+    "na": 1
+   }
+  }
+ },
+ "n_families": {
+  "0": 1,
+  "3": 666,
+  "4": 29,
+  "5": 593
+ },
+ "carpathian_outside": {
+  "middle": 142,
+  "faltered": 55,
+  "held_up": 54
+ },
+ "by_type_outside": {
+  "city": {
+   "middle": 194,
+   "faltered": 48,
+   "held_up": 37
+  },
+  "settlement": {
+   "middle": 210,
+   "faltered": 60,
+   "held_up": 37
+  },
+  "village": {
+   "middle": 314,
+   "held_up": 104,
+   "faltered": 67
+  }
+ },
+ "lisa": {
+  "composite": {
+   "I": 0.09,
+   "p_sim": 0.001,
+   "n": 1093,
+   "classes": {
+    "ns": 948,
+    "LL": 46,
+    "HH": 44,
+    "HL": 29,
+    "LH": 26
+   },
+   "classes_fdr": {
+    "ns": 1088,
+    "LL": 4,
+    "HH": 1
+   }
+  },
+  "composite_func": {
+   "I": 0.113,
+   "p_sim": 0.001,
+   "n": 541,
+   "classes": {
+    "ns": 465,
+    "LL": 24,
+    "HH": 24,
+    "LH": 14,
+    "HL": 14
+   },
+   "classes_fdr": {
+    "ns": 530,
+    "LL": 7,
+    "HH": 2,
+    "HL": 1,
+    "LH": 1
+   }
+  },
+  "composite_fisc": {
+   "I": 0.098,
+   "p_sim": 0.001,
+   "n": 1093,
+   "classes": {
+    "ns": 947,
+    "HH": 49,
+    "LL": 34,
+    "LH": 33,
+    "HL": 30
+   },
+   "classes_fdr": {
+    "ns": 1077,
+    "HH": 8,
+    "LL": 5,
+    "LH": 3
+   }
+  }
+ },
+ "families_diagnostic": {
+  "residual_corr": {
+   "s24": {
+    "s24": 1.0,
+    "recent": 0.533,
+    "econ": 0.033,
+    "cult": 0.026,
+    "own": 0.02
+   },
+   "recent": {
+    "s24": 0.533,
+    "recent": 1.0,
+    "econ": 0.224,
+    "cult": 0.15,
+    "own": 0.12
+   },
+   "econ": {
+    "s24": 0.033,
+    "recent": 0.224,
+    "econ": 1.0,
+    "cult": 0.332,
+    "own": 0.202
+   },
+   "cult": {
+    "s24": 0.026,
+    "recent": 0.15,
+    "econ": 0.332,
+    "cult": 1.0,
+    "own": 0.091
+   },
+   "own": {
+    "s24": 0.02,
+    "recent": 0.12,
+    "econ": 0.202,
+    "cult": 0.091,
+    "own": 1.0
+   }
+  },
+  "mean_offdiag": 0.173,
+  "held_up_top_share": {
+   "s24": 0.304,
+   "recent": 0.359,
+   "econ": 0.691,
+   "cult": 0.613,
+   "own": 0.641
+  },
+  "held_up_combinations": {
+   "econ+own": 30,
+   "econ+cult": 25,
+   "econ+cult+own": 24,
+   "cult+own": 18,
+   "recent+econ+cult+own": 9,
+   "s24+recent": 9,
+   "s24+recent+cult+own": 7,
+   "s24+econ": 6,
+   "s24+recent+econ+cult+own": 5,
+   "recent+econ": 5,
+   "s24+recent+own": 5,
+   "s24+recent+econ": 4
+  }
+ }
+}
