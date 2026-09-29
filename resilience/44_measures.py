@@ -600,7 +600,7 @@ def cmd_prozorro(a):
         f"locality gives a settlement for {int(df['settlement'].notna().sum())}, a raion for {int(df['raion'].notna().sum())}")
     cols = {"hromada": "council", "oblast": "oblast", "settlement": "settlement", "raion": "raion"}   # no region -> nationwide routes
     df = place(df, cols, "tenders")
-    df["year"] = pd.to_datetime(df["date"], errors="coerce").dt.year
+    df["year"] = pd.to_datetime(df["date"].astype(str).str.slice(0, 10), errors="coerce").dt.year
     out = None
     for kind, lab in (("council", "council"), (None, "local")):
         sub = df if kind is None else df[df["kind"] == kind]
