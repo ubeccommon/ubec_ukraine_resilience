@@ -331,7 +331,7 @@ per hromada only (R1, R7).
 | Youth centres and veteran spaces registers | per 10,000 | hromada via settlement | verify | civic life | existence, format |
 | Ukrainian Library Association / Ministry of Culture | public libraries per 10,000; closures since 2022 | via settlement | verify | cultural provision | licence |
 | ЄДЕБО (pulled) | schools by operating mode, shelter share, mountain flag | hromada | terms pending | cultural provision under fire | fields present |
-| OCHA Ukraine 3W (HDX, CC BY) | organisations and sectors active per hromada; local vs international | admin3 (verify) | CC BY | reception; local NGOs as implementers | admin level; series ends June 2024 |
+| OCHA Ukraine 3W/5W (HDX, CC BY, `ukraine-who-does-what-where-3w`) | organisations and sectors active per hromada; local vs international | admin3 | CC BY | reception; local NGOs as implementers | monthly cumulative files, January–August 2026 current (29 Sep 2026) |
 | Sentinel-1 building damage (Zenodo 15088349, Dietrich et al. 2025) | share of buildings damaged per ADM3 | hromada | CC BY | separates damage from targeting | ADM3 coding |
 | NBU bank branches; Ukrposhta and Nova Poshta points; pharmacy licences | services per 10,000, closures since 2022 | address → hromada | open / site terms | service retreat or growth | address fields, reuse terms |
 | Prozorro.Sale land and lease auctions | communal land and property auctioned per hromada | hromada (seller) | open API | use of common assets | seller→k3 |

@@ -64,9 +64,11 @@ sys.path.insert(0, str(BASE))
 
 # ---- source settings (set after `probe`) ---------------------------------------------------------------------
 PROZORRO_SEARCH = "https://prozorro.gov.ua/api/search/tenders"
-PROZORRO_QUERIES = ["генератор", "генераторна установка", "електрогенератор", "дизельна електростанція", "31120000", "31121000"]
+PROZORRO_QUERIES = ["генератор", "електрогенератор", "електростанція", "генераторна установка"]
+PROZORRO_EXCLUDE = r"кисн|кисен|озон|азот|парогенер|пари|льод|льоду|димов|піно|імпульс|сигнал|ультразвук|водн|функці|числ|аерозол"
+                                         # oxygen, steam, ozone, nitrogen, ice, smoke, foam, signal … generators are not power
 PROZORRO_YEARS = (2022, 2023, 2024)
-NONPROFIT_DATASET = "5c78eb60"          # prefix noted 28 Sep 2026; `probe` searches data.gov.ua for the full id
+NONPROFIT_DATASET = "f41f0e6d-135a-4ad9-b961-5da30bfc7a19"   # probe of 29 Sep 2026: newest resource reestr_nuo_2022-02-23.zip (pre-war)
 NONPROFIT_QUERY = "Реєстр неприбуткових установ та організацій"
 # codes of the non-profit register (ознака неприбутковості, MinFin order 553/2016) — confirm on the probe against the
 # register's own legend. Religious organisations (0035) and parties (0033) are never counted (R7); budget
@@ -74,10 +76,12 @@ NONPROFIT_QUERY = "Реєстр неприбуткових установ та �
 NONPROFIT_CODES = {"0032": "assoc", "0034": "assoc", "0036": "charity", "0038": "assoc", "0039": "housing", "0040": "housing",
                    "0041": "union", "0042": "union", "0043": "agri_coop", "0044": "agri_coop", "0045": "other"}
 W3_QUERY = "ukraine 3w operational presence"
-W3_DATASET = ""                          # set from the probe (HDX dataset name), else the first search hit is used
+W3_DATASET = "ukraine-who-does-what-where-3w"   # probe of 29 Sep 2026: 5W cumulative files, January–August 2026 the newest
 WIKIDATA_SPARQL = "https://query.wikidata.org/sparql"
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
-KATOTTG_PROP = ""                        # set from the probe (property "KATOTTG ID"), e.g. "P9435"
+KATOTTG_PROP = ""                        # set from the probe: the property whose value is the UA… code on a hromada item
+HROMADA_CLASSES = []                     # set from the probe: P31 classes of a hromada item (route without the property)
+PROBE_ITEM = "Верховинська селищна громада"   # a hromada the probe looks up to find those
 ADMIN_WAVE = "2020-06-12"                # CMU orders of 12 June 2020: the administrative formation of the remaining hromadas
 
 _logf = None
@@ -131,7 +135,13 @@ def get(url, **kw):
 
 def read_any(content, name):
     m41 = importlib.import_module("41_nhsu_declarations")
-    return m41.read_any(content, name)
+    try:
+        return m41.read_any(content, name)
+    except ValueError:
+        if name.lower().endswith(".csv"):                       # a one-column list
+            import io
+            return pd.read_csv(io.BytesIO(content), dtype=str, encoding="utf-8-sig")
+        raise
 
 
 # ---- placement engine ------------------------------------------------------------------------------------------
@@ -153,6 +163,20 @@ def guess_cols(df, given=""):
             continue
         for c in df.columns:
             if re.search(pat, str(c), re.I) and c not in cols.values():
+                cols[role] = c
+                break
+    # by the values, when the header says nothing: a code, a pcode, a council name, an address
+    by_value = (("katottg", r"^UA\d{17}$"), ("pcode", r"^UA\d{7}$"),
+                ("hromada", r"(сільськ|селищн|міськ|територіальн).*(громад|рад)"),
+                ("address", r"(обл|область).*(вул|просп|пров|пл\.|буд)"))
+    for role, pat in by_value:
+        if role in cols:
+            continue
+        for c in df.columns:
+            if c in cols.values():
+                continue
+            v = df[c].dropna().astype(str).str.strip()
+            if len(v) and v.str.contains(pat, regex=True, case=False).mean() > 0.5:
                 cols[role] = c
                 break
     return cols
@@ -193,9 +217,13 @@ def place(df, cols, label=""):
         pc = df[cols["pcode"]].astype(str).str.strip().str.upper().str.extract(r"^UA(\d{7})$")[0]
         m = df["k3"].isna() & pc.notna()
         df.loc[m, "k3"], df.loc[m, "route"] = pc[m], "pcode"
-    if {"hromada", "oblast"} <= set(cols):
+    if "hromada" in cols:
         e33 = importlib.import_module("33_elections_2020")
-        todo = df.index[df["k3"].isna() & df[cols["hromada"]].notna()]
+        if "oblast" not in cols:
+            df["_oblast"] = None
+            cols["oblast"] = "_oblast"
+        has_ob = df[cols["oblast"]].notna() & (df[cols["oblast"]].astype(str).str.strip() != "")
+        todo = df.index[df["k3"].isna() & df[cols["hromada"]].notna() & has_ob]
         if len(todo):
             u = df.loc[todo, [cols["oblast"], cols["hromada"]]].drop_duplicates()
             u.columns = ["oblast", "hromada"]
@@ -215,16 +243,33 @@ def place(df, cols, label=""):
             got = pd.Series([lk.get((o, h)) for o, h in zip(df.loc[todo, cols["oblast"]], df.loc[todo, cols["hromada"]])], index=todo)
             m = got.notna()
             df.loc[got.index[m], "k3"], df.loc[got.index[m], "route"] = got[m], "hromada"
-    if {"settlement", "oblast"} <= set(cols):
+        todo = df.index[df["k3"].isna() & df[cols["hromada"]].notna() & ~has_ob]
+        if len(todo):                                            # no oblast given: the stem + type must be unique in the country
+            k = keys()
+            st_ = k["name"].map(e33.stem_type)
+            k["key"] = st_.str[0] + "|" + st_.str[1]
+            kk = k.drop_duplicates("key", keep=False).set_index("key")["k3"]
+            q = df.loc[todo, cols["hromada"]].map(lambda nme: "|".join(e33.stem_type(nme)))
+            got = q.map(kk)
+            m = got.notna()
+            df.loc[got.index[m], "k3"], df.loc[got.index[m], "route"] = got[m], "hromada_national"
+            allk = set(k["key"])
+            amb = int(sum(1 for v in q[~m] if v in allk))
+            log(f"  hromada names without an oblast: {len(todo)}, unique in the country {int(m.sum())}, ambiguous (dropped) {amb}")
+    if "settlement" in cols:
         try:
             s34 = importlib.import_module("34_schools")
             st, _ = s34.settlements()
             st = st.dropna(subset=["k3"])
             st["k2"] = st["k3"].str[:4]
             uniq_ob = st.groupby(["obl", "nn"])["k3"].agg(lambda x: x.iloc[0] if x.nunique() == 1 else None).dropna()
+            if "oblast" not in cols:
+                df["_oblast"] = None
+                cols["oblast"] = "_oblast"
             todo = df.index[df["k3"].isna() & df[cols["settlement"]].notna()]
             if len(todo):
-                o = df.loc[todo, cols["oblast"]].map(s34.obl_norm)
+                o = df.loc[todo, cols["oblast"]].map(lambda v: s34.obl_norm(v) if pd.notna(v) and str(v).strip() else "")
+                uniq_nat = st.groupby("nn")["k3"].agg(lambda x: x.iloc[0] if x.nunique() == 1 else None).dropna()
                 nn = df.loc[todo, cols["settlement"]].map(s34.norm)
                 got = pd.Series(list(zip(o, nn)), index=todo).map(uniq_ob)
                 route = pd.Series("settlement", index=todo)
@@ -239,6 +284,11 @@ def place(df, cols, label=""):
                         use = got.isna() & g2.notna()
                         got[use] = g2[use]
                         route[use] = "settlement+raion"
+                no_ob = (o == "") & got.isna()
+                if no_ob.any():                                  # no oblast: the settlement name must be unique in the country
+                    g3 = nn[no_ob].map(uniq_nat)
+                    got[g3.index[g3.notna()]] = g3[g3.notna()]
+                    route[g3.index[g3.notna()]] = "settlement_national"
                 m = got.notna()
                 df.loc[got.index[m], "k3"], df.loc[got.index[m], "route"] = got[m], route[m]
         except SystemExit as ex:
@@ -354,7 +404,13 @@ def cmd_civil(a):
     out["m_civil_share_2425"] = piv_s[[y for y in (2024, 2025) if y in piv_s]].mean(axis=1)
     out["m_civil_pc_2021"] = piv_p.get(2021)
     out["m_civil_pc_2223"] = piv_p[[y for y in (2022, 2023) if y in piv_p]].mean(axis=1)
+    out["m_civil_share_2025"] = piv_s.get(2025)
+    out["m_civil_pc_2025"] = piv_p.get(2025)
     out["m_civil_change"] = out["m_civil_share_2223"] - out["m_civil_share_2021"]
+    out["m_civil_change_2125"] = out["m_civil_share_2025"] - out["m_civil_share_2021"]
+    if out["m_civil_share_2223"].notna().sum() < 100:
+        log("note: 2022–2023 are all but absent from 31's cache — run `31_functional_spending.py pull --years 2022-2024` "
+            "then `shares`, and rerun this; until then use m_civil_share_2025 and m_civil_change_2125")
     out["m_civil_any_2225"] = (piv_s[[y for y in (2022, 2023, 2024, 2025) if y in piv_s]].fillna(0) > 0).any(axis=1).astype(int)
     out = keys()[["k1", "k2", "k3", "name"]].merge(out.reset_index(), on="k3", how="left")
     src = "openbudget.gov.ua EXPENSES PROGRAM cache (31_functional_spending.py), functional code 0320 civil protection"
@@ -365,7 +421,10 @@ def cmd_civil(a):
         "m_civil_share_2425": ("share", "2024-2025", "mean of the annual shares"),
         "m_civil_pc_2021": ("UAH per resident", "2021", "0320 / GHS-POP 2020, nominal"),
         "m_civil_pc_2223": ("UAH per resident", "2022-2023", "mean, nominal"),
+        "m_civil_share_2025": ("share", "2025", "0320 / civilian service expenditure (31)"),
+        "m_civil_pc_2025": ("UAH per resident", "2025", "0320 / GHS-POP 2020, nominal"),
         "m_civil_change": ("share points", "2021→2022-23", "m_civil_share_2223 − m_civil_share_2021: what the hromada set aside once the war came"),
+        "m_civil_change_2125": ("share points", "2021→2025", "m_civil_share_2025 − m_civil_share_2021"),
         "m_civil_any_2225": ("0/1", "2022-2025", "any 0320 spending in 2022–2025")}}
     write("civil", out, meta)
 
@@ -420,6 +479,15 @@ def cmd_prozorro(a):
             safe = json.dumps({k: (v if k not in ("procuringEntity",) else {kk: vv for kk, vv in v.items() if kk != "contactPoint"})
                                for k, v in rec.items()}, ensure_ascii=False)[:3000]
             log(f"first record (contact fields hidden, R6):\n{safe}")
+            keys_top = sorted({k for r in data for k in r})
+            keys_pe = sorted({k for r in data for k in (r.get("procuringEntity") or {}) if k != "contactPoint"})
+            keys_ad = sorted({k for r in data for k in ((r.get("procuringEntity") or {}).get("address") or {})})
+            log(f"keys over the page — record: {keys_top}\n  procuringEntity: {keys_pe}\n  address: {keys_ad}")
+            n_reg = sum(1 for r in data if dig(r, "procuringEntity.address.region"))
+            n_cls = sum(1 for r in data if dig(r, "classification.id", "items.classification.id"))
+            log(f"  with address.region {n_reg}/{len(data)}, with a CPV classification {n_cls}/{len(data)}")
+            rows = pd.DataFrame([build_prozorro_row(r) for r in data])
+            log("  as build reads them (buyer, locality, region, amount, date):\n" + rows[["buyer", "locality", "region", "amount", "date"]].head(8).to_string(index=False))
         log("Next: check that the fields read in build_prozorro_rows() exist (buyer name, identifier, address.region, "
             "address.locality, value.amount, tenderID, dateCreated, classification); adjust PROZORRO_QUERIES; then `pull`.")
         return
@@ -470,14 +538,17 @@ def cmd_prozorro(a):
     df = pd.DataFrame(rows).dropna(subset=["tender_id"]).drop_duplicates("tender_id")
     log(f"tenders read: {len(df)}")
     cls = df["classification"].astype(str)
-    df = df[cls.str.startswith("3112") | cls.str.startswith("31100") | df["title"].astype(str).str.lower().str.contains("генератор|електростанц")]
-    log(f"  generators by CPV 3112*/31100* or title: {len(df)}")
+    title = df["title"].astype(str).str.lower()
+    keep = (cls.str.startswith("3112") | cls.str.startswith("31100") | title.str.contains("генератор|електростанц")) \
+        & ~title.str.contains(PROZORRO_EXCLUDE)
+    log(f"  generators by CPV 3112*/31100* or title, after exclusions ({PROZORRO_EXCLUDE[:40]}…): {int(keep.sum())} of {len(df)}")
+    df = df[keep]
     nm = df["buyer"].astype(str).str.lower()
     df["kind"] = np.select([nm.str.contains(r"\bрада\b|ради\b|виконавч|виконком|управління.*ради|відділ.*ради"),
                             nm.str.contains(r"комунальн|\bкп\b|кнп|ліцей|школа|гімназ|лікарн|бібліотек|будинок культури|дитяч|садок|цнап")],
                            ["council", "communal"], "other")
-    df["oblast"] = df["region"].astype(str).str.replace(r"\s*область", "", regex=True)
-    cols = {"hromada": "buyer", "oblast": "oblast", "settlement": "locality"}
+    df["oblast"] = df["region"].map(lambda v: re.sub(r"\s*область", "", str(v)) if pd.notna(v) and str(v).strip() else None)
+    cols = {"hromada": "buyer", "oblast": "oblast", "settlement": "locality"}   # no region -> nationwide-unique routes
     df.loc[df["kind"] != "council", "buyer"] = None                 # only councils are placed by name
     df = place(df, cols, "tenders")
     df["year"] = pd.to_datetime(df["date"], errors="coerce").dt.year
@@ -519,6 +590,13 @@ def ckan(base, action, **params):
     return j["result"]
 
 
+def newest_resource(pk, formats):
+    rs = [r for r in pk.get("resources", []) if (r.get("format") or "").lower() in formats]
+    if not rs:
+        sys.exit(f"no resource in {formats} for {pk.get('name') or pk.get('id')}")
+    return max(rs, key=lambda r: (r.get("last_modified") or r.get("created") or ""))
+
+
 def cmd_nonprofit(a):
     if a.step == "probe":
         res = ckan(CKAN_UA, "package_search", q=NONPROFIT_QUERY, rows=10)
@@ -528,7 +606,8 @@ def cmd_nonprofit(a):
                 log(f"    resource {r.get('name')}  format={r.get('format')}  size={r.get('size')}  url={r.get('url')}")
         hit = next((pk for pk in res.get("results", []) if pk["id"].startswith(NONPROFIT_DATASET)), None)
         if hit and hit.get("resources"):
-            r = hit["resources"][0]
+            r = newest_resource(hit, ("zip", "csv", "xlsx", "xls"))
+            log(f"newest resource: {r.get('name')}  {r.get('last_modified')}")
             try:
                 chunk = next(get(r["url"], stream=True, timeout=120).iter_content(chunk_size=1_500_000))
                 m41 = importlib.import_module("41_nhsu_declarations")
@@ -549,9 +628,7 @@ def cmd_nonprofit(a):
         if not hit:
             sys.exit("dataset not found: run `probe` and set NONPROFIT_DATASET")
         out = raw_dir("nonprofit", new=True)
-        for r in hit.get("resources", []):
-            if (r.get("format") or "").lower() not in ("csv", "xlsx", "zip", "xls"):
-                continue
+        for r in [newest_resource(hit, ("zip", "csv", "xlsx", "xls"))]:
             fn = out / (re.sub(r"[^\w.-]+", "_", r.get("name") or "register") + "." + r["format"].lower())
             with get(r["url"], stream=True, timeout=900) as resp:
                 with open(fn, "wb") as f:
@@ -604,9 +681,7 @@ def cmd_w3(a):
         if not hit:
             sys.exit("no 3W dataset found on HDX")
         out = raw_dir("w3", new=True)
-        for r in hit.get("resources", []):
-            if (r.get("format") or "").lower() not in ("csv", "xlsx", "xls"):
-                continue
+        for r in [newest_resource(hit, ("csv", "xlsx", "xls"))]:
             fn = out / (re.sub(r"[^\w.-]+", "_", r.get("name") or "3w") + "." + r["format"].lower())
             with get(r["url"], stream=True, timeout=600) as resp:
                 with open(fn, "wb") as f:
@@ -619,12 +694,23 @@ def cmd_w3(a):
     d = raw_dir("w3")
     frames = []
     for p in d.iterdir():
-        if p.suffix.lower() in (".csv", ".xlsx", ".xls"):
-            df = read_any(p.read_bytes(), p.name)
-            if df.iloc[0].astype(str).str.startswith("#").any():          # HXL tag row
-                df = df.iloc[1:]
-            frames.append(df)
+        if p.suffix.lower() in (".xlsx", ".xls"):
+            sheets = pd.read_excel(p, sheet_name=None, dtype=str)
+            for nm, sh in sheets.items():
+                if any(re.search(r"adm3|admin3", str(c), re.I) and re.search(r"pcode|code", str(c), re.I) for c in sh.columns):
+                    log(f"  {p.name}: sheet '{nm}' carries admin3 pcodes ({len(sh)} rows); sheets present {list(sheets)}")
+                    frames.append(sh)
+                    break
+            else:
+                log(f"  {p.name}: no sheet with an admin3 pcode column; sheets and their first columns: "
+                    + "; ".join(f"{nm}: {list(sh.columns)[:8]}" for nm, sh in sheets.items()))
+        elif p.suffix.lower() == ".csv":
+            frames.append(read_any(p.read_bytes(), p.name))
+    if not frames:
+        sys.exit("no 3W table with admin3 pcodes found")
     df = pd.concat(frames, ignore_index=True)
+    if df.iloc[0].astype(str).str.startswith("#").any():              # HXL tag row
+        df = df.iloc[1:]
     cols = guess_cols(df, a.cols)
     p3 = next((c for c in df.columns if re.search(r"adm3|admin3", str(c), re.I) and re.search(r"pcode|code", str(c), re.I)), None)
     if p3 is None:
@@ -652,33 +738,94 @@ def sparql(q):
     return r.json()["results"]["bindings"]
 
 
+def wd_labels(ids):
+    """Labels (en, else uk) for a list of P/Q ids."""
+    out = {}
+    ids = [i for i in ids if i]
+    for i in range(0, len(ids), 50):
+        j = get(WIKIDATA_API, params={"action": "wbgetentities", "ids": "|".join(ids[i:i + 50]), "props": "labels",
+                                      "languages": "en|uk", "format": "json"}).json()
+        for k, e in j.get("entities", {}).items():
+            lb = e.get("labels", {})
+            out[k] = (lb.get("en") or lb.get("uk") or {}).get("value", "")
+    return out
+
+
 def cmd_formation(a):
     if a.step == "probe":
-        j = get(WIKIDATA_API, params={"action": "wbsearchentities", "search": "KATOTTG", "language": "en", "type": "property", "format": "json"}).json()
-        for s in j.get("search", []):
-            log(f"property {s['id']}  {s.get('label')}  — {s.get('description')}")
-        log("Next: set KATOTTG_PROP to the property 'KATOTTG ID' (or the codifier code property), then `pull`.")
+        # find one hromada item and read its claims: the property whose value is a UA… code, its classes (P31), its inception
+        j = get(WIKIDATA_API, params={"action": "wbsearchentities", "search": PROBE_ITEM, "language": "uk", "type": "item",
+                                      "limit": 5, "format": "json"}).json()
+        hits = j.get("search", [])
+        if not hits:
+            sys.exit(f"no Wikidata item found for '{PROBE_ITEM}'")
+        for h in hits:
+            log(f"item {h['id']}  {h.get('label')}  — {h.get('description')}")
+        qid = hits[0]["id"]
+        e = get(WIKIDATA_API, params={"action": "wbgetentities", "ids": qid, "props": "claims", "format": "json"}).json()["entities"][qid]
+        claims = e.get("claims", {})
+        lab = wd_labels(list(claims))
+        code_props, classes = [], []
+        for pid, cl in claims.items():
+            vals = []
+            for c in cl:
+                dv = (c.get("mainsnak") or {}).get("datavalue", {}).get("value")
+                if isinstance(dv, dict):
+                    dv = dv.get("id") or dv.get("time") or dv.get("text") or str(dv)
+                vals.append(str(dv))
+            if any(re.fullmatch(r"UA\d{17}", v) for v in vals):
+                code_props.append(pid)
+            if pid == "P31":
+                classes = vals
+            log(f"  {pid:8s} {lab.get(pid, ''):40s} {'; '.join(vals)[:100]}")
+        cl_lab = wd_labels(classes)
+        log(f"\ncode property (value UA + 17 digits): {code_props or 'none on this item'}")
+        log(f"P31 classes: " + ", ".join(f"{c} ({cl_lab.get(c, '')})" for c in classes))
+        log(f"P571 inception: {'present' if 'P571' in claims else 'absent on this item'}")
+        log("Next: set KATOTTG_PROP to the code property (preferred), or HROMADA_CLASSES to the P31 class ids; then `pull`.")
         return
     if a.step == "pull":
-        if not KATOTTG_PROP:
-            sys.exit("set KATOTTG_PROP from the probe first")
-        q = f"""SELECT ?item ?code ?inception ?dissolved WHERE {{
+        if not KATOTTG_PROP and not HROMADA_CLASSES:
+            sys.exit("set KATOTTG_PROP or HROMADA_CLASSES from the probe first")
+        if KATOTTG_PROP:
+            q = f"""SELECT ?item ?code ?inception ?dissolved WHERE {{
   ?item wdt:{KATOTTG_PROP} ?code .
   FILTER(STRLEN(?code) = 19 && SUBSTR(?code, 10, 3) = "000" && SUBSTR(?code, 13, 2) = "00" && SUBSTR(?code, 7, 3) != "000")
   OPTIONAL {{ ?item wdt:P571 ?inception . }}
   OPTIONAL {{ ?item wdt:P576 ?dissolved . }}
 }}"""
+        else:
+            vals = " ".join(f"wd:{c}" for c in HROMADA_CLASSES)
+            q = f"""SELECT ?item ?itemLabel ?code ?inception ?dissolved ?obl ?oblLabel WHERE {{
+  VALUES ?cls {{ {vals} }}
+  ?item wdt:P31 ?cls .
+  OPTIONAL {{ ?item wdt:P571 ?inception . }}
+  OPTIONAL {{ ?item wdt:P576 ?dissolved . }}
+  OPTIONAL {{ ?item wdt:P131 ?r . ?r wdt:P131* ?obl . ?obl wdt:P31 wd:Q3348196 . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "uk". }}
+}}"""
         rows = sparql(q)
         out = raw_dir("formation", new=True)
-        recs = [{"item": r["item"]["value"].rsplit("/", 1)[-1], "katottg": r["code"]["value"],
+        recs = [{"item": r["item"]["value"].rsplit("/", 1)[-1], "katottg": r.get("code", {}).get("value"),
+                 "name": r.get("itemLabel", {}).get("value"), "oblast": r.get("oblLabel", {}).get("value"),
                  "inception": r.get("inception", {}).get("value"), "dissolved": r.get("dissolved", {}).get("value")} for r in rows]
-        pd.DataFrame(recs).to_csv(out / "hromadas.csv", index=False)
-        (out / "meta.json").write_text(json.dumps({"accessed": out.name, "property": KATOTTG_PROP, "licence": "CC0"}), encoding="utf-8")
-        log(f"  {len(recs)} hromada-level items with a KATOTTG code; inception given for {sum(1 for r in recs if r['inception'])}")
+        df = pd.DataFrame(recs).drop_duplicates("item")
+        df.to_csv(out / "hromadas.csv", index=False)
+        (out / "meta.json").write_text(json.dumps({"accessed": out.name, "property": KATOTTG_PROP, "classes": HROMADA_CLASSES,
+                                                   "licence": "CC0"}), encoding="utf-8")
+        log(f"  {len(df)} items; with a code {int(df['katottg'].notna().sum())}; inception given for {int(df['inception'].notna().sum())}")
         return
     d = raw_dir("formation")
     df = pd.read_csv(d / "hromadas.csv", dtype=str)
-    df = place(df, {"katottg": "katottg"}, "Wikidata items")
+    df = df[df["dissolved"].isna()] if "dissolved" in df else df
+    cols = {}
+    if "katottg" in df and df["katottg"].notna().any():
+        cols["katottg"] = "katottg"
+    if "name" in df and df["name"].notna().any():
+        cols["hromada"] = "name"
+        if "oblast" in df and df["oblast"].notna().any():
+            cols["oblast"] = "oblast"
+    df = place(df, cols, "Wikidata items")
     df = df.dropna(subset=["k3"]).drop_duplicates("k3")
     inc = pd.to_datetime(df["inception"].str.slice(0, 10), errors="coerce")
     df["m_formed_year"] = inc.dt.year
