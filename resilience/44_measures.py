@@ -6,7 +6,10 @@ only (rules R1, R6, R7): no locations, no names, no religious affiliation.
 
   python 44_measures.py civil                            civil protection (functional code 0320) from 31's local full table
   python 44_measures.py prozorro probe|pull|build        generators and generating sets bought 2022–2024 (Prozorro search API)
-  python 44_measures.py nonprofit probe|pull|build       register of non-profit organisations (State Tax Service, data.gov.ua)
+  python 44_measures.py nonprofit probe|pull|build       register of non-profit organisations (State Tax Service, data.gov.ua);
+                                                         it carries no address: `edr build` first (EDRPOU -> hromada, below)
+  python 44_measures.py edr probe|build                  ЄДР legal-entity dump (07_edr.py's UO.zip): EDRPOU -> hromada from the
+                                                         registered address, for the register's entities; raw/edr/edrpou_k3.csv (local)
   python 44_measures.py w3 probe|pull|build              OCHA Ukraine 3W operational presence (HDX): organisations per hromada
   python 44_measures.py formation probe|pull|build       Wikidata (CC0): when the hromada was formed, voluntary or administrative
   python 44_measures.py places --file F --kind K         any list of institutions or points (invincibility points, youth
@@ -73,8 +76,14 @@ NONPROFIT_QUERY = "Реєстр неприбуткових установ та �
 # codes of the non-profit register (ознака неприбутковості, MinFin order 553/2016) — confirm on the probe against the
 # register's own legend. Religious organisations (0035) and parties (0033) are never counted (R7); budget
 # institutions (0031) and pension funds (0037) are not civic life outside the budget.
-NONPROFIT_CODES = {"0032": "assoc", "0034": "assoc", "0036": "charity", "0038": "assoc", "0039": "housing", "0040": "housing",
-                   "0041": "union", "0042": "union", "0043": "agri_coop", "0044": "agri_coop", "0045": "other"}
+# classes read from the register's own label column (nonpr), not from the code: the code legend differs between
+# releases (2022: 0043 = ОСББ). Religious organisations, parties, budget institutions and pension funds never count (R7).
+NONPROFIT_CLASSES = (("religious", r"реліг"), ("party", r"політичн"), ("budget", r"бюджетн"), ("pension", r"пенсійн"),
+                     ("assoc", r"громадськ|творч|асоціац|спілк|об'єднанн[яь] юридичн"), ("charity", r"благодійн"),
+                     ("housing", r"співвласник|житлов|гаражн|садів|дачн"), ("agri_coop", r"сільськогосподарськ"),
+                     ("coop", r"кооперат"), ("union", r"профспілк|професійн|роботодавц"), ("other", r"."))
+NONPROFIT_EXCLUDED = {"religious", "party", "budget", "pension"}
+EDR_XW = BASE / "raw" / "edr" / "edrpou_k3.csv"     # local: EDRPOU -> k3 from the ЄДР legal-entity dump (`edr build`)
 W3_QUERY = "ukraine 3w operational presence"
 W3_DATASET = "ukraine-who-does-what-where-3w"   # probe of 29 Sep 2026: 5W cumulative files, January–August 2026 the newest
 WIKIDATA_SPARQL = "https://query.wikidata.org/sparql"
@@ -182,8 +191,8 @@ def guess_cols(df, given=""):
                 break
     # by the values, when the header says nothing: a code, a pcode, a council name, an address
     by_value = (("katottg", r"^UA\d{17}$"), ("pcode", r"^UA\d{7}$"),
-                ("hromada", r"(сільськ|селищн|міськ|територіальн).*(громад|рад)"),
-                ("address", r"(обл|область).*(вул|просп|пров|пл\.|буд)"))
+                ("hromada", r"(?:сільськ|селищн|міськ|територіальн).*(?:громад|рад)"),
+                ("address", r"(?:обл|область).*(?:вул|просп|пров|пл\.|буд)"))
     for role, pat in by_value:
         if role in cols:
             continue
@@ -470,17 +479,32 @@ PROZORRO_METHOD = "POST"                 # the site's search endpoint answers 40
 def prozorro_page(q, year, page):
     import requests
     params = {"text": q, "page": page, "date[tender][start]": f"{year}-01-01", "date[tender][end]": f"{year}-12-31"}
-    last = None
+    tried = []
     for method in ([PROZORRO_METHOD] + [m for m in ("POST", "GET") if m != PROZORRO_METHOD]):
         r = requests.request(method, PROZORRO_SEARCH, params=params, headers={**HEAD, "Accept": "application/json"}, timeout=90)
         if r.status_code == 200:
             try:
                 return r.json()
             except ValueError:
-                last = f"{method}: 200 but not JSON (starts {r.text[:80]!r})"
+                tried.append(f"{method}: 200 but not JSON (starts {r.text[:60]!r})")
                 continue
-        last = f"{method}: {r.status_code}"
-    raise RuntimeError(f"Prozorro search not answered ({last}); check PROZORRO_SEARCH in a browser's network tab")
+        tried.append(f"{method}: {r.status_code}")
+        if r.status_code in (403, 429, 503):                 # rate limit or block: do not fall through to the other method
+            break
+    raise RuntimeError("Prozorro search not answered (" + "; ".join(tried) + ")")
+
+
+def prozorro_page_retry(q, year, page, tries=6):
+    """Back off on a refusal: 30, 60, 120, 240, 480 s; then give up on this page."""
+    for i in range(tries):
+        try:
+            return prozorro_page(q, year, page)
+        except Exception as ex:
+            if i == tries - 1:
+                raise
+            wait = 30 * 2 ** i
+            log(f"    {q} {year} page {page}: {ex}; waiting {wait} s")
+            time.sleep(wait)
 
 
 def cmd_prozorro(a):
@@ -511,16 +535,19 @@ def cmd_prozorro(a):
         for q in PROZORRO_QUERIES:
             for y in PROZORRO_YEARS:
                 fn = out / (re.sub(r"\W+", "_", q) + f"_{y}.jsonl")
-                if fn.exists() and fn.stat().st_size > 0:
+                done = fn.with_suffix(".done")
+                if done.exists():
                     continue
-                n = 0
-                with open(fn, "w", encoding="utf-8") as f:
-                    page = 1
+                n = sum(1 for _ in open(fn, encoding="utf-8")) if fn.exists() else 0
+                page = n // 20 + 1                               # resume where the last run stopped (20 per page)
+                stopped = False
+                with open(fn, "a", encoding="utf-8") as f:
                     while True:
                         try:
-                            j = prozorro_page(q, y, page)
+                            j = prozorro_page_retry(q, y, page)
                         except Exception as ex:
-                            log(f"  {q} {y} page {page}: {ex}; stopping this query")
+                            log(f"  {q} {y} page {page}: {ex}; stopping this query — rerun `pull` later to resume")
+                            stopped = True
                             break
                         data = j.get("data") or j.get("items") or j.get("results") or []
                         if not data:
@@ -535,8 +562,10 @@ def cmd_prozorro(a):
                         total = j.get("total") or j.get("count") or 0
                         if page > 500 or (total and n >= total):
                             break
-                        time.sleep(0.3)
-                log(f"  {q} {y}: {n} tenders -> {fn.name}")
+                        time.sleep(a.pause)
+                if not stopped:
+                    done.write_text(time.strftime("%Y-%m-%d %H:%M"))
+                log(f"  {q} {y}: {n} tenders in {fn.name}" + (" (incomplete)" if stopped else ""))
         (out / "meta.json").write_text(json.dumps({"accessed": out.name, "queries": PROZORRO_QUERIES, "years": PROZORRO_YEARS}),
                                        encoding="utf-8")
         return
@@ -668,9 +697,9 @@ def cmd_nonprofit(a):
                 df = read_any(fn.read_bytes(), fn.name)
                 safe = [c for c in df.columns if not re.search(r"name|pib|фіо|прізвище|назва", str(c), re.I)]
                 log(f"  columns: {list(df.columns)}\n  first rows (name columns hidden):\n{df[safe].head(3).to_string()}")
-                code = guess_cols(df).get("katottg") or next((c for c in df.columns if re.search(r"ознак|код", str(c), re.I)), None)
-                if code:
-                    log(f"  value counts of {code}: {df[code].value_counts().head(15).to_dict()}")
+                lab_col = "nonpr" if "nonpr" in df else next((c for c in df.columns if re.search(r"ознак|код", str(c), re.I)), None)
+                if lab_col:
+                    log("  legend (label: rows):\n" + df[lab_col].value_counts().head(25).to_string())
             except Exception as ex:
                 log(f"  (sample not read: {ex})")
         log("Next: set NONPROFIT_DATASET to the full id, confirm NONPROFIT_CODES against the legend, check which column "
@@ -696,26 +725,51 @@ def cmd_nonprofit(a):
     frames = [read_any(p.read_bytes(), p.name) for p in d.iterdir() if p.suffix.lower() in (".csv", ".xlsx", ".xls", ".zip")]
     df = pd.concat(frames, ignore_index=True)
     cols = guess_cols(df, a.cols)
-    code_col = next((c for c in df.columns if re.search(r"ознак|непр", str(c), re.I)), None)
-    if code_col is None:
-        sys.exit(f"no non-profit code column found in {list(df.columns)}")
-    df["code"] = df[code_col].astype(str).str.extract(r"(\d{4})")[0]
-    df["cls"] = df["code"].map(NONPROFIT_CODES)
-    log(f"register rows {len(df)}; by class {df['cls'].value_counts(dropna=False).to_dict()}")
-    df = df[df["cls"].notna()]                                          # R7: 0035 religious and 0033 parties never counted
+    lab_col = "nonpr" if "nonpr" in df else next((c for c in df.columns if re.search(r"ознак|непр", str(c), re.I)), None)
+    if lab_col is None:
+        sys.exit(f"no non-profit label column found in {list(df.columns)}")
+    lab = df[lab_col].astype(str).str.lower().str.replace("i", "і")     # the register mixes Latin i into Cyrillic words
+    df["cls"] = "other"
+    for name, pat in reversed(NONPROFIT_CLASSES):                        # first pattern wins
+        df.loc[lab.str.contains(pat, regex=True), "cls"] = name
+    if "d_anul" in df:
+        ann = df["d_anul"].notna() & (df["d_anul"].astype(str).str.strip() != "")
+        log(f"annulled entries excluded: {int(ann.sum())}")
+        df = df[~ann]
+    log(f"register rows {len(df)}; by class {df['cls'].value_counts().to_dict()}")
+    df = df[~df["cls"].isin(NONPROFIT_EXCLUDED)]
+    tin = "tin" if "tin" in df else next((c for c in df.columns if re.search(r"tin|єдрпоу|edrpou|код", str(c), re.I)), None)
     if not any(k in cols for k in ("katottg", "address", "settlement")):
-        sys.exit("the register carries no address or KATOTTG column: hromada placement is not possible (tax office = raion at best)")
-    df = place(df, cols, "non-profits")
+        if tin and EDR_XW.exists():
+            xw = pd.read_csv(EDR_XW, dtype=str)
+            xw["k3"] = xw["k3"].str.zfill(7)
+            df["_edrpou"] = df[tin].astype(str).str.replace(r"\D", "", regex=True).str.zfill(8)
+            df["k3"] = df["_edrpou"].map(xw.set_index("edrpou")["k3"])
+            df["route"] = np.where(df["k3"].notna(), "edrpou", "")
+            log(f"  placed non-profits through the ЄДР crosswalk: {int(df['k3'].notna().sum())} of {len(df)}")
+        else:
+            sys.exit("the register carries no address: run `44_measures.py edr build` first (EDRPOU -> hromada from the ЄДР "
+                     "legal-entity dump, local), then this build again")
+    else:
+        df = place(df, cols, "non-profits")
+    if "d_nonpr" in df:
+        yr = pd.to_datetime(df["d_nonpr"], errors="coerce").dt.year
+        df["since"] = np.where(yr >= 2018, "1821", "pre18")
     out = counts_to_table(df, "npo", by="cls")
+    if "since" in df:
+        out["m_npo_new_1821_n"] = out["k3"].map(df[df["since"] == "1821"].groupby("k3").size()).fillna(0).astype(int)
     meta = {"accessed": d.name, "source": "Register of non-profit institutions and organisations, State Tax Service, data.gov.ua",
             "licence": "CC BY 4.0; counts per hromada by class only (R6, R7: religious organisations and parties excluded)",
             "level": "hromada", "columns": {
                 "m_npo_n": ("count", d.name, "civic organisations registered as non-profit (assoc., charities, housing and agricultural co-ops, unions, other)"),
                 "m_npo_per10k": ("per 10,000", d.name, "per 10,000 residents 2020"),
-                "m_npo_assoc_n": ("count", d.name, "public associations, creative unions, associations of legal persons (0032, 0034, 0038)"),
-                "m_npo_charity_n": ("count", d.name, "charitable organisations (0036)"),
-                "m_npo_housing_n": ("count", d.name, "OSBB and housing co-operatives (0039, 0040)"),
-                "m_npo_agri_coop_n": ("count", d.name, "agricultural service co-operatives (0043, 0044)")}}
+                "m_npo_assoc_n": ("count", d.name, "public associations, creative unions, associations of legal persons"),
+                "m_npo_charity_n": ("count", d.name, "charitable organisations"),
+                "m_npo_housing_n": ("count", d.name, "OSBB, housing, garage, garden and dacha co-operatives"),
+                "m_npo_agri_coop_n": ("count", d.name, "agricultural service co-operatives"),
+                "m_npo_coop_n": ("count", d.name, "other co-operatives"),
+                "m_npo_union_n": ("count", d.name, "trade unions and employers' organisations"),
+                "m_npo_new_1821_n": ("count", d.name, "of the above, given non-profit status 2018–2021 (recent civic formation)")}}
     write("nonprofit", out, meta)
 
 
@@ -928,6 +982,112 @@ def cmd_formation(a):
     write("formation", out, meta)
 
 
+# ---- ЄДР legal-entity dump: EDRPOU -> hromada ------------------------------------------------------------------------------------
+def edr_records(zpath, limit=None):
+    """Yield (edrpou, address, extra) from the UO.zip of the Ministry of Justice (07_edr.py downloads it): the XML is
+    streamed, a record is the parent of the EDRPOU tag, and only address-like tags are read (names never, R6)."""
+    import zipfile
+    from lxml import etree
+
+    def members(z, prefix=""):
+        for nm in z.namelist():
+            low = nm.lower()
+            if low.endswith(".xml"):
+                yield prefix + nm, z.open(nm)
+            elif low.endswith(".zip"):
+                import io
+                with zipfile.ZipFile(io.BytesIO(z.read(nm))) as inner:
+                    yield from members(inner, prefix + nm + "/")
+
+    n = 0
+    with zipfile.ZipFile(zpath) as z:
+        for nm, fh in members(z):
+            if re.search(r"fop", nm, re.I):
+                continue                                         # personal data: never read
+            rec_el, edrpou, addr, extra = None, None, None, {}
+            for ev, el in etree.iterparse(fh, events=("end",), recover=True, huge_tree=True):
+                tag = etree.QName(el).localname.upper() if isinstance(el.tag, str) else ""
+                if rec_el is None and "EDRPOU" in tag and el.text and el.text.strip():
+                    rec_el, edrpou = el.getparent(), el.text.strip()
+                    continue
+                if rec_el is not None and el is rec_el:
+                    for ch in rec_el.iter():
+                        t = etree.QName(ch).localname.upper() if isinstance(ch.tag, str) else ""
+                        if ch.text and ch.text.strip():
+                            if "ADDRESS" in t or t == "ADDR":
+                                addr = ch.text.strip()
+                            elif "KATOT" in t or "KOATUU" in t or "ATU" in t:
+                                extra[t] = ch.text.strip()
+                    yield edrpou, addr, extra
+                    n += 1
+                    rec_el, edrpou, addr, extra = None, None, None, {}
+                    el.clear()
+                    while el.getprevious() is not None:
+                        del el.getparent()[0]
+                    if limit and n >= limit:
+                        return
+
+
+def cmd_edr(a):
+    zs = sorted((BASE / "raw" / "edr").glob("*.zip")) if (BASE / "raw" / "edr").exists() else []
+    zs = [z for z in zs if re.search(r"uo", z.name, re.I) and not re.search(r"schema|fop", z.name, re.I)]
+    if not zs:
+        sys.exit("no UO.zip in raw/edr — run `07_edr.py probe` first (it downloads the legal-entity resource only)")
+    zpath = zs[-1]
+    if a.step == "probe":
+        seen, ex = {}, {}
+        for edrpou, addr, extra in edr_records(zpath, limit=3000):
+            seen["records"] = seen.get("records", 0) + 1
+            if addr:
+                seen["with_address"] = seen.get("with_address", 0) + 1
+                ex.setdefault("address", addr)
+            for k, v in extra.items():
+                seen[k] = seen.get(k, 0) + 1
+                ex.setdefault(k, v)
+        log(f"{zpath.name}: first records {seen}")
+        for k, v in ex.items():
+            log(f"  example {k}: {v[:120]}")
+        if ex.get("address"):
+            log(f"  parsed: {parse_address(ex['address'])}")
+        log("Next: `edr build` (streams the whole dump; EDRPOU -> hromada for the non-profit register's entities, local).")
+        return
+    tins = None
+    if a.tins or not a.all:
+        src = Path(a.tins) if a.tins else None
+        if src is None:
+            d = raw_dir("nonprofit")
+            src = next((p for p in d.iterdir() if p.suffix.lower() in (".zip", ".csv")), None)
+        if src is None:
+            sys.exit("no non-profit register found: pass --tins <file> or --all")
+        reg = read_any(src.read_bytes(), src.name)
+        tin = "tin" if "tin" in reg else next((c for c in reg.columns if re.search(r"tin|єдрпоу|edrpou", str(c), re.I)), None)
+        tins = set(reg[tin].astype(str).str.replace(r"\D", "", regex=True).str.zfill(8))
+        log(f"restricting to {len(tins)} EDRPOU codes of {src.name}")
+    rows, n, t0 = [], 0, time.time()
+    for edrpou, addr, extra in edr_records(zpath):
+        n += 1
+        code = re.sub(r"\D", "", edrpou).zfill(8)
+        if tins is not None and code not in tins:
+            continue
+        rows.append({"edrpou": code, "address": addr, **{k.lower(): v for k, v in extra.items()}})
+        if n % 200_000 == 0:
+            log(f"  {n:,} records read, {len(rows):,} kept ({time.time() - t0:.0f} s)")
+    df = pd.DataFrame(rows).drop_duplicates("edrpou")
+    log(f"{n:,} records in {zpath.name}; kept {len(df):,}; with an address {int(df['address'].notna().sum()) if 'address' in df else 0}")
+    cols = {}
+    kat = next((c for c in df.columns if "katot" in c), None)
+    if kat:
+        cols["katottg"] = kat
+    if "address" in df:
+        cols["address"] = "address"
+    if not cols:
+        sys.exit("the dump carries neither an address nor a KATOTTG tag for these records")
+    df = place(df, cols, "legal entities")
+    EDR_XW.parent.mkdir(parents=True, exist_ok=True)
+    df.loc[df["k3"].notna(), ["edrpou", "k3", "route"]].to_csv(EDR_XW, index=False)
+    log(f"wrote {EDR_XW.relative_to(BASE)} (local): {int(df['k3'].notna().sum()):,} entities placed; now `nonprofit build`")
+
+
 # ---- any list of places ---------------------------------------------------------------------------------------------------
 def cmd_places(a):
     p = Path(a.file)
@@ -997,7 +1157,7 @@ def cmd_assemble(a):
 
 def main():
     ap = argparse.ArgumentParser(description="round 3, step 4: the nearest open measure per hromada")
-    ap.add_argument("kind", choices=("civil", "prozorro", "nonprofit", "w3", "formation", "places", "assemble"))
+    ap.add_argument("kind", choices=("civil", "prozorro", "nonprofit", "edr", "w3", "formation", "places", "assemble"))
     ap.add_argument("step", nargs="?", default="build", choices=("probe", "pull", "build"))
     ap.add_argument("--file", help="places: the list to count (csv, xlsx, json, geojson)")
     ap.add_argument("--kind", dest="kind_label", default="", help="places: short label, e.g. invincibility, youth, veteran, library, idp_council, cnap, officer")
@@ -1008,6 +1168,9 @@ def main():
     ap.add_argument("--year", default="", help="places: reference date for the dictionary")
     ap.add_argument("--delete-source", action="store_true", help="places: delete the input file after the build (R1)")
     ap.add_argument("--resource", default="", help="w3 pull: substring of the resource name to download (default: the newest)")
+    ap.add_argument("--pause", type=float, default=1.0, help="prozorro pull: seconds between pages (default 1.0)")
+    ap.add_argument("--tins", default="", help="edr build: register file whose EDRPOU codes to place (default: the latest non-profit pull)")
+    ap.add_argument("--all", action="store_true", help="edr build: place every legal entity (slow, large)")
     a = ap.parse_args()
     open_log("44_measures")
     log(f"44_measures.py {a.kind} {a.step}")
@@ -1017,6 +1180,8 @@ def main():
         cmd_prozorro(a)
     elif a.kind == "nonprofit":
         cmd_nonprofit(a)
+    elif a.kind == "edr":
+        cmd_edr(a)
     elif a.kind == "w3":
         cmd_w3(a)
     elif a.kind == "formation":
