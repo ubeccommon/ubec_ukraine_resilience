@@ -23,8 +23,8 @@ tidy/resilience_index_v11_k3.csv (local) or public/resilience_index_v11_k3.csv, 
 
 Outputs — LOCAL ONLY, never committed and never published (rule R2: the classes come from recent light residuals;
 and the list names places singled out for a visit):
-  field/pairs_<date>.csv        one row per hromada in a pair or reserve
-  field/field_sheets_<date>.md  one sheet per pair (L = light / functional, B = budgets / fiscal, -R = reserve):
+  field/pairs_<date>_<scope>.csv        one row per hromada in a pair or reserve (scope: all | <km>km, + oblasts)
+  field/field_sheets_<date>_<scope>.md  one sheet per pair (L = light / functional, B = budgets / fiscal, -R = reserve):
                                 the two hromadas, what the data say, the open questions, space for notes
   logs/43_pairs.log
 field/ is outside the repository's whitelist (.gitignore denies /resilience/*), so nothing there can be staged.
@@ -214,9 +214,10 @@ def main():
         log(f"{pid:6s} {r['quality']}  {OBL.get(r['k1'], r['k1']):15s} {r['htype']:10s}  "
             f"held up: {r['name_h']}  |  faltered: {r['name_f']}  (dist {r['dist']:.2f}, contrast {r['contrast']:.2f}"
             + (f", {r.get('km_h', np.nan):.0f} / {r.get('km_f', np.nan):.0f} km" if pd.notna(r.get('km_h')) else "") + ")")
-    out = FIELD / f"pairs_{day}.csv"
+    tag = f"{day}_" + (f"{a.max_km:.0f}km" if a.max_km else "all") + (f"_{'-'.join(obls)}" if a.oblasts != ",".join(sorted(CARP)) else "")
+    out = FIELD / f"pairs_{tag}.csv"
     pd.DataFrame(rows).to_csv(out, index=False)
-    md = FIELD / f"field_sheets_{day}.md"
+    md = FIELD / f"field_sheets_{tag}.md"
     md.write_text("\n".join(sheets), encoding="utf-8")
     (FIELD / "README.txt").write_text("LOCAL field material for round 3 (docs/pattern_language.md 5.7). Never commit "
                                       "or publish: rules R2 and R6.\n", encoding="utf-8")
