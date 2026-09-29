@@ -1,0 +1,23 @@
+{
+ "accessed": "2026-09-29",
+ "source": "Wikidata, items with a KATOTTG code at hromada level, inception (P571)",
+ "licence": "CC0",
+ "level": "hromada",
+ "columns": {
+  "m_formed_year": [
+   "year",
+   "2026-09-29",
+   "year the hromada was formed (P571); coverage in the log"
+  ],
+  "m_formed_voluntary": [
+   "0/1",
+   "2026-09-29",
+   "formed before the administrative wave of 2020-06-12 (voluntary amalgamation 2015–2019)"
+  ],
+  "m_formed_years_before_2020": [
+   "years",
+   "2026-09-29",
+   "years between formation and the 2020 wave (0 for the wave itself)"
+  ]
+ }
+}

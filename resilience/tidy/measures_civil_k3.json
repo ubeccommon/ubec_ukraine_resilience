@@ -1,0 +1,58 @@
+{
+ "accessed": "2026-09-29",
+ "source": "openbudget.gov.ua EXPENSES PROGRAM cache (31_functional_spending.py), functional code 0320 civil protection",
+ "licence": "Ukrainian open data, CMU Resolution 835 — attribution; the 0320 line alone reveals no R4 amount",
+ "level": "hromada",
+ "columns": {
+  "m_civil_share_2021": [
+   "share",
+   "2021",
+   "0320 / civilian service expenditure (31), full years only"
+  ],
+  "m_civil_share_2223": [
+   "share",
+   "2022-2023",
+   "mean of the annual shares"
+  ],
+  "m_civil_share_2425": [
+   "share",
+   "2024-2025",
+   "mean of the annual shares"
+  ],
+  "m_civil_pc_2021": [
+   "UAH per resident",
+   "2021",
+   "0320 / GHS-POP 2020, nominal"
+  ],
+  "m_civil_pc_2223": [
+   "UAH per resident",
+   "2022-2023",
+   "mean, nominal"
+  ],
+  "m_civil_share_2025": [
+   "share",
+   "2025",
+   "0320 / civilian service expenditure (31)"
+  ],
+  "m_civil_pc_2025": [
+   "UAH per resident",
+   "2025",
+   "0320 / GHS-POP 2020, nominal"
+  ],
+  "m_civil_change": [
+   "share points",
+   "2021→2022-23",
+   "m_civil_share_2223 − m_civil_share_2021: what the hromada set aside once the war came"
+  ],
+  "m_civil_change_2125": [
+   "share points",
+   "2021→2025",
+   "m_civil_share_2025 − m_civil_share_2021"
+  ],
+  "m_civil_any_2225": [
+   "0/1",
+   "2022-2025",
+   "any 0320 spending in 2022–2025"
+  ]
+ }
+}

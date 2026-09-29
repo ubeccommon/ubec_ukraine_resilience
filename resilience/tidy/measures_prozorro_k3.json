@@ -1,0 +1,33 @@
+{
+ "accessed": "2026-09-29",
+ "source": "Prozorro search API (prozorro.gov.ua), tenders for generators and generating sets 2022–2024",
+ "licence": "Prozorro open data, CMU Resolution 835 — attribution",
+ "level": "hromada",
+ "columns": {
+  "m_gen_council_n": [
+   "count",
+   "2022-2024",
+   "tenders by the hromada council and its executive bodies"
+  ],
+  "m_gen_council_per10k": [
+   "per 10,000",
+   "2022-2024",
+   "per 10,000 residents 2020"
+  ],
+  "m_gen_council_sum_pc": [
+   "UAH per resident",
+   "2022-2024",
+   "expected value of those tenders per resident"
+  ],
+  "m_gen_local_n": [
+   "count",
+   "2022-2024",
+   "tenders by the council and communal entities placed in the hromada"
+  ],
+  "m_gen_local_per10k": [
+   "per 10,000",
+   "2022-2024",
+   "per 10,000 residents 2020"
+  ]
+ }
+}
