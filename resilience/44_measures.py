@@ -79,8 +79,8 @@ W3_QUERY = "ukraine 3w operational presence"
 W3_DATASET = "ukraine-who-does-what-where-3w"   # probe of 29 Sep 2026: 5W cumulative files, January–August 2026 the newest
 WIKIDATA_SPARQL = "https://query.wikidata.org/sparql"
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
-KATOTTG_PROP = ""                        # set from the probe: the property whose value is the UA… code on a hromada item
-HROMADA_CLASSES = []                     # set from the probe: P31 classes of a hromada item (route without the property)
+KATOTTG_PROP = "P9435"                   # probe of 29 Sep 2026: "KATOTTH ID" on hromada items (value UA + 17 digits)
+HROMADA_CLASSES = ["Q104841013"]         # probe of 29 Sep 2026: P31 "hromada" (route without the property)
 PROBE_ITEM = "Верховинська селищна громада"   # a hromada the probe looks up to find those
 ADMIN_WAVE = "2020-06-12"                # CMU orders of 12 June 2020: the administrative formation of the remaining hromadas
 
@@ -135,6 +135,21 @@ def get(url, **kw):
 
 def read_any(content, name):
     m41 = importlib.import_module("41_nhsu_declarations")
+    if name.lower().endswith(".zip"):                           # every table inside the archive, not only the first
+        import io
+        import zipfile
+        frames = []
+        with zipfile.ZipFile(io.BytesIO(content)) as zf:
+            for inner in zf.namelist():
+                if inner.lower().endswith((".csv", ".xlsx", ".xls", ".txt")):
+                    try:
+                        frames.append(m41.read_any(zf.read(inner), inner if not inner.lower().endswith(".txt") else inner[:-4] + ".csv"))
+                        log(f"    {name}: {inner} ({len(frames[-1])} rows, {frames[-1].shape[1]} columns)")
+                    except ValueError as ex:
+                        log(f"    {name}: {inner} not read ({ex})")
+        if not frames:
+            raise ValueError(f"no table inside {name}")
+        return pd.concat(frames, ignore_index=True)
     try:
         return m41.read_any(content, name)
     except ValueError:
@@ -544,12 +559,17 @@ def cmd_prozorro(a):
     log(f"  generators by CPV 3112*/31100* or title, after exclusions ({PROZORRO_EXCLUDE[:40]}…): {int(keep.sum())} of {len(df)}")
     df = df[keep]
     nm = df["buyer"].astype(str).str.lower()
-    df["kind"] = np.select([nm.str.contains(r"\bрада\b|ради\b|виконавч|виконком|управління.*ради|відділ.*ради"),
-                            nm.str.contains(r"комунальн|\bкп\b|кнп|ліцей|школа|гімназ|лікарн|бібліотек|будинок культури|дитяч|садок|цнап")],
-                           ["council", "communal"], "other")
+    df["kind"] = np.select([nm.str.contains(r"комунальн|\bкп\b|кнп|ліцей|школа|гімназ|лікарн|бібліотек|будинок культури|дитяч|садок|цнап|водоканал|тепло"),
+                            nm.str.contains(r"\bрада\b|ради\b|виконавч|виконком|управління.*ради|відділ.*ради")],
+                           ["communal", "council"], "other")       # communal entities first: 'КП … міської ради' is not the council
     df["oblast"] = df["region"].map(lambda v: re.sub(r"\s*область", "", str(v)) if pd.notna(v) and str(v).strip() else None)
-    cols = {"hromada": "buyer", "oblast": "oblast", "settlement": "locality"}   # no region -> nationwide-unique routes
-    df.loc[df["kind"] != "council", "buyer"] = None                 # only councils are placed by name
+    df["council"] = df["buyer"].map(council_name)                   # the council named in the buyer, nominative
+    df.loc[df["council"].notna() & (df["kind"] == "other"), "kind"] = "council"
+    sp = df["locality"].map(split_locality)
+    df["settlement"], df["raion"] = [t[0] for t in sp], [t[1] for t in sp]
+    log(f"  buyers: {df['kind'].value_counts().to_dict()}; council named in {int(df['council'].notna().sum())}; "
+        f"locality gives a settlement for {int(df['settlement'].notna().sum())}, a raion for {int(df['raion'].notna().sum())}")
+    cols = {"hromada": "council", "oblast": "oblast", "settlement": "settlement", "raion": "raion"}   # no region -> nationwide routes
     df = place(df, cols, "tenders")
     df["year"] = pd.to_datetime(df["date"], errors="coerce").dt.year
     out = None
@@ -569,6 +589,33 @@ def cmd_prozorro(a):
                 "m_gen_local_n": ("count", "2022-2024", "tenders by the council and communal entities placed in the hromada"),
                 "m_gen_local_per10k": ("per 10,000", "2022-2024", "per 10,000 residents 2020")}}
     write("prozorro", out, meta)
+
+
+def council_name(buyer):
+    """'ВІДДІЛ ОСВІТИ … ВИКОНАВЧОГО КОМІТЕТУ МІЖГІРСЬКОЇ СЕЛИЩНОЇ РАДИ' -> 'Міжгірська селищна рада';
+    'Верховинська селищна рада' -> itself; None when no council is named."""
+    b = str(buyer or "")
+    m = re.search(r"([А-ЯІЇЄҐа-яіїєґ'’\-]+(?:ої|ая|а))\s+(сільськ|селищн|міськ)(?:ої|а|ая)\s+(?:територіальн(?:ої|а)\s+)?(?:громад[иа]|рад[иа])", b, re.I)
+    if not m:
+        return None
+    adj, typ = m.group(1), m.group(2).lower()
+    adj = re.sub(r"ої$", "а", adj, flags=re.I)
+    adj = adj[:1].upper() + adj[1:].lower()
+    return f"{adj} {typ}а рада"
+
+
+def split_locality(loc):
+    """'смт Козин, Обухівський район' -> ('Козин', 'Обухівський'); 'Міжгірський р-н' -> (None, 'Міжгірський')."""
+    loc = str(loc or "")
+    parts = [p.strip() for p in loc.split(",") if p.strip()]
+    settlement = raion = None
+    for p in parts:
+        if re.search(r"\b(р-н|район)\b", p):
+            m = re.search(r"([А-ЯІЇЄҐ][\w'’\-]+)\s*(?:р-н|район)", p)
+            raion = m.group(1) if m else raion
+        elif settlement is None and not re.search(r"обл|область", p):
+            settlement = re.sub(r"^" + ADDR_TYPE + r"\s*", "", p).strip() or None
+    return settlement, raion
 
 
 def build_prozorro_row(rec):
@@ -607,11 +654,18 @@ def cmd_nonprofit(a):
         hit = next((pk for pk in res.get("results", []) if pk["id"].startswith(NONPROFIT_DATASET)), None)
         if hit and hit.get("resources"):
             r = newest_resource(hit, ("zip", "csv", "xlsx", "xls"))
-            log(f"newest resource: {r.get('name')}  {r.get('last_modified')}")
+            log(f"newest resource: {r.get('name')}  {r.get('last_modified')} — downloading it whole (this is the pull)")
             try:
-                chunk = next(get(r["url"], stream=True, timeout=120).iter_content(chunk_size=1_500_000))
-                m41 = importlib.import_module("41_nhsu_declarations")
-                df = m41.read_any(chunk, r["url"].split("?")[0], partial=True)
+                out = raw_dir("nonprofit", new=True)
+                fn = out / (re.sub(r"[^\w.-]+", "_", r.get("name") or "register") + "." + r["format"].lower())
+                if not fn.exists():
+                    with get(r["url"], stream=True, timeout=900) as resp:
+                        with open(fn, "wb") as f:
+                            for chunk in resp.iter_content(chunk_size=8_000_000):
+                                f.write(chunk)
+                (out / "meta.json").write_text(json.dumps({"accessed": out.name, "dataset": hit["id"], "licence": hit.get("license_title")}),
+                                               encoding="utf-8")
+                df = read_any(fn.read_bytes(), fn.name)
                 safe = [c for c in df.columns if not re.search(r"name|pib|фіо|прізвище|назва", str(c), re.I)]
                 log(f"  columns: {list(df.columns)}\n  first rows (name columns hidden):\n{df[safe].head(3).to_string()}")
                 code = guess_cols(df).get("katottg") or next((c for c in df.columns if re.search(r"ознак|код", str(c), re.I)), None)
@@ -668,12 +722,21 @@ def cmd_nonprofit(a):
 # ---- OCHA 3W ----------------------------------------------------------------------------------------------------------
 def cmd_w3(a):
     if a.step == "probe":
-        res = ckan(CKAN_HDX, "package_search", q=W3_QUERY, rows=8)
-        for pk in res.get("results", []):
-            log(f"dataset {pk['name']}  {pk.get('title')}  licence={pk.get('license_title')}  modified={pk.get('metadata_modified')}")
-            for r in pk.get("resources", [])[:8]:
-                log(f"    resource {r.get('name')}  format={r.get('format')}  modified={r.get('last_modified')}  url={r.get('url')}")
-        log("Next: set W3_DATASET to the dataset name whose resource carries admin3 pcodes (UA + 7 digits); then `pull`.")
+        if W3_DATASET:
+            pk = ckan(CKAN_HDX, "package_show", id=W3_DATASET)
+            log(f"dataset {pk['name']}  {pk.get('title')}  licence={pk.get('license_title')}  modified={pk.get('metadata_modified')}  "
+                f"resources {len(pk.get('resources', []))}")
+            for r in pk.get("resources", []):
+                log(f"    resource {r.get('name')}  format={r.get('format')}  modified={r.get('last_modified')}")
+            log("Next: `pull --resource <substring of a name>` for a file likely to carry hromada pcodes (the 2022–2024 3W files), "
+                "then `build`; the build takes the sheet whose pcode values are UA + 7 digits.")
+        else:
+            res = ckan(CKAN_HDX, "package_search", q=W3_QUERY, rows=8)
+            for pk in res.get("results", []):
+                log(f"dataset {pk['name']}  {pk.get('title')}  licence={pk.get('license_title')}  modified={pk.get('metadata_modified')}")
+                for r in pk.get("resources", [])[:8]:
+                    log(f"    resource {r.get('name')}  format={r.get('format')}  modified={r.get('last_modified')}  url={r.get('url')}")
+            log("Next: set W3_DATASET, then `probe` again to list all its resources.")
         return
     if a.step == "pull":
         res = ckan(CKAN_HDX, "package_search", q=W3_QUERY, rows=8)
@@ -681,7 +744,14 @@ def cmd_w3(a):
         if not hit:
             sys.exit("no 3W dataset found on HDX")
         out = raw_dir("w3", new=True)
-        for r in [newest_resource(hit, ("csv", "xlsx", "xls"))]:
+        rs = [r for r in hit.get("resources", []) if (r.get("format") or "").lower() in ("csv", "xlsx", "xls")]
+        if a.resource:
+            rs = [r for r in rs if a.resource.lower() in (r.get("name") or "").lower()]
+            if not rs:
+                sys.exit(f"no resource matching '{a.resource}'")
+        else:
+            rs = [newest_resource(hit, ("csv", "xlsx", "xls"))]
+        for r in rs:
             fn = out / (re.sub(r"[^\w.-]+", "_", r.get("name") or "3w") + "." + r["format"].lower())
             with get(r["url"], stream=True, timeout=600) as resp:
                 with open(fn, "wb") as f:
@@ -692,30 +762,45 @@ def cmd_w3(a):
                                        encoding="utf-8")
         return
     d = raw_dir("w3")
-    frames = []
-    for p in d.iterdir():
+    def hromada_pcode_col(sh):
+        """The column whose values are hromada pcodes (UA + 7 digits) in most rows, else None."""
+        for c in sh.columns:
+            v = sh[c].dropna().astype(str).str.strip()
+            if len(v) >= 20 and v.str.fullmatch(r"UA\d{7}").mean() > 0.5:
+                return c
+        return None
+
+    frames, p3 = [], None
+    for p in sorted(d.iterdir()):
         if p.suffix.lower() in (".xlsx", ".xls"):
             sheets = pd.read_excel(p, sheet_name=None, dtype=str)
             for nm, sh in sheets.items():
-                if any(re.search(r"adm3|admin3", str(c), re.I) and re.search(r"pcode|code", str(c), re.I) for c in sh.columns):
-                    log(f"  {p.name}: sheet '{nm}' carries admin3 pcodes ({len(sh)} rows); sheets present {list(sheets)}")
+                if sh.iloc[:1].astype(str).apply(lambda r: r.str.startswith("#").any(), axis=1).any():
+                    sh = sh.iloc[1:]                                  # HXL tag row
+                c = hromada_pcode_col(sh)
+                if c:
+                    log(f"  {p.name}: sheet '{nm}' carries hromada pcodes in '{c}' ({len(sh)} rows)")
+                    sh = sh.rename(columns={c: "_pcode"})
                     frames.append(sh)
                     break
             else:
-                log(f"  {p.name}: no sheet with an admin3 pcode column; sheets and their first columns: "
-                    + "; ".join(f"{nm}: {list(sh.columns)[:8]}" for nm, sh in sheets.items()))
+                log(f"  {p.name}: no sheet with hromada-level pcodes (UA + 7 digits); sheets: "
+                    + "; ".join(f"{nm}: {list(sh.columns)[:6]}" for nm, sh in sheets.items()))
         elif p.suffix.lower() == ".csv":
-            frames.append(read_any(p.read_bytes(), p.name))
+            sh = read_any(p.read_bytes(), p.name)
+            if sh.iloc[:1].astype(str).apply(lambda r: r.str.startswith("#").any(), axis=1).any():
+                sh = sh.iloc[1:]
+            c = hromada_pcode_col(sh)
+            if c:
+                log(f"  {p.name}: hromada pcodes in '{c}' ({len(sh)} rows)")
+                frames.append(sh.rename(columns={c: "_pcode"}))
+            else:
+                log(f"  {p.name}: no hromada-level pcode column; columns {list(sh.columns)[:10]}")
     if not frames:
-        sys.exit("no 3W table with admin3 pcodes found")
+        sys.exit("no 3W table with hromada pcodes found in raw/w3 — pull an earlier 3W file (`pull --resource …`)")
     df = pd.concat(frames, ignore_index=True)
-    if df.iloc[0].astype(str).str.startswith("#").any():              # HXL tag row
-        df = df.iloc[1:]
     cols = guess_cols(df, a.cols)
-    p3 = next((c for c in df.columns if re.search(r"adm3|admin3", str(c), re.I) and re.search(r"pcode|code", str(c), re.I)), None)
-    if p3 is None:
-        sys.exit(f"no admin3 pcode column: {list(df.columns)}")
-    cols["pcode"] = p3
+    cols["pcode"] = "_pcode"
     org = next((c for c in df.columns if re.search(r"org.*(name|acronym)|organisation|organization", str(c), re.I)), None)
     typ = next((c for c in df.columns if re.search(r"org.*type|type.*org", str(c), re.I)), None)
     df = place(df, cols, "3W rows")
@@ -922,6 +1007,7 @@ def main():
     ap.add_argument("--licence", default="", help="places: licence for the dictionary")
     ap.add_argument("--year", default="", help="places: reference date for the dictionary")
     ap.add_argument("--delete-source", action="store_true", help="places: delete the input file after the build (R1)")
+    ap.add_argument("--resource", default="", help="w3 pull: substring of the resource name to download (default: the newest)")
     a = ap.parse_args()
     open_log("44_measures")
     log(f"44_measures.py {a.kind} {a.step}")
