@@ -235,6 +235,70 @@ to observe. Round 3 is therefore field-first:
 The benchmark set of 7–12 patterns comes out of step 3 and is validated in step 4; the open data then serve as the
 test, not as the source.
 
+### 5.8 The field sheet reviewed before the first pairs (29 Sep 2026)
+
+The six questions of `43_pairs.py` were written with the light pairs in mind. Read against the method's own rules —
+observe the place first, ask what is rather than what is thought, keep the two qualities apart, record what can
+later be tested — they needed five corrections, all made in the sheet before L2 and B2 rather than after, because
+each would otherwise cost a visit:
+
+1. **Question 1 named the outcome.** "The outages of summer 2024" is the definition of the functional quality; asked
+   in a budget pair it steers the conversation to light and away from money. It now asks what kept going since 2022,
+   through the winters, the outages and the alerts, and what stopped, and when.
+2. **Nothing asked about money.** The fiscal quality — a tax base held, cultural provision kept, own revenue not lost
+   when military PIT left — had no question at all. Question 5 now asks where the money comes from for what the
+   hromada does for itself: own means, the oblast, donors, people abroad. Phrased in things, not budget lines.
+3. **"Who decided" invites names.** Rule R6 is now on the sheet: answers by role or institution.
+4. **Timing was absent.** The return to the data (5.9) has to know whether a practice pre-dates 2022 (a condition,
+   testable against pre-war registers) or arose in response (a consequence, or the holding up itself). Each practice
+   noted gets a "since when" (before 2014 / 2014–21 / 2022 / 2024).
+5. **Nothing was observed without asking.** Alexander's observation begins with the place. The sheet now lists a
+   walk to be made before the conversations — council hours, market, school gate, club, church, notice board,
+   generators and heating points, fields, houses, the bus — and a row for what it shows.
+
+Two more things the sheet now fixes: who is asked (the same three roles in both members of a pair, so that the
+contrast is like for like — council, an institution, the market or a farm), and that question 4 asks for kinds and
+numbers of households, not their stories.
+
+What the questions cannot reach, so that silence is not read as absence: how the hromada was formed (Annex A's
+self-formation) and participation between elections. A seventh question on formation is held in reserve; the "since
+when" row will show whether it is needed ("since the amalgamation" is an answer people give). Participation stays
+out until a pattern points to it. The review after L2 and B2 stands as planned: which questions earned their place,
+which words recurred, what the walk showed that the conversations did not.
+
+### 5.9 Return to the data: `44_measures.py` and `45_candidates.py` (29 Sep 2026)
+
+Step 4 of the field round is prepared so that a candidate pattern can be tested the week it is stated.
+
+**`44_measures.py`** gives each section-6 aspect its nearest open measure, one value per hromada, counts and shares
+only (R1, R6, R7). One placement engine serves every source — KATOTTG code, COD pcode, hromada name (the matcher of
+`33`), settlement name within the raion or oblast (the codifier of `34`), coordinates (spatial join, then dropped),
+or a free-text address parsed into these. Sub-commands: `civil` (functional 0320, civil protection, from `31`'s
+local table: share of civilian expenditure 2021, 2022–23, 2024–25, per resident, and the change — the reserve a
+hromada set aside once the war came; no network needed); `prozorro` (tenders for generators and generating sets
+2022–2024 by the council and by communal entities, counts and expected value per resident; Prozorro search API);
+`nonprofit` (the State Tax Service register: public associations, charities, OSBB and housing co-operatives,
+agricultural co-operatives, unions — religious organisations and parties are never counted, R7); `w3` (OCHA 3W on
+HDX: organisations active per hromada, of which local); `formation` (Wikidata: year the hromada was formed, before
+or in the administrative wave of 12 June 2020); and `places`, which counts any list — invincibility points, youth
+centres, veteran spaces, libraries, IDP councils, service centres, community officers — and deletes a point file
+after use. Each sub-command has `probe`, `pull`, `build`; the probes exist because none of these sites can be opened
+from Claude's workspace, so column names and dataset ids are confirmed on the data machine first. `assemble` merges
+everything into `tidy/measures_k3.csv` (public) and writes the `m_*` rows of the data dictionary.
+
+**`45_candidates.py`** takes a measure (or several: each alone, then their conjunction), a quality and a sign, and
+runs the checks the design's stars stand for, each named and logged: C1 the plain comparison; C2 the linear
+association against the within-oblast permutation ceiling; C3 the paper's inference (oblast fixed effects,
+wild-cluster bootstrap); C4 the families that did not define the quality (define on some, validate on the others);
+C5 three of four macro-regions; C6 the zone as a separate population (a caveat, not a failure); C7 the
+configurational search of `40` with the candidate as an added condition — the difference between an association and
+a configuration. Two stars for C1–C5 and C7; one for an association that is not a configuration, or one soft check
+missed; none otherwise. A measure dated after February 2022 is marked as accompanying, not preceding. The row goes
+to `tidy/candidates.csv` with the calibration thresholds the profile table of section 7 will use. Synthetic tests
+(29 Sep 2026): a planted single condition at r ≈ 0.6 earns two stars and is found in 31 conjunctions; noise earns
+none and passes no conjunction; a paper-scale association at r ≈ 0.24 passes the linear checks and, with few
+permutations, the ceiling — run with `--perms 20` or more before believing a configuration.
+
 ## 6. Data not yet used
 
 Discovery can only find configurations among the variables it is given; the current 111 describe budgets, light,
@@ -318,9 +382,13 @@ do not recognise goes back to step 2.
 3. Compute the revenue Herfindahl and civil-protection change from the caches (script to follow).
 4. `40_configurations.py`: tree, QCA, kinds of held-up hromada.
 5. Draft the pattern statements; open Annex A.
-6. Field round in the Carpathian oblasts through the dispatch series.
-7. New data in the order the first round shows something missing; NHSU declarations and 2019 turnout first.
-8. Write-up: a short paper on the method and the patterns, a dispatch per pattern, the profile table in the data
+6. Field round in the Carpathian oblasts through the dispatch series: L2 and B2 first, with the sheet of 5.8;
+   review the questions after them.
+7. Before the notes come back: `44_measures.py civil` (no network), then the probes for `prozorro`, `nonprofit`,
+   `w3`, `formation` on the data machine, and `assemble`. The other lists of section 6 through `places` as they
+   are found.
+8. For each candidate from the pairs: its nearest measure, `45_candidates.py`, stars; Annex A opened only then.
+9. Write-up: a short paper on the method and the patterns, a dispatch per pattern, the profile table in the data
    package. Map page 25 (the observation set) after review.
 
 Decisions needed before step 2: keep all five families or drop own-revenue retention (Q4 2023 break); quartiles or

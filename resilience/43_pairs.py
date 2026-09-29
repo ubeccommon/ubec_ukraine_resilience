@@ -30,6 +30,12 @@ and the list names places singled out for a visit):
 field/ is outside the repository's whitelist (.gitignore denies /resilience/*), so nothing there can be staged.
 
 Field rule (R6): notes record places, practices and institutions, never the names of people.
+
+Questions reviewed 29 Sep 2026 before the first pairs (docs/pattern_language.md, 5.8): the outcome of the light pairs is no
+longer named in question 1; question 2 asks for roles; question 4 asks for kinds and numbers, not stories; question 5
+asks where the money comes from (the fiscal quality had no question); the sheet now says who is asked, what is seen
+without asking, and since when each practice exists. A seventh question on how the hromada was formed is held in
+reserve and asked only if the first two pairs leave it unreached.
 """
 import argparse
 import json
@@ -47,20 +53,33 @@ QUALITY = {"func": ("quality_func", "composite_func", "functional (light kept in
            "fisc": ("quality_fisc", "composite_fisc", "fiscal (tax base, cultural provision and own revenue held)")}
 FAM_WORDS = {"s24": "light in the summer-2024 outages", "recent": "light level 2025–26",
              "econ": "tax base 2021→2025", "cult": "cultural provision 2021→2025", "own": "own revenue after Q4 2023"}
-PROMPTS = """**Open questions** (ask in both hromadas of the pair; do not bring the data or the expectations of Annex A)
+PROMPTS = """**Who is asked** (the same three in both hromadas of the pair, recorded by role only — rule R6): the council
+(head, starosta or secretary); one institution (school, library, house of culture, church, fire unit, clinic); one
+from the market, a shop or a farm.
 
-1. What kept going here through the winters since 2022 and the outages of summer 2024? What stopped?
-2. When something failed, who decided what to do, and how fast? What did people do without being asked?
+**Open questions** (ask in both hromadas of the pair; do not bring the data or the expectations of Annex A)
+
+1. What kept going here since 2022 — through the winters, the outages, the alerts? What stopped, and when?
+2. When something failed, who decided what to do, and how fast? (Answer by role or institution — the head, the
+   starosta, the school, the fire unit, the church, a farmer — never by name.) What did people do without being asked?
 3. Where do people meet now? What happens there that did not happen before 2022?
-4. Who came here since 2022, and what became of them? Who left, and why?
-5. What does the hromada make, grow, repair or store for itself?
+4. Who came here since 2022 — how many, what kind of households — and what became of them: work, housing, school?
+   Who left, and why?
+5. What does the hromada make, grow, repair or store for itself? Where does the money for it come from — own means,
+   the oblast, donors, people abroad?
 6. What would you tell another hromada to do first?
+
+**Seen without asking** (the observer's walk, before the conversations): the council building and its hours; the
+market or shop; the school gate; the club or house of culture; the church; the notice board and what it announces;
+generators, fuel, a heating point; fields worked or abandoned; houses repaired, new or empty; the bus.
 
 **Observer's notes** (places, practices, institutions — never names of people, rule R6)
 
+- Seen without asking:
 - Seen here and not in the partner:
 - Seen in the partner and not here:
 - Said in both, in the words used:
+- Since when, for each practice noted (before 2014 / 2014–21 / 2022 / 2024 — a condition or a response?):
 - Candidate pattern (one sentence, if one appears):
 """
 
