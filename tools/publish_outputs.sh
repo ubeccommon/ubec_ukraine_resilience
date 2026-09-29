@@ -46,6 +46,13 @@ OUTPUTS=(
 # Claude adds a path here when a new script starts producing a tracked
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
+  "resilience/tidy/measures_k3.csv"
+  "resilience/tidy/measures_civil_k3.csv"
+  "resilience/tidy/measures_civil_k3.json"
+  "resilience/tidy/measures_formation_k3.csv"
+  "resilience/tidy/measures_formation_k3.json"
+  "resilience/tidy/measures_prozorro_k3.csv"
+  "resilience/tidy/measures_prozorro_k3.json"
 )
 
 DRY=0; YES=0; SUBJECT=""
