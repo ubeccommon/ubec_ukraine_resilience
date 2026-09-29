@@ -335,9 +335,19 @@ def cmd_civil(a):
     pop = population()
     f = f.merge(pop[["k3", "pop_ghs_2020"]], on="k3", how="left")
     f["pc"] = f[col] / pd.to_numeric(f["pop_ghs_2020"], errors="coerce").where(lambda v: v > 0)
-    full = f[f["last_month"] >= 12] if "last_month" in f else f
-    piv_s = full.pivot_table(index="k3", columns="year", values="share", aggfunc="first")
-    piv_p = full.pivot_table(index="k3", columns="year", values="pc", aggfunc="first")
+    f["year"] = pd.to_numeric(f["year"], errors="coerce").astype("Int64")
+    if "last_month" in f:
+        f["last_month"] = pd.to_numeric(f["last_month"], errors="coerce")
+        diag = f.groupby("year").agg(rows=("k3", "size"), full_year=("last_month", lambda v: int((v >= 12).sum())),
+                                     last_month_median=("last_month", "median"), with_0320=(col, lambda v: int((v > 0).sum())))
+        log("cache by year (rows, full years, median last month, hromadas with 0320 > 0):\n" + diag.to_string())
+        # one row per hromada and year: the latest reporting month (as 31 does for 2026); partial years are logged, not dropped
+        f = f.sort_values(["k3", "year", "last_month"]).drop_duplicates(["k3", "year"], keep="last")
+        part = f[f["last_month"] < 12].groupby("year").size()
+        if len(part):
+            log(f"note: partial years kept (latest month used): { {int(k): int(v) for k, v in part.items()} }")
+    piv_s = f.pivot_table(index="k3", columns="year", values="share", aggfunc="first")
+    piv_p = f.pivot_table(index="k3", columns="year", values="pc", aggfunc="first")
     out = pd.DataFrame(index=piv_s.index)
     out["m_civil_share_2021"] = piv_s.get(2021)
     out["m_civil_share_2223"] = piv_s[[y for y in (2022, 2023) if y in piv_s]].mean(axis=1)
@@ -379,10 +389,24 @@ def dig(d, *paths):
     return None
 
 
+PROZORRO_METHOD = "POST"                 # the site's search endpoint answers 405 to GET (probe of 29 Sep 2026); POST with the
+                                         # filters in the query string is what the prozorro.gov.ua front end sends
+
+
 def prozorro_page(q, year, page):
+    import requests
     params = {"text": q, "page": page, "date[tender][start]": f"{year}-01-01", "date[tender][end]": f"{year}-12-31"}
-    r = get(PROZORRO_SEARCH, params=params, timeout=90)
-    return r.json()
+    last = None
+    for method in ([PROZORRO_METHOD] + [m for m in ("POST", "GET") if m != PROZORRO_METHOD]):
+        r = requests.request(method, PROZORRO_SEARCH, params=params, headers={**HEAD, "Accept": "application/json"}, timeout=90)
+        if r.status_code == 200:
+            try:
+                return r.json()
+            except ValueError:
+                last = f"{method}: 200 but not JSON (starts {r.text[:80]!r})"
+                continue
+        last = f"{method}: {r.status_code}"
+    raise RuntimeError(f"Prozorro search not answered ({last}); check PROZORRO_SEARCH in a browser's network tab")
 
 
 def cmd_prozorro(a):
