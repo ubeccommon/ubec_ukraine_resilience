@@ -748,8 +748,9 @@ def cmd_nonprofit(a):
             df["route"] = np.where(df["k3"].notna(), "edrpou", "")
             log(f"  placed non-profits through the ЄДР crosswalk: {int(df['k3'].notna().sum())} of {len(df)}")
         else:
-            sys.exit("the register carries no address: run `44_measures.py edr build` first (EDRPOU -> hromada from the ЄДР "
-                     "legal-entity dump, local), then this build again")
+            sys.exit("parked (29 Sep 2026): the register carries no address, only the tax office (c_sti), and the ЄДР legal-entity "
+                     "dump has no address either, so non-profits cannot be counted per hromada from open registers; the regional "
+                     "statistics offices' counts by legal form (09_stat_edrpou.py, 10 oblasts) are the nearest substitute")
     else:
         df = place(df, cols, "non-profits")
     if "d_nonpr" in df:
@@ -851,7 +852,8 @@ def cmd_w3(a):
             else:
                 log(f"  {p.name}: no hromada-level pcode column; columns {list(sh.columns)[:10]}")
     if not frames:
-        sys.exit("no 3W table with hromada pcodes found in raw/w3 — pull an earlier 3W file (`pull --resource …`)")
+        sys.exit("parked (29 Sep 2026): every 3W/5W file on HDX, the 2022 weekly rounds included, is by oblast (ADMIN1); "
+                 "operational presence per hromada is not in the public files")
     df = pd.concat(frames, ignore_index=True)
     cols = guess_cols(df, a.cols)
     cols["pcode"] = "_pcode"
@@ -1049,8 +1051,13 @@ def cmd_edr(a):
             log(f"  example {k}: {v[:120]}")
         if ex.get("address"):
             log(f"  parsed: {parse_address(ex['address'])}")
-        log("Next: `edr build` (streams the whole dump; EDRPOU -> hromada for the non-profit register's entities, local).")
+            log("Next: `edr build` (streams the whole dump; EDRPOU -> hromada for the non-profit register's entities, local).")
+        else:
+            log("the dump carries no address tag (probe of 29 Sep 2026: the UO schema has no ADDRESS element, only names, "
+                "codes, states and dates) — the ЄДР route to a hromada is closed; the non-profit register stays at tax-office level")
         return
+    if a.step == "build":
+        log("note: the UO dump has no address (29 Sep 2026); the build is kept for a future release that carries one")
     tins = None
     if a.tins or not a.all:
         src = Path(a.tins) if a.tins else None

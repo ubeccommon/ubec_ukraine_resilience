@@ -284,7 +284,7 @@ or in the administrative wave of 12 June 2020); and `places`, which counts any l
 centres, veteran spaces, libraries, IDP councils, service centres, community officers — and deletes a point file
 after use. Each sub-command has `probe`, `pull`, `build`; the probes exist because none of these sites can be opened
 from Claude's workspace, so column names and dataset ids are confirmed on the data machine first. `assemble` merges
-everything into `tidy/measures_k3.csv` (public) and writes the `m_*` rows of the data dictionary.
+everything into `tidy/measures_k3.csv` (public) and writes the `m_*` rows of the data dictionary. First runs (29 Sep 2026): `civil` and `formation` built; `prozorro` running against a rate limit; `nonprofit` and `w3` parked — the register has no address and the ЄДР dump none either, and every 3W file is by oblast (section 6.2).
 
 **`45_candidates.py`** takes a measure (or several: each alone, then their conjunction), a quality and a sign, and
 runs the checks the design's stars stand for, each named and logged: C1 the plain comparison; C2 the linear
@@ -320,18 +320,18 @@ per hromada only (R1, R7).
 | Source | What it gives | Level | Terms | Aspect | Verify |
 |---|---|---|---|---|---|
 | openbudget INCOMES cache (pulled) | revenue diversity: shares of PIT, single tax, property and land, excise, rent; Herfindahl of own revenue; tourist tax (1811), retail excise (1404–1405), parking and advertising fees | hromada 2021–2026 | CMU 835 | tax-base composition; visitor and retail economy | codes in the cache |
-| openbudget functional 03xx | civil protection (0320) per resident, 2022–2025 change | hromada | CMU 835 | what the hromada set aside for itself | populated at hromada level |
+| openbudget functional 03xx | civil protection (0320) per resident, 2022–2025 change | hromada | CMU 835 | what the hromada set aside for itself | built 29 Sep 2026 (`44 civil`): 770 hromadas with 0320 in 2021, 1,077 in 2025; 2022–2024 not yet in `31`'s cache |
 | Prozorro public API | tenders by hromada councils and communal enterprises: generators and energy equipment 2022–24, repair contracts, share won by local suppliers | buyer ЄДРПОУ → k3; supplier by locality | CMU 835, API open | reserve, repair, local supply chains | EDRPOU→k3 crosswalk, supplier address quality |
 | nezlamnist.gov.ua | invincibility points per 10,000 | point → count | public by design | reserve | counts only, delete point cache (R1) |
-| decentralization.gov.ua / Wikidata (CC0) | formation date, voluntary amalgamation before 2020 vs administrative, councils merged | hromada | site terms / CC0 | how the community came to be | Wikidata KATOTTG and inception coverage |
+| decentralization.gov.ua / Wikidata (CC0) | formation date, voluntary amalgamation before 2020 vs administrative, councils merged | hromada | site terms / CC0 | how the community came to be | built 29 Sep 2026 (`44 formation`, P9435): year known for 1,144 hromadas, 783 formed before 12 June 2020 |
 | E-DEM petitions; data.gov.ua petitions | petitions and signatures per 10,000; participatory-budget hromadas | hromada | CC BY (data.gov.ua part) | participation between elections | no signer data (R6) |
 | Mintsyfra ЦНАП list | service centres per 10,000 | hromada | verify | access to administration | bulk list |
 | IDP councils (CMU resolution, Aug 2023; SSS list) | hromadas with an IDP council, date | hromada | verify | reception | official register |
-| Register of non-profits (State Tax Service, CC BY 4.0) | CSOs, charities, OSBB, cooperatives by non-profit code | tax office (raion) at best | CC BY | civic life outside the budget | address or KATOTTG field |
+| Register of non-profits (State Tax Service, CC BY 4.0) | CSOs, charities, OSBB, cooperatives by non-profit code | tax office (raion) at best | CC BY | civic life outside the budget | verified 29 Sep 2026: no address in the register (229,416 entities, Feb 2022) and none in the ЄДР legal-entity dump — parked; nearest substitute: statistics offices' counts by legal form (`09`, 10 oblasts) |
 | Youth centres and veteran spaces registers | per 10,000 | hromada via settlement | verify | civic life | existence, format |
 | Ukrainian Library Association / Ministry of Culture | public libraries per 10,000; closures since 2022 | via settlement | verify | cultural provision | licence |
 | ЄДЕБО (pulled) | schools by operating mode, shelter share, mountain flag | hromada | terms pending | cultural provision under fire | fields present |
-| OCHA Ukraine 3W/5W (HDX, CC BY, `ukraine-who-does-what-where-3w`) | organisations and sectors active per hromada; local vs international | admin3 | CC BY | reception; local NGOs as implementers | monthly cumulative files, January–August 2026 current (29 Sep 2026) |
+| OCHA Ukraine 3W/5W (HDX, CC BY, `ukraine-who-does-what-where-3w`) | organisations and sectors active; local vs international | oblast only | CC BY | reception; local NGOs as implementers | verified 29 Sep 2026: all 73 files, the 2022 weekly rounds included, are by oblast — parked |
 | Sentinel-1 building damage (Zenodo 15088349, Dietrich et al. 2025) | share of buildings damaged per ADM3 | hromada | CC BY | separates damage from targeting | ADM3 coding |
 | NBU bank branches; Ukrposhta and Nova Poshta points; pharmacy licences | services per 10,000, closures since 2022 | address → hromada | open / site terms | service retreat or growth | address fields, reuse terms |
 | Prozorro.Sale land and lease auctions | communal land and property auctioned per hromada | hromada (seller) | open API | use of common assets | seller→k3 |
