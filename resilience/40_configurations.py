@@ -7,6 +7,8 @@ configurations that held-up hromadas share and faltered ones lack.
   python 40_configurations.py --pop zone      the 30 km zone population (small: read with care)
   python 40_configurations.py --max-k 2       conjunctions of at most two conditions (default 3)
   python 40_configurations.py --with-region   add is_village, is_city and carp as conditions (default: covariates only)
+  python 40_configurations.py --outcome func  the functional quality (light) or fiscal quality (fisc) of 39;
+                                              outputs configurations_func.* / configurations_fisc.*
   python 40_configurations.py --outcome s24   one family's residual as the outcome (s24, recent, econ, cult, own):
                                               extremes = its top and bottom quarter; outputs configurations_<f>.*
 
@@ -118,8 +120,12 @@ def main():
     ap.add_argument("--pop", default="outside", choices=("outside", "zone"))
     ap.add_argument("--max-k", type=int, default=3, choices=(1, 2, 3))
     ap.add_argument("--with-region", action="store_true", help="is_village, is_city, carp as conditions")
-    ap.add_argument("--outcome", default="composite", choices=("composite", "s24", "recent", "econ", "cult", "own"),
-                    help="fuzzy outcome: rank of the composite (default) or of one family's residual")
+    ap.add_argument("--with-present", action="store_true",
+                    help="add NHSU 2026 measures (declarations per 1,000 of 2020, share 65+) as conditions — concurrent, "
+                         "not pre-war: configurations found with them describe, they do not precede")
+    ap.add_argument("--outcome", default="composite", choices=("composite", "func", "fisc", "s24", "recent", "econ", "cult", "own"),
+                    help="fuzzy outcome: the composite quality (default), the functional (func) or fiscal (fisc) quality, "
+                         "or one family's residual")
     ap.add_argument("--variant", default="raw", choices=("raw", "spheres"),
                     help="which residual set a single-family outcome reads (res0_* raw, res_* spheres)")
     ap.add_argument("--perms", type=int, default=20, help="permutations of the outcome within oblasts for the noise ceiling (0 = skip)")
@@ -171,17 +177,27 @@ def main():
         x = pd.to_numeric(d[col], errors="coerce") * sign
         F[nm] = oblast_rank(x, d["k1"])
     conds = list(CONDITIONS)
+    if a.with_present:
+        nh = rd("nhsu_declarations_k3.csv").set_index("k3")
+        for col in ("decl_per1000_pop2020", "decl_share_65plus"):
+            d[col] = d["k3"].map(nh[col])                     # map, not merge: keeps d aligned with F
+        for nm, col, sign in (("people_present", "decl_per1000_pop2020", +1), ("young", "decl_share_65plus", -1)):
+            F[nm] = oblast_rank(pd.to_numeric(d[col], errors="coerce") * sign, d["k1"])
+            conds.append(nm)
     if a.with_region:
         for nm in STRUCT:
             F[nm] = d[nm]
         conds += list(STRUCT)
     C = (F > 0.5).astype(float).where(F.notna())          # crisp: above the oblast median
-    if a.outcome == "composite":
-        comp = pd.to_numeric(d["composite"], errors="coerce")
+    if a.outcome in ("composite", "func", "fisc"):
+        ccol = "composite" if a.outcome == "composite" else f"composite_{a.outcome}"
+        qcol = "quality" if a.outcome == "composite" else f"quality_{a.outcome}"
+        comp = pd.to_numeric(d[ccol], errors="coerce")
         Y = comp.rank(pct=True)                            # fuzzy held-up
         ok = F[conds].notna().all(axis=1) & Y.notna()
         do = d[ok]
-        held, falt = (do["quality"] == "held_up").values, (do["quality"] == "faltered").values
+        held, falt = (do[qcol] == "held_up").values, (do[qcol] == "faltered").values
+        log(f"outcome = {a.outcome} quality ({ccol}, classes from {qcol}): held_up {int(held.sum())}, faltered {int(falt.sum())}")
     else:
         col = ("res0_" if a.variant == "raw" else "res_") + a.outcome
         comp = pd.to_numeric(d[col], errors="coerce")

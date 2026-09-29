@@ -34,9 +34,13 @@ Two populations, fitted separately (context pattern: the zone is a boundary): no
 30 km zone (28), and the 196 zone hromadas. Light families use the >= 10 lit-pixel sample of 22 (tr_* present);
 tr_light_reliable is carried for checks.
 
-Rule (7.1): held_up = residual in the top quarter (or third, --cut 3) of its population on >= 2 families and in the
-bottom quarter on none; faltered = the reverse; middle = everything else with >= 2 families; na = < 2 families.
-composite = mean of the available standardised residuals (z within population).
+Three qualities (round 2, 28 Sep 2026 — round 1 showed light and budget residuals nearly uncorrelated):
+  composite  all five families; held_up = residual in the top quarter (or third, --cut 3) of its population on
+             >= 2 families and in the bottom quarter on none; faltered = the reverse; kept as a check
+  func       functional: the two light families; held_up = top quarter on >= 1 and bottom on none
+  fisc       fiscal: the three budget families; held_up = top quarter on >= 2 and bottom on none
+Columns quality / quality_func / quality_fisc, composite / composite_func / composite_fisc (mean of the
+standardised residuals of that quality's families), lisa_* for each.
 
 Also here, because it is cheap (7.3, method 1): the plain comparison. For every profile variable, the share of
 held-up and of faltered hromadas above the median of their own oblast, and the group medians. The profile has two
@@ -44,7 +48,8 @@ parts: CONDITIONS — pre-war (2021) sphere inputs (32), 2020 election contestat
 2020, hromada type, balance 2021, Carpathian flag — and CONSEQUENCES — the 2025 inputs, DREAM, schools 2026,
 balance 2025, modelled population change. The econ and cult families are built from the 2025 inputs, so the
 consequences describe what holding up looks like, not what precedes it; only the conditions are candidates for a
-pattern. Exposure is a control, listed with the consequences for reference.
+pattern. Exposure is a control, listed with the consequences for reference. PRESENT: the NHSU declarations of
+41 (per 1,000 residents of 2020, share aged 65+, share under 18; snapshot 2026) — concurrent with the outcomes.
 
 LISA (KNN 6, as 36) on the composite, non-zone population: where the quality clusters, the configuration behind it
 is probably regional (oblast row); where it is scattered, hromada-level.
@@ -197,6 +202,10 @@ def main():
             pd.to_numeric(sc.get("schools_2026"), errors="coerce").where(lambda v: v > 0)
         d = d.merge(sc[["k3"] + keep + ["rural_school_share"]], on="k3", how="left",
                     suffixes=("", "_sc"))
+    nh = rd("nhsu_declarations_k3.csv", required=False)          # 41 (NHSU, CC BY 4.0), snapshot 2026
+    if nh is not None:
+        keep = [c for c in ("decl_per1000_pop2020", "decl_share_65plus", "decl_share_0_17") if c in nh]
+        d = d.merge(nh[["k3"] + keep], on="k3", how="left")
     pop = rd("population_k3.csv", required=False)
     if pop is not None:
         pop["pop_change"] = np.log(pd.to_numeric(pop["pop_ghs_2025"], errors="coerce") /
@@ -243,29 +252,39 @@ def main():
                 d.loc[e.index, col] = e.values
                 fit_n[f"{pop_lab}_{variant}_{f}"] = {"n": int(n), "r2": None if not np.isfinite(r2) else round(float(r2), 3)}
 
-    # ---- classes ---------------------------------------------------------------------------------------
+    # ---- classes: three qualities ----------------------------------------------------------------------
+    # composite (all five families; kept as a check), functional (the two light families), fiscal (the three
+    # budget families). Round 1 (28 Sep 2026) showed light and budget residuals nearly uncorrelated.
     pre = "res" if a.variant == "spheres" else "res0"
     n = a.cut
     for f in FAM:
         d[f"q_{f}"] = np.nan
-    d["composite"] = np.nan
     for pop_lab in ("outside", "zone"):
         m = d["pop"] == pop_lab
-        zs = []
         for f in FAM:
-            x = pd.to_numeric(d.loc[m, f"{pre}_{f}"], errors="coerce")
-            d.loc[m, f"q_{f}"] = quantile_class(x, n)
-            zs.append(z(x))
-        d.loc[m, "composite"] = pd.concat(zs, axis=1).mean(axis=1, skipna=True)
-    Q = d[[f"q_{f}" for f in FAM]]
-    d["n_families"] = Q.notna().sum(axis=1)
-    d["n_top"] = (Q == n).sum(axis=1)
-    d["n_bottom"] = (Q == 1).sum(axis=1)
-    d["quality"] = np.select(
-        [d["n_families"] < 2,
-         (d["n_top"] >= 2) & (d["n_bottom"] == 0),
-         (d["n_bottom"] >= 2) & (d["n_top"] == 0)],
-        ["na", "held_up", "faltered"], default="middle")
+            d.loc[m, f"q_{f}"] = quantile_class(pd.to_numeric(d.loc[m, f"{pre}_{f}"], errors="coerce"), n)
+    QUAL = {"composite": FAM, "func": ("s24", "recent"), "fisc": ("econ", "cult", "own")}
+    for qn, fams_q in QUAL.items():
+        comp_col = "composite" if qn == "composite" else f"composite_{qn}"
+        d[comp_col] = np.nan
+        for pop_lab in ("outside", "zone"):
+            m = d["pop"] == pop_lab
+            zs = [z(pd.to_numeric(d.loc[m, f"{pre}_{f}"], errors="coerce")) for f in fams_q]
+            d.loc[m, comp_col] = pd.concat(zs, axis=1).mean(axis=1, skipna=True)
+        Q = d[[f"q_{f}" for f in fams_q]]
+        nf, nt, nb = Q.notna().sum(axis=1), (Q == n).sum(axis=1), (Q == 1).sum(axis=1)
+        need = 2 if len(fams_q) >= 3 else 1          # functional: top quarter on one light family, bottom on none
+        col = "quality" if qn == "composite" else f"quality_{qn}"
+        d[col] = np.select([nf < min(2, len(fams_q)), (nt >= need) & (nb == 0), (nb >= need) & (nt == 0)],
+                           ["na", "held_up", "faltered"], default="middle")
+        if qn == "composite":
+            d["n_families"], d["n_top"], d["n_bottom"] = nf, nt, nb
+        log(f"\n== classes, {qn} quality ({', '.join(fams_q)}; held_up = top 1/{n} on >= {need}, bottom on none)")
+        log(pd.crosstab(d["pop"], d[col]).to_string())
+    log(f"families available per hromada: {d['n_families'].value_counts().sort_index().to_dict()}")
+    for f in FAM:
+        log(f"  {f:7s} residual available: {int(d[f'{pre}_{f}'].notna().sum())}")
+
     log("\n== are the families one quality? rank correlations of the residuals (outside the zone)")
     R5 = d.loc[d["pop"] == "outside", [f"{pre}_{f}" for f in FAM]].apply(pd.to_numeric, errors="coerce")
     R5.columns = list(FAM)
@@ -285,33 +304,28 @@ def main():
                 "held_up_top_share": {f: round(float(top[f"q_{f}"].mean()), 3) for f in FAM},
                 "held_up_combinations": pairs.to_dict()}
 
-    log("\n== classes (rows = population)")
-    tab = pd.crosstab(d["pop"], d["quality"])
-    log(tab.to_string())
-    log(f"families available per hromada: {d['n_families'].value_counts().sort_index().to_dict()}")
-    for f in FAM:
-        c = f"{pre}_{f}"
-        log(f"  {f:7s} residual available: {int(d[c].notna().sum())}")
 
     # ---- LISA on the composite (non-zone) ---------------------------------------------------------------
-    d["lisa_composite"] = ""
     moran = {}
-    if not a.no_lisa:
+    for comp_col in ("composite", "composite_func", "composite_fisc"):
+        d[f"lisa_{comp_col}"] = ""
+        if a.no_lisa:
+            continue
         try:
-            s, g, cls, cls_f, cut = lisa(d[(d["pop"] == "outside") & d["composite"].notna()], "composite", "national")
-            d.loc[cls.index, "lisa_composite"] = cls
-            moran = {"I": round(float(g.I), 3), "p_sim": round(float(g.p_sim), 4), "n": int(len(s)),
-                     "classes": cls.value_counts().to_dict(), "classes_fdr": cls_f.value_counts().to_dict()}
-            log(f"\nLISA composite (outside zone): Moran's I = {g.I:.3f} (p = {g.p_sim:.4f})  "
+            s, g, cls, cls_f, cut = lisa(d[(d["pop"] == "outside") & d[comp_col].notna()], comp_col, "national")
+            d.loc[cls.index, f"lisa_{comp_col}"] = cls
+            moran[comp_col] = {"I": round(float(g.I), 3), "p_sim": round(float(g.p_sim), 4), "n": int(len(s)),
+                               "classes": cls.value_counts().to_dict(), "classes_fdr": cls_f.value_counts().to_dict()}
+            log(f"\nLISA {comp_col} (outside zone): Moran's I = {g.I:.3f} (p = {g.p_sim:.4f})  "
                 f"classes {cls.value_counts().to_dict()}  after FDR {cls_f.value_counts().to_dict()}")
             for k1 in sorted(CARP):
-                cc = cls[s["k1"] == k1].value_counts().to_dict()
-                log(f"  Carpathian {k1}: {cc}")
+                log(f"  Carpathian {k1}: {cls[s['k1'] == k1].value_counts().to_dict()}")
         except Exception as ex:
-            log(f"note: LISA skipped ({ex})")
+            log(f"note: LISA {comp_col} skipped ({ex})")
 
     # ---- plain comparison (7.3, method 1) -----------------------------------------------------------------
     log("\n== plain comparison: share above own-oblast median, held up vs faltered (outside the zone)")
+    log("(rows: the composite quality; the same table for the functional and fiscal qualities is in quality_profile.csv, column 'quality_set')")
     inputs = [c for c in inp.columns if c not in PROFILE_SKIP]
     cond = [c for c in inputs if c.endswith("_2021") or c.endswith("_2020")]
     cond += [c for c in ("class_size_2021", "pupils_per1000_2021", "pop_ghs_2020", "imbalance_2021",
@@ -319,30 +333,48 @@ def main():
     cons = [c for c in inputs if c not in cond]
     cons += [c for c in ("schools_suspended_2026", "rural_school_share", "pop_change", "imbalance_2025",
                          "lean_cult_2025", "lean_econ_rights_2025", "exp", "exp_alert") if c in d and c not in cons]
+    present = [c for c in ("decl_per1000_pop2020", "decl_share_65plus", "decl_share_0_17") if c in d]
     binary = [c for c in ("is_city", "is_settlement", "is_village", "carp", "light_reliable") if c in d]
     rows = []
     out = d[d["pop"] == "outside"].copy()
-    for part, vs in (("condition", cond), ("consequence", cons)):
-        for v in vs:
+    for qset, qcol in (("composite", "quality"), ("func", "quality_func"), ("fisc", "quality_fisc")):
+        for part, vs in (("condition", cond), ("consequence", cons), ("present", present)):
+            for v in vs:
+                x = pd.to_numeric(out[v], errors="coerce")
+                med = x.groupby(out["k1"]).transform("median")
+                above = (x > med).where(x.notna())
+                for grp in ("held_up", "faltered", "middle"):
+                    m = out[qcol] == grp
+                    nv = int(x[m].notna().sum())
+                    rows.append({"quality_set": qset, "part": part, "variable": v, "group": grp, "n": int(m.sum()),
+                                 "n_valid": nv,
+                                 "share_above_oblast_median": float(above[m].mean()) if nv >= MIN_N else np.nan,
+                                 "median": float(x[m].median()) if nv >= MIN_N else np.nan})
+        for v in binary:
             x = pd.to_numeric(out[v], errors="coerce")
-            med = x.groupby(out["k1"]).transform("median")
-            above = (x > med).where(x.notna())
             for grp in ("held_up", "faltered", "middle"):
-                m = out["quality"] == grp
+                m = out[qcol] == grp
                 nv = int(x[m].notna().sum())
-                rows.append({"part": part, "variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
-                             "share_above_oblast_median": float(above[m].mean()) if nv >= MIN_N else np.nan,
-                             "median": float(x[m].median()) if nv >= MIN_N else np.nan})
-    for v in binary:
-        x = pd.to_numeric(out[v], errors="coerce")
-        for grp in ("held_up", "faltered", "middle"):
-            m = out["quality"] == grp
-            nv = int(x[m].notna().sum())
-            rows.append({"part": "structure", "variable": v, "group": grp, "n": int(m.sum()), "n_valid": nv,
-                         "share_above_oblast_median": np.nan,
-                         "median": float(x[m].mean()) if nv >= MIN_N else np.nan})
+                rows.append({"quality_set": qset, "part": "structure", "variable": v, "group": grp, "n": int(m.sum()),
+                             "n_valid": nv, "share_above_oblast_median": np.nan,
+                             "median": float(x[m].mean()) if nv >= MIN_N else np.nan})
     P = pd.DataFrame(rows)
     P.to_csv(OUT_P, index=False)
+    for qset in ("func", "fisc"):
+        wide = P[(P["quality_set"] == qset) & (P["part"] == "condition")].pivot_table(
+            index="variable", columns="group", values="share_above_oblast_median", sort=False).reindex(cond)
+        if {"held_up", "faltered"} <= set(wide.columns):
+            wide["gap"] = wide["held_up"] - wide["faltered"]
+            wide = wide.sort_values("gap", ascending=False)
+        log(f"\n-- CONDITIONS, {qset} quality\n" + wide.round(3).to_string())
+    if present:
+        wide = P[P["part"] == "present"].pivot_table(index=["variable", "quality_set"], columns="group",
+                                                     values="share_above_oblast_median", sort=False)
+        if {"held_up", "faltered"} <= set(wide.columns):
+            wide["gap"] = wide["held_up"] - wide["faltered"]
+        log("\n-- PRESENT (NHSU declarations, 2026 snapshot: concurrent with the outcomes, read as association)\n"
+            + wide.round(3).to_string())
+    P = P[P["quality_set"] == "composite"]
     for part, vs in (("condition", cond), ("consequence", cons)):
         wide = P[P["part"] == part].pivot_table(index="variable", columns="group",
                                                 values="share_above_oblast_median", sort=False)
@@ -350,7 +382,7 @@ def main():
         if {"held_up", "faltered"} <= set(wide.columns):
             wide["gap"] = wide["held_up"] - wide["faltered"]
             wide = wide.sort_values("gap", ascending=False)
-        title = ("CONDITIONS (pre-war and structural: candidates for a pattern)" if part == "condition"
+        title = ("CONDITIONS, composite quality (pre-war and structural: candidates for a pattern)" if part == "condition"
                  else "CONSEQUENCES (2025 values, part of what defines the quality: not conditions)")
         log(f"\n-- {title}\n" + wide.round(3).to_string())
     log("\nshares of hromada type, Carpathian and reliable light by group:")
@@ -360,7 +392,8 @@ def main():
 
     # ---- outputs ---------------------------------------------------------------------------------------
     cols = ["k1", "k2", "k3", "name", "pop", "in_zone", "carp", "light_reliable", "n_families", "n_top",
-            "n_bottom", "quality", "composite", "lisa_composite"] + \
+            "n_bottom", "quality", "composite", "lisa_composite", "quality_func", "composite_func", "lisa_composite_func",
+            "quality_fisc", "composite_fisc", "lisa_composite_fisc"] + \
            [f"q_{f}" for f in FAM] + [f"res_{f}" for f in FAM] + [f"res0_{f}" for f in FAM]
     d[cols].sort_values("k3").to_csv(OUT, index=False)
     log(f"wrote {OUT.relative_to(BASE)}  (local: hromada-level light residuals, rule R2)")
@@ -371,12 +404,13 @@ def main():
         "families": {f: {"y": fams[f][0], "controls": fams[f][1] + (sph21 if a.variant == "spheres" else [])}
                      for f in FAM},
         "fits": fit_n,
-        "classes": {p: d.loc[d["pop"] == p, "quality"].value_counts().to_dict() for p in ("outside", "zone")},
+        "classes": {q: {p: d.loc[d["pop"] == p, c].value_counts().to_dict() for p in ("outside", "zone")}
+                    for q, c in (("composite", "quality"), ("func", "quality_func"), ("fisc", "quality_fisc"))},
         "n_families": d["n_families"].value_counts().sort_index().to_dict(),
         "carpathian_outside": d.loc[(d["pop"] == "outside") & (d["carp"] == 1), "quality"].value_counts().to_dict(),
         "by_type_outside": {t: d.loc[(d["pop"] == "outside") & (d["htype"] == t), "quality"].value_counts().to_dict()
                             for t in ("city", "settlement", "village")},
-        "lisa_composite": moran, "families_diagnostic": fam_diag,
+        "lisa": moran, "families_diagnostic": fam_diag,
     }
     OUT_S.write_text(json.dumps(summ, ensure_ascii=False, indent=1, default=int), encoding="utf-8")
     log(f"wrote {OUT_S.relative_to(BASE)}")
@@ -414,6 +448,9 @@ def main():
         g["composite"] = g["k3"].map(d.set_index("k3")["composite"])
         g.loc[g["quality_cls"].isin(["zone", "occ"]), "composite"] = np.nan
         g["lisa_composite"] = g["k3"].map(d.set_index("k3")["lisa_composite"]).fillna("")
+        for qn in ("func", "fisc"):
+            g[f"quality_{qn}"] = g["k3"].map(d.set_index("k3")[f"quality_{qn}"]).fillna("occ")
+            g.loc[g["quality_cls"] == "zone", f"quality_{qn}"] = "zone"
         g.to_file(MAPS, layer="hromada_quality", driver="GPKG")
         log(f"wrote {MAPS.name} layer hromada_quality  {g['quality_cls'].value_counts().to_dict()}")
     except Exception as ex:
