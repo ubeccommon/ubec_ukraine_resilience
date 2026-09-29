@@ -46,25 +46,6 @@ OUTPUTS=(
 # Claude adds a path here when a new script starts producing a tracked
 # output; once it is committed, the entry can be removed again.
 ALLOW_NEW=(
-  "resilience/tidy/quality_summary.json"
-  "resilience/tidy/quality_profile.csv"
-  "resilience/tidy/configurations.csv"
-  "resilience/tidy/configurations_summary.json"
-  "resilience/tidy/configurations_func.csv"
-  "resilience/tidy/configurations_func.json"
-  "resilience/tidy/configurations_fisc.csv"
-  "resilience/tidy/configurations_fisc.json"
-  "resilience/tidy/configurations_s24.csv"
-  "resilience/tidy/configurations_s24.json"
-  "resilience/tidy/configurations_recent.csv"
-  "resilience/tidy/configurations_recent.json"
-  "resilience/tidy/configurations_econ.csv"
-  "resilience/tidy/configurations_econ.json"
-  "resilience/tidy/configurations_cult.csv"
-  "resilience/tidy/configurations_cult.json"
-  "resilience/tidy/configurations_own.csv"
-  "resilience/tidy/configurations_own.json"
-  "resilience/tidy/elections_2019_k3.csv"
 )
 
 DRY=0; YES=0; SUBJECT=""
