@@ -64,6 +64,9 @@
 /resilience/tidy/sphere_lisa_k3.csv
 # observation set with hromada-level residuals of recent light (rule R2) -> local; summary and profile are public
 /resilience/tidy/quality_k3.csv
+# present population per hromada, incl. the 30 km zone (NHSU 2026; rule R3) -> local; zone values only as raion aggregates
+/resilience/tidy/nhsu_declarations_k3.csv
+/resilience/tidy/nhsu_declarations_long.csv
 # superseded
 /resilience/tidy/keys_hromada_before_katottg_names.csv
 

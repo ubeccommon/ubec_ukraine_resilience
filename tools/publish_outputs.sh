@@ -64,8 +64,6 @@ ALLOW_NEW=(
   "resilience/tidy/configurations_cult.json"
   "resilience/tidy/configurations_own.csv"
   "resilience/tidy/configurations_own.json"
-  "resilience/tidy/nhsu_declarations_k3.csv"
-  "resilience/tidy/nhsu_declarations_long.csv"
   "resilience/tidy/elections_2019_k3.csv"
 )
 

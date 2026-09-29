@@ -34,6 +34,9 @@ script. R1 — no facility locations. Output per hromada: declarations total, by
 source allows), by sex, per 1,000 GHS-POP 2020 residents, and the date of the snapshot. Rerun monthly to build a
 series; each run appends a dated row set to tidy/nhsu_declarations_long.csv.
 
+Outputs stay LOCAL (.gitignore): they give present population per hromada including the 30 km zone (rule R3).
+Publication only through the data package, with zone hromadas as raion values.
+
 Licence: CC BY 4.0 — cite "National Health Service of Ukraine, data.gov.ua, accessed <date>".
 """
 import argparse
